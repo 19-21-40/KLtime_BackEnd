@@ -1,9 +1,10 @@
-package domain;
+package com.example.demo.domain;
 
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter @Setter
@@ -16,11 +17,10 @@ public class Student {
     private String name;
     private String email;
 
-    @OneToMany(mappedBy = "student")
-    private List<StudentLecture> myLectures;
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    private List<StudentLecture> myLectures = new ArrayList<>();
 
 
-    /** 처리해야할것 **/
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dept_id")
@@ -32,4 +32,7 @@ public class Student {
     private int totalCredit;
     private int grade;
     private String multiMajor;
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    private List<TimeTable> timetables = new ArrayList<>();
 }

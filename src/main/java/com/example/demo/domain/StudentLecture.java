@@ -1,9 +1,10 @@
-package domain;
+package com.example.demo.domain;
 
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,8 +25,6 @@ public class StudentLecture {
     @JoinColumn(name = "lecture_id")
     private Lecture lecture;
 
-    @OneToMany(mappedBy = "studentLecture")
-    private List<TableStLecture> tableStLectures;
     private int gpa;
     private String comment;
     private int takesGrade;

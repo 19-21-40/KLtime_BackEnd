@@ -1,4 +1,4 @@
-package domain;
+package com.example.demo.domain;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +20,6 @@ public class LectureTimeSlot {
     private Lecture lecture;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tiemslot_id")
+    @JoinColumn(name = "timeslot_id")
     private TimeSlot timeslot;
 }

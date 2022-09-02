@@ -1,4 +1,4 @@
-package domain;
+package com.example.demo.domain;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,15 +9,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-@Getter
-@Setter
-public class TimeSlot {
+@Getter @Setter
+public class Department {
 
-    @Id
-    @GeneratedValue
-    @Column(name = "timeslot_id")
+    @Id @GeneratedValue
+    @Column(name = "dept_id")
     private Long id;
-    private String startTime;
-    private String endTime;
-    private String day;
+    private String name;
+    private String collegeName;
 }
