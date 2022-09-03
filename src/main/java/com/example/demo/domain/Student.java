@@ -21,7 +21,6 @@ public class Student {
     private List<StudentLecture> myLectures = new ArrayList<>();
 
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dept_id")
     private Department department;

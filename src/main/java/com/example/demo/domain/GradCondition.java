@@ -14,7 +14,7 @@ public class GradCondition {
     @GeneratedValue
     @Column(name = "gradcondition_id")
     private Long id;
-    private int addmissionYear;
+    private int admissionYear;
     private int gradCredit;
     private int essBalCredit;
     private int basicCredit;
@@ -24,5 +24,5 @@ public class GradCondition {
     private Department department;
     private int mainCredit;
     private boolean isMultiDept;
-    private int multiCredit;
+    private Integer multiCredit;
 }

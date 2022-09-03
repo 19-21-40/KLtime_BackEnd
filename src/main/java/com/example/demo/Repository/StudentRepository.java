@@ -1,5 +1,6 @@
-package com.example.demo.domain;
+package com.example.demo.Repository;
 
+import com.example.demo.domain.Student;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 

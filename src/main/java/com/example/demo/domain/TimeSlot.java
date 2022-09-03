@@ -22,5 +22,5 @@ public class TimeSlot {
     private List<LectureTimeSlot> lectureTimeSlots = new ArrayList<>();
     private String startTime;
     private String endTime;
-    private String whatDay;
+    private String dayName;
 }

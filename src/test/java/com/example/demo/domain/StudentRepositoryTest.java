@@ -1,5 +1,6 @@
 package com.example.demo.domain;
 
+import com.example.demo.Repository.StudentRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
