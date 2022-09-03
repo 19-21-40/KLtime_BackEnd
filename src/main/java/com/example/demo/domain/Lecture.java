@@ -25,7 +25,7 @@ public class Lecture {
     private int credit;
     private int level;
     private String department;
-    private int year;
+    private int yearOfLecture;
     private String semester;
     private String notes;
 
