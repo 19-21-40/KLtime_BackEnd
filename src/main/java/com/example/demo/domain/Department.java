@@ -17,4 +17,12 @@ public class Department {
     private Long id;
     private String name;
     private String collegeName;
+
+    public Department(String name, String collegeName) {
+        this.name = name;
+        this.collegeName = collegeName;
+    }
+
+    public Department() {
+    }
 }

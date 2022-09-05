@@ -29,4 +29,9 @@ public class StudentLecture {
     private String comment;
     private int takesGrade;
     private int takesSemester;
+
+    public StudentLecture(Student student, Lecture lecture) {
+        this.student = student;
+        this.lecture = lecture;
+    }
 }

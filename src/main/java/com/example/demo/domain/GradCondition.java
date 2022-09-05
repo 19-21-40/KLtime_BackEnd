@@ -25,4 +25,17 @@ public class GradCondition {
     private int mainCredit;
     private boolean isMultiDept;
     private Integer multiCredit;
+
+    public GradCondition(int admissionYear, int gradCredit, int essBalCredit, int basicCredit, Department department, int mainCredit, boolean isMultiDept) {
+        this.admissionYear = admissionYear;
+        this.gradCredit = gradCredit;
+        this.essBalCredit = essBalCredit;
+        this.basicCredit = basicCredit;
+        this.department = department;
+        this.mainCredit = mainCredit;
+        this.isMultiDept = isMultiDept;
+    }
+
+    public GradCondition() {
+    }
 }
