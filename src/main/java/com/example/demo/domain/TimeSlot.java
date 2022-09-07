@@ -10,17 +10,27 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@Table(name = "timeslot")
+@Table(name = "time_slot")
 public class TimeSlot {
 
     @Id
     @GeneratedValue
-    @Column(name = "timeslot_id")
+    @Column(name = "time_slot_id")
     private Long id;
 
-    @OneToMany(mappedBy = "timeslot", cascade = CascadeType.ALL)
-    private List<LectureTimeSlot> lectureTimeSlots = new ArrayList<>();
+    private String dayName;
     private String startTime;
     private String endTime;
-    private String dayName;
+
+
+    public static TimeSlot createTimeSlot(String dayName, String startTime, String endTime){
+        TimeSlot timeSlot=new TimeSlot();
+        timeSlot.setDayName(dayName);
+        timeSlot.setStartTime(startTime);
+        timeSlot.setEndTime(endTime);
+
+
+        return timeSlot;
+    }
+
 }

@@ -6,13 +6,13 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Getter
 @Setter
-@Table(name = "lecture_timeslot")
+@Getter
+@Table(name = "lecture_time_slot")
 public class LectureTimeSlot {
     @Id
     @GeneratedValue
-    @Column(name = "lecture_timeslot_id")
+    @Column(name = "lecture_time_slot_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -20,6 +20,30 @@ public class LectureTimeSlot {
     private Lecture lecture;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "timeslot_id")
-    private TimeSlot timeslot;
+    @JoinColumn(name = "time_slot_id")
+    private TimeSlot timeSlot;
+
+    //==연관관계 메서드==
+    public void setLecture(Lecture lecture){
+        this.lecture=lecture;
+        lecture.getTimes().add(this);
+    }
+
+    public void setTimeSlot(TimeSlot timeSlot){
+        this.timeSlot=timeSlot;
+    }
+
+    //==생성 메서드==
+
+    /**
+     * 강의 시간 생성
+     * @author 부겸
+     * @param timeSlot  TimeSlot 객체
+     * @return LectureTimeSlot 객체
+     */
+    public static LectureTimeSlot createLectureTimeSlot(TimeSlot timeSlot){
+        LectureTimeSlot lts=new LectureTimeSlot();
+        lts.setTimeSlot(timeSlot);
+        return lts;
+    }
 }

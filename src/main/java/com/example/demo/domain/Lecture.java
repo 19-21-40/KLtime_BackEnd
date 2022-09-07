@@ -1,10 +1,12 @@
 package com.example.demo.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -24,7 +26,7 @@ public class Lecture {
     private String sectionDetail;
     private int credit;
     private int level;
-    private String department;
+    private String departmentName;
     private int yearOfLecture;
     private String semester;
     private String notes;
@@ -40,5 +42,54 @@ public class Lecture {
 //    @JoinColumn(name = "preReq_lecture_id")
 //    private Lecture preReq;
 
+    //==연관관계 메서드==
+
+
+    /**
+     * LectureTimeSlot 추가
+     * createLectureTimeSlot 을 통해 우선적으로 LectureTimeSlot 객체를 만들어 사용
+     * @param lts LectureTimeSlot 객체
+     */
+    public void addTimes(LectureTimeSlot lts) {
+        if(!times.contains(lts)){
+            this.times.add(lts);
+            lts.setLecture(this);
+        }
+    }
+
+    public void setTimes(List<LectureTimeSlot> ltsList){
+        this.times=ltsList;
+        ltsList.forEach(lts->lts.setLecture(this));
+    }
+
+    public static Lecture createLecture(
+            String lectureNumber,
+            String name,
+            String professor,
+            String section,
+            String sectionDetail,
+            int credit,
+            int level,
+            String departmentName,
+            int yearOfLecture,
+            String semester,
+            String notes){
+
+        Lecture lecture=new Lecture();
+
+        lecture.setLectureNumber(lectureNumber);
+        lecture.setName(name);
+        lecture.setProfessor(professor);
+        lecture.setSection(section);
+        lecture.setSectionDetail(sectionDetail);
+        lecture.setCredit(credit);
+        lecture.setLevel(level);
+        lecture.setDepartmentName(departmentName);
+        lecture.setYearOfLecture(yearOfLecture);
+        lecture.setSemester(semester);
+        lecture.setNotes(notes);
+
+        return lecture;
+    }
 
 }
