@@ -21,10 +21,10 @@ public class DepartmentRepository {
     /**
      * 학과(부) 저장
      */
-    public void save(Department department) {
+    public Long save(Department department) {
 //        validateDuplicateDepartment(department); //나중에 서비스 레포지토리에 옮기기
         em.persist(department);
-        //return department.getId();
+        return department.getId();
     }
 
     /**

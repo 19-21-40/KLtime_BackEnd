@@ -23,7 +23,7 @@ public class TimeTable {
     private List<TimeTableLecture> lectures = new ArrayList<>();
 
     //cascade 추가 (transientpropertyvalueexception)
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
     @JoinColumn(name = "student_id")
     private Student student;
     private String tableName;
