@@ -34,4 +34,13 @@ public class Student {
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<TimeTable> timetables = new ArrayList<>();
+
+    public Student(String name, Department department, int grade) {
+        this.name = name;
+        this.department = department;
+        this.grade = grade;
+    }
+
+    public Student() {
+    }
 }
