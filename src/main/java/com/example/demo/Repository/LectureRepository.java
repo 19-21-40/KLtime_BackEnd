@@ -202,10 +202,9 @@ public class LectureRepository {
 
 
     public List<Lecture> findByTimeSlot(TimeSlot timeSlot){
-        return em.createQuery("select L from Lecture L join LectureTimeSlot LTS"
-                        +" where LTS.lecture.id=L.id and LTS.timeSlot.id=:id"
+        return em.createQuery("select L from Lecture L left join L.times t where t.timeSlot=:timeSlot"
                         ,Lecture.class)
-                .setParameter("id",timeSlot.getId())
+                .setParameter("timeSlot",timeSlot)
                 .getResultList();
     }
 

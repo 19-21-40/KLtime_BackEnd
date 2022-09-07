@@ -39,6 +39,10 @@ public class Lecture {
     @OneToMany(mappedBy = "lecture")
     private List<TimeTableLecture> tableListWhichAdd = new ArrayList<>();
 
+
+    protected Lecture(){
+
+    }
     public Lecture(String lectureNumber, String name) {
         this.lectureNumber = lectureNumber;
         this.name = name;

@@ -109,7 +109,7 @@ public class LectureRepositoryTest {
         em.persist(timeSlot2);
 
         LectureTimeSlot lts1=LectureTimeSlot.createLectureTimeSlot(timeSlot1);
-        LectureTimeSlot lts2=LectureTimeSlot.createLectureTimeSlot(timeSlot1);
+        LectureTimeSlot lts2=LectureTimeSlot.createLectureTimeSlot(timeSlot2);
         em.persist(lts1);
         em.persist(lts2);
 
@@ -125,15 +125,17 @@ public class LectureRepositoryTest {
                 2022,
                 "1학기",
                 "");
-//        lecture.addTimes(lts1);
-//        lecture.addTimes(lts2);
+        lecture.addTimes(lts1);
+        lecture.addTimes(lts2);
 
         lectureRepository.save(lecture);
 
         //when
-        List<Lecture> findLecture = lectureRepository.findByTimeSlot(timeSlot1);
+        List<Lecture> findLectures = lectureRepository.findByTimeSlot(timeSlot2);
 
         //then
-        Assertions.assertEquals(findLecture.contains(lecture),true);
+//        for(Lecture findLecture :findLectures) System.out.println(findLecture.getName());
+
+        Assertions.assertEquals(findLectures.contains(lecture),true);
     }
 }
