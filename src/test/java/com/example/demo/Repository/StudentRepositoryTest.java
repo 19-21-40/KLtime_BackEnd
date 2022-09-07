@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.swing.text.html.parser.Entity;
+import java.util.List;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -42,7 +43,7 @@ public class StudentRepositoryTest {
 
         //when
         Long savedId = studentRepository.save(student);
-        Student findStudent = studentRepository.findbyId(savedId);
+        Student findStudent = studentRepository.findById(savedId);
 
         //then
 //        Assertions.assertEquals(findStudent.getName(), student.getName());
@@ -57,14 +58,11 @@ public class StudentRepositoryTest {
 
         Student student1 = new Student("이성훈", dept1, 1);
         Student student2 = new Student("나부겸", dept1, 2);
-        Student student3 = new Student("김수연", dept1, 1);
+        Student student3 = new Student("김수연", dept2, 1);
         Student student4 = new Student("신재민", dept2, 1);
 
         Lecture lecture1 = new Lecture("1000-1-2345-87", "공학설계입문");
         Lecture lecture2 = new Lecture("1001-2-3456-89", "디지털논리");
-
-        studentRepository.addLectureToStudent(student1, lecture1);
-        studentRepository.addLectureToStudent(student2, lecture1);
 
         //when
         departmentRepository.save(dept1);
@@ -76,7 +74,28 @@ public class StudentRepositoryTest {
         lectureRepository.save(lecture1);
         lectureRepository.save(lecture2);
 
+        student1.addLectureToStudent(lecture1);
+        student1.addLectureToStudent(lecture2);
+        student2.addLectureToStudent(lecture1);
+        student2.addLectureToStudent(lecture2);
+        student3.addLectureToStudent(lecture2);
+
         em.flush();
+
+        //then
+        List<Student> resultList = studentRepository.findByLecture(lecture2);
+        for ( Student student : resultList ) {
+            System.out.println("grade: " + student.getGrade() + ", name: " + student.getName() + ", dept: " + student.getDepartment().getName());
+        }
+
+        List<Student> resultList2 = studentRepository.findByLectureAndDept(lecture2, dept1);
+        for ( Student student : resultList2 ) {
+            System.out.println("grade: " + student.getGrade() + ", name: " + student.getName() + ", dept: " + student.getDepartment().getName());
+        }
+
+        List<Student> resultList3 = studentRepository.findByLectureAndDeptAndGrade(lecture2, dept1, student1.getGrade());
+        for ( Student student : resultList3 ) {
+            System.out.println("grade: " + student.getGrade() + ", name: " + student.getName() + ", dept: " + student.getDepartment().getName());        }
 
     }
 
