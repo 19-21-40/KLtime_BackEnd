@@ -13,7 +13,7 @@ public class Student {
 
     @Id @GeneratedValue
     @Column(name = "student_id")
-    private Long Id;
+    private Long id;
     private String name;
     private String email;
 
@@ -43,4 +43,12 @@ public class Student {
 
     public Student() {
     }
+
+    /** 양방향 편의 메서드 */
+    public void addLectureToStudent(Lecture lecture) {
+        StudentLecture st = new StudentLecture(this, lecture);
+
+        this.getMyLectures().add(st);
+    }
+
 }

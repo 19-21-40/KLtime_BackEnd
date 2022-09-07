@@ -24,28 +24,32 @@ public class StudentRepository {
         return student.getId();
     }
 
-    public Student findbyId(Long id) {
+    public Student findById(Long id) {
         return em.find(Student.class, id);
     }
 
-    /** 나중에 서비스계층으로 옮겨야함 */
-    public void addLectureToStudent(Student student, Lecture lecture) {
-        StudentLecture st = new StudentLecture(student, lecture);
-
-        student.getMyLectures().add(st);
-    }
 
     public List<Student> findByLecture(Lecture lecture) {
-        return em.createQuery("select S from Student S left join StudentLecture SL on S.Id=SL.id left join Lecture L on L.id=SL.id", Student.class)
-                .setParameter()
-                .
+        return em.createQuery("select s from Student s left join s.myLectures sl where sl.lecture =:lecture", Student.class)
+                .setParameter("lecture", lecture)
+                .getResultList();
     }
 //
-//    public List<Student> findByLectureAndDept(Lecture lecture, Department dept) {
-//
-//    }
-//
-//    public List<Student> findByLectureAndDeptAndGrade(Lecture lecture, Department dept) {
-//
-//    }
+    public List<Student> findByLectureAndDept(Lecture lecture, Department dept) {
+        return em.createQuery("select s from Student s left join s.myLectures sl where sl.lecture =:lecture and s.department =:dept", Student.class)
+                .setParameter("lecture", lecture)
+                .setParameter("dept", dept)
+                .getResultList();
+
+    }
+
+    public List<Student> findByLectureAndDeptAndGrade(Lecture lecture, Department dept, int grade) {
+        return em.createQuery("select s from Student s left join s.myLectures sl "
+                + "where sl.lecture =:lecture and s.department =:dept and s.grade =:grade", Student.class)
+                .setParameter("lecture", lecture)
+                .setParameter("dept", dept)
+                .setParameter("grade", grade)
+                .getResultList();
+
+    }
 }
