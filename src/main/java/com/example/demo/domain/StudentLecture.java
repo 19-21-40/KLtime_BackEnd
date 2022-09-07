@@ -25,7 +25,7 @@ public class StudentLecture {
     @JoinColumn(name = "lecture_id")
     private Lecture lecture;
 
-    private int gpa;
+    private String gpa; //수정
     private String comment;
     private int takesGrade;
     private int takesSemester;
