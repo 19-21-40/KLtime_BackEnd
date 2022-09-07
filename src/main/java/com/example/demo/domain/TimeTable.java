@@ -22,8 +22,7 @@ public class TimeTable {
     @OneToMany(mappedBy = "timeTable", cascade = CascadeType.ALL)
     private List<TimeTableLecture> lectures = new ArrayList<>();
 
-    //cascade 추가 (transientpropertyvalueexception)
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
     private Student student;
     private String tableName;
