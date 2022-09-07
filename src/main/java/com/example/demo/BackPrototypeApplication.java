@@ -1,5 +1,8 @@
 package com.example.demo;
 
+import com.example.demo.Repository.DepartmentRepository;
+import com.example.demo.domain.Department;
+import com.example.demo.domain.GradCondition;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -8,6 +11,7 @@ public class BackPrototypeApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(BackPrototypeApplication.class, args);
+
 	}
 
 }

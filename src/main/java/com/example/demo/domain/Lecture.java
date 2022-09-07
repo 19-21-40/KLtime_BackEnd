@@ -20,6 +20,7 @@ public class Lecture {
     private Long id;
 
     private String lectureNumber;
+
     private String name;
     private String professor;
     private String section;
@@ -37,6 +38,11 @@ public class Lecture {
 
     @OneToMany(mappedBy = "lecture")
     private List<TimeTableLecture> tableListWhichAdd = new ArrayList<>();
+
+    public Lecture(String lectureNumber, String name) {
+        this.lectureNumber = lectureNumber;
+        this.name = name;
+    }
 
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "preReq_lecture_id")
