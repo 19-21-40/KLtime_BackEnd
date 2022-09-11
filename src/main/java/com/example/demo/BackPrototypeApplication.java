@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import com.example.demo.Repository.DepartmentRepository;
+import com.example.demo.Service.RecommendLectureService;
 import com.example.demo.domain.Department;
 import com.example.demo.domain.GradCondition;
 import org.springframework.boot.SpringApplication;

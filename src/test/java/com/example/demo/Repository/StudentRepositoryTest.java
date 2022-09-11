@@ -56,10 +56,10 @@ public class StudentRepositoryTest {
         Department dept1 = new Department("소프트웨어학부", "소융대");
         Department dept2 = new Department("컴퓨터정보공학부", "소융대");
 
-        Student student1 = new Student("이성훈", dept1, 1);
-        Student student2 = new Student("나부겸", dept1, 2);
-        Student student3 = new Student("김수연", dept2, 1);
-        Student student4 = new Student("신재민", dept2, 1);
+        Student student1 = new Student("이성훈", dept1, 1, 2019);
+        Student student2 = new Student("나부겸", dept1, 2, 2019);
+        Student student3 = new Student("김수연", dept2, 1,2021);
+        Student student4 = new Student("신재민", dept2, 1, 2021);
 
         Lecture lecture1 = new Lecture("1000-1-2345-87", "공학설계입문");
         Lecture lecture2 = new Lecture("1001-2-3456-89", "디지털논리");
@@ -74,11 +74,11 @@ public class StudentRepositoryTest {
         lectureRepository.save(lecture1);
         lectureRepository.save(lecture2);
 
-        student1.addLectureToStudent(lecture1);
-        student1.addLectureToStudent(lecture2);
-        student2.addLectureToStudent(lecture1);
-        student2.addLectureToStudent(lecture2);
-        student3.addLectureToStudent(lecture2);
+        student1.addLectureToStudent(lecture1, "A+", 1,2);
+        student1.addLectureToStudent(lecture2, "C0", 1,2);
+        student2.addLectureToStudent(lecture1, "A+", 1,2);
+        student2.addLectureToStudent(lecture2, "B+", 1,2);
+        student3.addLectureToStudent(lecture2, "A+", 1,2);
 
         em.flush();
 

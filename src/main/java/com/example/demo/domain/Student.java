@@ -32,23 +32,31 @@ public class Student {
     private int grade;
     private String multiMajor;
 
+    // 이성훈이 9/11에 추가함
+    private int admissionYear;
+
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<TimeTable> timetables = new ArrayList<>();
 
-    public Student(String name, Department department, int grade) {
+    public Student(String name, Department department, int grade, int admissionYear) {
         this.name = name;
         this.department = department;
         this.grade = grade;
+        this.admissionYear = admissionYear;
     }
 
     public Student() {
     }
 
     /** 양방향 편의 메서드 */
-    public void addLectureToStudent(Lecture lecture) {
-        StudentLecture st = new StudentLecture(this, lecture);
+    public void addLectureToStudent(Lecture lecture, String gpa, int takesGrade, int takesSemester) {
+        StudentLecture st = new StudentLecture(this,lecture, gpa, takesGrade, takesSemester);
 
         this.getMyLectures().add(st);
+    }
+
+    public void addCredit(int credit) {
+        this.totalCredit += credit;
     }
 
 }

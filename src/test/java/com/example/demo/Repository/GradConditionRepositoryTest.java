@@ -43,9 +43,9 @@ public class GradConditionRepositoryTest {
 
         //then
         em.flush();
-        GradCondition result = gradConditionRepository.findByDeptAndAdmissionYear(dept1, 2022);
+//        GradCondition result = gradConditionRepository.findByDeptAndAdmissionYear(dept1, 2022);
 
-        System.out.println(result.getId());
+//        System.out.println(result.getId());
     }
 
 }
