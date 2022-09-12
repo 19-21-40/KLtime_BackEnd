@@ -12,7 +12,7 @@ import javax.persistence.PersistenceContext;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-@Transactional
+//@Transactional
 public class RecommendLectureServiceTest {
 
     @PersistenceContext
@@ -25,6 +25,7 @@ public class RecommendLectureServiceTest {
         //given
 
         recommendLectureService.recommendLecture();
+
         //when
 
         //then

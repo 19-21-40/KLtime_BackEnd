@@ -17,10 +17,10 @@ import java.util.List;
 
 
 @Repository
+@RequiredArgsConstructor
 public class LectureRepository {
 
-    @PersistenceContext
-    private EntityManager em;
+    private final EntityManager em;
 
     public void save(Lecture lecture) { em.persist(lecture); }
 
@@ -133,9 +133,19 @@ public class LectureRepository {
 //     * 교수명으로 강의 목록 찾기
 //     */
 //
-//    /**
-//     * 구분으로 강의 목록 찾기
-//     */
+
+    /**
+     * 구분 2개로 강의 목록 찾기
+     * 이성훈이 만듬
+     */
+
+    // 이성훈이 만듬
+    public List<Lecture> findByTwoSection(String section1, String section2) {
+        return em.createQuery("select l from Lecture l where l.section =:section1 or l.section =:section2", Lecture.class)
+                .setParameter("section1", section1)
+                .setParameter("section2", section2)
+                .getResultList();
+    }
 //
 //    /**
 //     * 구분 세부항목으로 강의 목록 찾기

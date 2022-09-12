@@ -11,10 +11,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 @Repository
+@RequiredArgsConstructor
 public class GradConditionRepository {
 
-    @PersistenceContext
-    private EntityManager em;
+    private final EntityManager em;
 
 
 

@@ -1,10 +1,7 @@
 package com.example.demo;
 
 
-import com.example.demo.domain.Department;
-import com.example.demo.domain.GradCondition;
-import com.example.demo.domain.Lecture;
-import com.example.demo.domain.Student;
+import com.example.demo.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +36,7 @@ public class InitDb {
             em.persist(department1);
             em.persist(department2);
 
+
             Student student1 = new Student("이성훈", department1, 2, 2019);
             Student student2 = new Student("나부겸", department1, 2, 2019);
             Student student3 = new Student("김수연", department2, 2, 2021);
@@ -65,7 +63,7 @@ public class InitDb {
 
             Lecture lecture6 = new Lecture("H030-1-8297-01", "컴퓨팅사고", "손미영", "교필", "정보", 3, 1, "소프트웨어학부", 2019, "2학기");
 
-            Lecture lecture7 = new Lecture("H030-1-5714-01", "고급C프로그래밍및설계", "안우현", "기필", "정보", 3, 1, "소프트웨어학부", 2019, "2학기");
+            Lecture lecture7 = new Lecture("H030-1-5714-01", "고급C프로그래밍및설계", "안우현", "기필", "null", 3, 1, "소프트웨어학부", 2019, "2학기");
             Lecture lecture8 = new Lecture("H030-1-5714-01", "선형대수학", "김상목", "기선", "수학", 3, 2, "소프트웨어학부", 2022, "2학기");
 
             Lecture lecture9 = new Lecture("0000-1-8583-01", "글로벌시대의쟁점과현안", "전진호", "교선", "사회와경제", 3, 1, "공통", 2019, "2학기");
@@ -78,16 +76,22 @@ public class InitDb {
             Lecture lecture15 = new Lecture("0000-1-5688-01", "일본문화읽기", "손명지", "교선", "글로벌문화와제2외국어", 3, 1, "공통", 2022, "2학기");
             Lecture lecture16 = new Lecture("0000-1-6524-01", "일본어듣기와쓰기", "이수욱", "교선", "글로벌문화와제2외국어", 3, 1, "공통", 2022, "2학기");
 
-            Lecture lecture17 = new Lecture("H030-2-1243-02", "자료구조", "김용혁", "전필", "null", 3, 2, "공통", 2022, "2학기");
-            Lecture lecture18 = new Lecture("H030-2-3395-01", "시스템소프트웨어", "안우현", "전선", "null", 3, 2, "공통", 2022, "2학기");
+            Lecture lecture17 = new Lecture("H030-2-1243-02", "자료구조", "김용혁", "전필", "null", 3, 2, "소프트웨어학부", 2022, "2학기");
+            Lecture lecture18 = new Lecture("H030-2-3395-01", "시스템소프트웨어", "안우현", "전선", "null", 3, 2, "소프트웨어학부", 2022, "2학기");
 
             Lecture lecture19 = new Lecture("H000-1-3417-01 ", "대학화학및실험2", "최한", "기선", "기초과학", 3, 1, "공통", 2022, "2학기");
 
+            Lecture lecture20 = new Lecture("H030-2-1243-03", "자료구조", "김용혁", "전필", "null", 3, 2, "소프트웨어학부", 2022, "2학기");
+            Lecture lecture21 = new Lecture("H030-2-3405-02", "자료구조실습", "김용혁", "전필", "null", 2, 2, "소프트웨어학부", 2022, "2학기");
+            Lecture lecture22 = new Lecture("H030-2-7777-02", "객체지향프로그래밍", "김진우", "전선", "null", 3, 2, "소프트웨어학부", 2022, "2학기");
+            Lecture lecture23 = new Lecture("H030-2-8487-01", "오픈소스소프트웨어개발", "문승현", "전선", "null", 3, 2, "소프트웨어학부", 2022, "2학기");
+
+
             persistLectures(lecture1, lecture2, lecture3, lecture4, lecture5, lecture6, lecture7, lecture8);
             persistLectures(lecture9, lecture10, lecture11, lecture12, lecture13, lecture14, lecture15, lecture16);
-            persistLectures(lecture17, lecture18, lecture19);
+            persistLectures(lecture17, lecture18, lecture19, lecture20, lecture21, lecture22, lecture23);
 
-            student1.addLectureToStudent(lecture1, "A+", 1,2);
+            student1.addLectureToStudent(lecture1, "F", 1,2);
             student1.addLectureToStudent(lecture4, "A+", 1,2);
             student1.addLectureToStudent(lecture6, "A0", 1, 2);
             student1.addLectureToStudent(lecture7, "A+", 1,2);
