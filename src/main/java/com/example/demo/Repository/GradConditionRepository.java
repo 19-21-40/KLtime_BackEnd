@@ -3,6 +3,7 @@ package com.example.demo.Repository;
 import com.example.demo.domain.Department;
 import com.example.demo.domain.GradCondition;
 import com.example.demo.domain.Student;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
