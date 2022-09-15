@@ -16,8 +16,6 @@ public class GradConditionRepository {
 
     private final EntityManager em;
 
-
-
     public Long save(GradCondition gradCondition) {
         em.persist(gradCondition);
         return gradCondition.getId();

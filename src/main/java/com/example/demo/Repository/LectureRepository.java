@@ -20,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LectureRepository {
 
+
     private final EntityManager em;
 
     public void save(Lecture lecture) { em.persist(lecture); }

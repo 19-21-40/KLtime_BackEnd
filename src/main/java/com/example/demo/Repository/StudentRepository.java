@@ -18,9 +18,8 @@ public class StudentRepository {
 
     private final EntityManager em;
 
-    public Long save(Student student) {
+    public void save(Student student) {
         em.persist(student);
-        return student.getId();
     }
 
     public Student findById(Long id) {

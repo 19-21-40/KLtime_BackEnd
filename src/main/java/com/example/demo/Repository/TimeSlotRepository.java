@@ -11,9 +11,9 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
-@Repository @RequiredArgsConstructor
+@Repository
+@RequiredArgsConstructor
 public class TimeSlotRepository {
-
 
     private final EntityManager em;
 
