@@ -117,17 +117,17 @@ public class LectureRepository {
 //                .getResultList();
 //    }
 //
-//    /**
-//     * 이름으로 강의 목록 찾기
-//     * @param name 강의 이름
-//     * @return 같은 이름의 강의 리스트
-//     */
-//    public List<Lecture> findByLectureName(String name){
-//        return em.createQuery("select L from Lecture L"
-//        +" where L.name=:lectureName", Lecture.class)
-//                .setParameter("lectureName",name)
-//                .getResultList();
-//    }
+    /**
+     * 이름으로 대표 강의 1개 찾기
+     * @param name 강의 이름
+     * @return 같은 이름의 강의 리스트
+     */
+    public Lecture findByLectureName(String name){
+        return em.createQuery("select L from Lecture L"
+        +" where L.name=:lectureName", Lecture.class)
+                .setParameter("lectureName",name)
+                .getSingleResult();
+    }
 //
 //    /**
 //     * 교수명으로 강의 목록 찾기

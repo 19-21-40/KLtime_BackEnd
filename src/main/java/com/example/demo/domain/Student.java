@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -29,6 +30,10 @@ public class Student {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "multi_dept_id")
     private Department multiDept;
+
+    public void setCredit(Credit credit) {
+        this.credit = credit;
+    }
 
     @Embedded
     private Credit credit;
@@ -64,18 +69,22 @@ public class Student {
 
 
     /** 내가 들었던 강의들중 LectureName과 같은게 있다면 requiredLectures에서 삭제함*/
-    public void CheckIfListenLectures( Set<String> requiredLectures, String... lectureNames){
-        for (String lectureName : lectureNames) {
-            if (myLectures.stream().anyMatch(sl -> (sl.getLecture().getName().equals(lectureName)
-                    && sl.getGpa()!="F" && sl.getGpa()!="NP")))  // F나 NP가 아닌지 확인
-                requiredLectures.remove(lectureName);
+    public void CheckIfListenLectures( Set<String> requiredLectures ){
+        Iterator<String> iterate = requiredLectures.iterator();
+
+        while(iterate.hasNext()){
+            String lectureName = iterate.next();
+            if (myLectures.stream().anyMatch(sl -> (sl.getGpa()!="F" && sl.getGpa()!="NP" // F나 NP가 아닌지 확인
+                    && sl.getLecture().getName().equals(lectureName))))
+                    iterate.remove();
         }
     }
 
     /** 내가 들었던 강의들중 LectureName을 포함하는 것이 있다면 requiredLectures에서 LectureName을 포함하는 것들을 모두 삭제함*/
     public void CheckIfListenSimilarLecture(Set<String> requiredLectures, String lectureName){
-            if(myLectures.stream().anyMatch(sl -> (sl.getLecture().getName().contains(lectureName)
-                    && sl.getGpa()!="F" && sl.getGpa()!="NP")))  // F나 NP가 아닌지 확인
-                requiredLectures.removeIf(lecture -> lecture.contains(lectureName));
+        if(myLectures.stream().anyMatch(sl -> (sl.getGpa()!="F" && sl.getGpa()!="NP"    // F나 NP가 아닌지 확인
+                && sl.getLecture().getName().contains(lectureName))))
+            requiredLectures.removeIf(lecture -> lecture.contains(lectureName));
     }
+
 }

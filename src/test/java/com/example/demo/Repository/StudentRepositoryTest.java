@@ -83,16 +83,19 @@ public class StudentRepositoryTest {
         em.flush();
 
         //then
+        // Lecture로만 조회
         List<Student> resultList = studentRepository.findByLecture(lecture2);
         for ( Student student : resultList ) {
             System.out.println("grade: " + student.getGrade() + ", name: " + student.getName() + ", dept: " + student.getDepartment().getName());
         }
 
+        // Lecture와 Department로 조회
         List<Student> resultList2 = studentRepository.findByLectureAndDept(lecture2, dept1);
         for ( Student student : resultList2 ) {
             System.out.println("grade: " + student.getGrade() + ", name: " + student.getName() + ", dept: " + student.getDepartment().getName());
         }
 
+        // Lecture와 Department, Student.grade로 조회
         List<Student> resultList3 = studentRepository.findByLectureAndDeptAndGrade(lecture2, dept1, student1.getGrade());
         for ( Student student : resultList3 ) {
             System.out.println("grade: " + student.getGrade() + ", name: " + student.getName() + ", dept: " + student.getDepartment().getName());        }
