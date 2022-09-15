@@ -15,7 +15,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TimeSlotRepository {
 
-//    @
     private final EntityManager em;
 
     public void save(TimeSlot timeSlot) { em.persist(timeSlot); }

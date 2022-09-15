@@ -26,6 +26,12 @@ public class StudentRepository {
         return em.find(Student.class, id);
     }
 
+    public Student findByIdWithLecture(Long id) {
+        return em.createQuery("select s from Student s join fetch s.myLectures sl join fetch sl.lecture l where s.id =:id", Student.class)
+                .setParameter("id", id)
+                .getSingleResult();
+    }
+
 
     public List<Student> findByLecture(Lecture lecture) {
         return em.createQuery("select s from Student s left join s.myLectures sl where sl.lecture =:lecture", Student.class)

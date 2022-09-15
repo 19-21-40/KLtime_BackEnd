@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LectureRepository {
 
-//    @PersistenceContext
+
     private final EntityManager em;
 
     public void save(Lecture lecture) { em.persist(lecture); }
@@ -118,25 +118,35 @@ public class LectureRepository {
 //                .getResultList();
 //    }
 //
-//    /**
-//     * 이름으로 강의 목록 찾기
-//     * @param name 강의 이름
-//     * @return 같은 이름의 강의 리스트
-//     */
-//    public List<Lecture> findByLectureName(String name){
-//        return em.createQuery("select L from Lecture L"
-//        +" where L.name=:lectureName", Lecture.class)
-//                .setParameter("lectureName",name)
-//                .getResultList();
-//    }
+    /**
+     * 이름으로 대표 강의 1개 찾기
+     * @param name 강의 이름
+     * @return 같은 이름의 강의 리스트
+     */
+    public Lecture findByLectureName(String name){
+        return em.createQuery("select L from Lecture L"
+        +" where L.name=:lectureName", Lecture.class)
+                .setParameter("lectureName",name)
+                .getSingleResult();
+    }
 //
 //    /**
 //     * 교수명으로 강의 목록 찾기
 //     */
 //
-//    /**
-//     * 구분으로 강의 목록 찾기
-//     */
+
+    /**
+     * 구분 2개로 강의 목록 찾기
+     * 이성훈이 만듬
+     */
+
+    // 이성훈이 만듬
+    public List<Lecture> findByTwoSection(String section1, String section2) {
+        return em.createQuery("select l from Lecture l where l.section =:section1 or l.section =:section2", Lecture.class)
+                .setParameter("section1", section1)
+                .setParameter("section2", section2)
+                .getResultList();
+    }
 //
 //    /**
 //     * 구분 세부항목으로 강의 목록 찾기

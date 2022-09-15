@@ -48,6 +48,20 @@ public class Lecture {
         this.name = name;
     }
 
+    // 이성훈이 만듬 ( Timeslot, TimeTable은 생성자에서 배제했음 )
+    public Lecture(String lectureNumber, String name, String professor, String section, String sectionDetail, int credit, int level, String departmentName, int yearOfLecture, String semester) {
+        this.lectureNumber = lectureNumber;
+        this.name = name;
+        this.professor = professor;
+        this.section = section;
+        this.sectionDetail = sectionDetail;
+        this.credit = credit;
+        this.level = level;
+        this.departmentName = departmentName;
+        this.yearOfLecture = yearOfLecture;
+        this.semester = semester;
+    }
+
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "preReq_lecture_id")
 //    private Lecture preReq;
@@ -102,6 +116,12 @@ public class Lecture {
 
         return lecture;
     }
+    
+    @Override
+    public String toString() {
+        return "LectureNumber = " + lectureNumber + ", Name = " + name + ", Professor = " + professor;
+    }
+
 
     //==비즈니스 로직==//
 
@@ -110,6 +130,8 @@ public class Lecture {
      */
     public void delete(TimeTableLecture timeTableLecture) {
         tableListWhichAdd.remove(timeTableLecture);
-    }
+        }
+        
+
 
 }

@@ -22,7 +22,7 @@ public class GradCondition {
     private int essBalCredit;
     private int basicCredit;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dept_id")
     private Department department;
     private int mainCredit;

@@ -14,7 +14,6 @@ import javax.persistence.PersistenceContext;
 @RequiredArgsConstructor
 public class GradConditionRepository {
 
-//    @PersistenceContext
     private final EntityManager em;
 
     public Long save(GradCondition gradCondition) {
@@ -26,13 +25,29 @@ public class GradConditionRepository {
         return em.find(GradCondition.class, id);
     }
 
-    public GradCondition findByDeptAndAdmissionYear(Department dept, int admissionYear) {
-        GradCondition result = em.createQuery("select g from GradCondition g where g.admissionYear =:admissionYear "
-                        + "and g.department =:dept", GradCondition.class)
+    /** 단일전공인 졸업조건을 조회함 */
+    public GradCondition findByDeptAndAdmissionYearWithNoMultiDept(Department dept, int admissionYear) {
+        GradCondition result = em.createQuery("select g from GradCondition g where g.admissionYear =:admissionYear " +
+                                "and g.department =:dept " +
+                                "and g.isMultiDept = false",
+                        GradCondition.class)
                 .setParameter("admissionYear", admissionYear)
                 .setParameter("dept", dept)
                 .getSingleResult();
         return result;
     }
+
+    /** 복수전공인 졸업조건을 조회함 */
+    public GradCondition findByDeptAndAdmissionYearWithMultiDept(Department dept, int admissionYear) {
+        GradCondition result = em.createQuery("select g from GradCondition g where g.admissionYear =:admissionYear " +
+                                "and g.department =:dept " +
+                                "and g.isMultiDept = true",
+                        GradCondition.class)
+                .setParameter("admissionYear", admissionYear)
+                .setParameter("dept", dept)
+                .getSingleResult();
+        return result;
+    }
+
 
 }
