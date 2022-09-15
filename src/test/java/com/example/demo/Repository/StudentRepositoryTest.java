@@ -42,8 +42,8 @@ public class StudentRepositoryTest {
         student.setName("memberA");
 
         //when
-        Long savedId = studentRepository.save(student);
-        Student findStudent = studentRepository.findById(savedId);
+        studentRepository.save(student);
+        Student findStudent = studentRepository.findById(student.getId());//수정
 
         //then
 //        Assertions.assertEquals(findStudent.getName(), student.getName());

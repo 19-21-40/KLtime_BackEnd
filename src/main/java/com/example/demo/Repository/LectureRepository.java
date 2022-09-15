@@ -17,11 +17,11 @@ import java.util.List;
 
 
 @Repository
-@Transactional
+@RequiredArgsConstructor
 public class LectureRepository {
 
-    @PersistenceContext
-    private EntityManager em;
+//    @PersistenceContext
+    private final EntityManager em;
 
     public void save(Lecture lecture) { em.persist(lecture); }
 

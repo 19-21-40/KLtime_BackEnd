@@ -1,6 +1,8 @@
 package com.example.demo.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -8,6 +10,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)//protected default constructor
 public class GradCondition {
 
     @Id
@@ -34,8 +37,5 @@ public class GradCondition {
         this.department = department;
         this.mainCredit = mainCredit;
         this.isMultiDept = isMultiDept;
-    }
-
-    public GradCondition() {
     }
 }

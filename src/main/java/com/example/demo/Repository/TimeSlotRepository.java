@@ -12,10 +12,11 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
+@RequiredArgsConstructor
 public class TimeSlotRepository {
 
-    @PersistenceContext
-    private EntityManager em;
+//    @
+    private final EntityManager em;
 
     public void save(TimeSlot timeSlot) { em.persist(timeSlot); }
 

@@ -11,13 +11,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 @Repository
-@Transactional
+@RequiredArgsConstructor
 public class GradConditionRepository {
 
-    @PersistenceContext
-    private EntityManager em;
-
-
+//    @PersistenceContext
+    private final EntityManager em;
 
     public Long save(GradCondition gradCondition) {
         em.persist(gradCondition);

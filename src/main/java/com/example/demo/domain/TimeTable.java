@@ -54,4 +54,15 @@ public class TimeTable {
         }
         return timeTable;
     }
+
+    //==비즈니스 로직==//
+
+    /**
+     * 시간표 삭제
+     */
+    public void delete() {
+        lectures.remove(this);
+    }
+
+
 }

@@ -72,6 +72,7 @@ public class Lecture {
         ltsList.forEach(lts->lts.setLecture(this));
     }
 
+    //==생성 메서드==//
     public static Lecture createLecture(
             String lectureNumber,
             String name,
@@ -100,6 +101,15 @@ public class Lecture {
         lecture.setNotes(notes);
 
         return lecture;
+    }
+
+    //==비즈니스 로직==//
+
+    /**
+     * 시간표 내의 강의 삭제
+     */
+    public void delete(TimeTableLecture timeTableLecture) {
+        tableListWhichAdd.remove(timeTableLecture);
     }
 
 }
