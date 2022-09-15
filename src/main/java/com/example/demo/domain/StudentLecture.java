@@ -13,7 +13,8 @@ import java.util.List;
 @Table(name = "student_lecture")
 public class StudentLecture {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     @Column(name = "student_lecture_id")
     private Long id;
 
@@ -30,8 +31,20 @@ public class StudentLecture {
     private int takesGrade;
     private int takesSemester;
 
-    public StudentLecture(Student student, Lecture lecture) {
+    public StudentLecture(){
+
+    }
+
+    public StudentLecture(Student student, Lecture lecture, String gpa, int takesGrade, int takesSemester) {
         this.student = student;
         this.lecture = lecture;
+        this.gpa = gpa;
+        this.takesGrade = takesGrade;
+        this.takesSemester = takesSemester;
+    }
+
+    @Override /** lecture inner join 주의 */
+    public String toString() {
+        return  takesGrade + "학년 " + takesSemester + "학기에 들은 " + lecture.getName() + "이며, 학점은 " + gpa + "입니다.";
     }
 }

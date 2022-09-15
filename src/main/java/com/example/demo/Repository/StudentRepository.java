@@ -14,7 +14,6 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-@Transactional
 public class StudentRepository {
 
     private final EntityManager em;
@@ -26,6 +25,12 @@ public class StudentRepository {
 
     public Student findById(Long id) {
         return em.find(Student.class, id);
+    }
+
+    public Student findByIdWithLecture(Long id) {
+        return em.createQuery("select s from Student s join fetch s.myLectures sl join fetch sl.lecture l where s.id =:id", Student.class)
+                .setParameter("id", id)
+                .getSingleResult();
     }
 
 
