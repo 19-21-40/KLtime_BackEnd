@@ -10,7 +10,6 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)//protected default constructor
 public class GradCondition {
 
     @Id
@@ -21,6 +20,10 @@ public class GradCondition {
     private int gradCredit;
     private int essBalCredit;
     private int basicCredit;
+
+    public GradCondition(){
+
+    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dept_id")

@@ -91,7 +91,7 @@ public class InitDb {
             persistLectures(lecture9, lecture10, lecture11, lecture12, lecture13, lecture14, lecture15, lecture16);
             persistLectures(lecture17, lecture18, lecture19, lecture20, lecture21, lecture22, lecture23);
 
-            student1.addLectureToStudent(lecture1, "F", 1,2);
+            student1.addLectureToStudent(lecture1, "A0", 1,2);
             student1.addLectureToStudent(lecture4, "A+", 1,2);
             student1.addLectureToStudent(lecture6, "A0", 1, 2);
             student1.addLectureToStudent(lecture7, "A+", 1,2);

@@ -7,8 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Collectors.*;
+
+
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +32,7 @@ public class RecommendLectureService {
         Department department = departmentRepository.findOne(student.getDepartment().getId());
 
         // 그에 맞는 졸업 학점 조건 불러오기
-        GradCondition gradCondition = new GradCondition();
+        GradCondition gradCondition;
 
         if (student.getMultiDept() == null) {
             gradCondition = gradConditionRepository.findByDeptAndAdmissionYearWithNoMultiDept(department, student.getAdmissionYear());
@@ -55,7 +58,7 @@ public class RecommendLectureService {
             String sectionDetail = lecture.getSectionDetail();
 
             // 받은 학점이 F or NP라면 continue 실행
-            if (sl.getGpa() == "F" || sl.getGpa() == "NP") continue;
+            if (sl.getGpa().equals("F") || sl.getGpa().equals("NP")) continue;
 
             // 그게 아니라면
             // totalCredit에 현재강의의 학점을 더해줌
@@ -64,7 +67,7 @@ public class RecommendLectureService {
 
             /** 19학번 기준 */
             // 교필과 교선에 대해서 먼저 따져줌 ( sectionDetail에 따라 처리해줘야 함 )
-            if (section == "교필" || section == "교선") {
+            if (section.equals("교필") || section.equals("교선")) {
                 switch (sectionDetail) {
                     case "광운인되기":
                         temporalCredit.addEssCredit(1);
@@ -75,8 +78,8 @@ public class RecommendLectureService {
                         break;
                     case "융합적사고와글쓰기":
                         // 단과대학이나 학과에 따라 균형교양, 필수교양으로 갈림. 그에 따라 코드 작성했음
-                        if (student.getDepartment().getName() == "경영학부" || student.getDepartment().getName() == "국제통상학부" ||
-                                student.getDepartment().getCollegeName() == "자연대" || student.getDepartment().getCollegeName() == "소융대")
+                        if (student.getDepartment().getName().equals("경영학부") || student.getDepartment().getName().equals("국제통상학부") ||
+                                student.getDepartment().getCollegeName().equals("자연대") || student.getDepartment().getCollegeName().equals("소융대"))
                             temporalCredit.addBalCredit(3);
                         else {
                             temporalCredit.addEssCredit(3);
@@ -129,6 +132,259 @@ public class RecommendLectureService {
         //필수_전공_과목들_수강하였는지_체크();
     }
 
+    public List<Lecture> recommendMainLectureWithNoDup(Long studentId) {
+
+        // 학생의 정보들을 불러옴
+        Student student = studentRepository.findByIdWithLecture(studentId);
+
+        // result에 전필과 전선 과목들을 불러옴
+        List<Lecture> result = lectureRepository.findMainLecturesByTwoSection(student.getDepartment());
+
+        /** 중복 제거를 위한 과정 */
+        // 중복되는 이름을 필터링하기 위해서 HashSet 컬렉션타입을 선언
+        Set<String> resultSet = new HashSet<>();
+        // result에서 강의명이 같은 강의들을 삭제함(HashSet에 기존 값이 있을 경우 add가 안돼서 false를 반환하기 때문)
+        result.removeIf(lecture -> !resultSet.add(lecture.getName()));
+
+
+        /** 학생이 들었던 강의를 결과에서 지우기 위한 과정 */
+        // 학생이 들은 강의들 중 "전필"과 "전선" 과목으로 필터링함.
+        List<StudentLecture> myLectures = student.getMyLectures().stream()
+                .filter( l -> l.getLecture().getSection().equals("전선")||l.getLecture().getSection().equals("전필"))
+                .collect(Collectors.toList());
+
+        for (StudentLecture sl : myLectures) {
+
+            // F이거나 NP이면 강의 목록에서 삭제하지 않음.
+            if(sl.getGpa() == "F" || sl.getGpa() == "NP") continue;
+
+            String lectureName = sl.getLecture().getName();
+
+            // result에 있는 강의명 중에 학생이 들은 강의가 존재한다면 result에서 해당 강의를 삭제함.
+            result.removeIf(lecture -> lecture.getName().equals(lectureName));
+        }
+
+        System.out.println(result);
+
+        return result;
+    }
+
+    public List<Lecture> recommendBasicLectureWithNoDup(Long studentId) {
+
+        // 학생의 정보들을 불러옴
+        Student student = studentRepository.findByIdWithLecture(studentId);
+
+        // result에 기초교양 과목들을 불러옴
+        List<Lecture> result = lectureRepository.findByTwoSection("기필", "기선");
+
+
+        /** 중복 제거를 위한 과정 */
+        // 중복되는 이름을 필터링하기 위해서 HashSet 컬렉션타입을 선언
+        Set<String> resultSet = new HashSet<>();
+        // result에서 강의명이 같은 강의들을 삭제함(HashSet에 기존 값이 있을 경우 add가 안돼서 false를 반환하기 때문)
+        result.removeIf(lecture -> !resultSet.add(lecture.getName()));
+
+
+
+        /** 학생이 들었던 강의를 결과에서 지우기 위한 과정 */
+        // 학생이 들은 강의들 중 "기필"과 "기선" 과목으로 필터링함.
+        List<StudentLecture> myLectures = student.getMyLectures().stream()
+                .filter( l -> l.getLecture().getSection().equals("기필")||l.getLecture().getSection().equals("기선"))
+                .collect(Collectors.toList());
+
+        for (StudentLecture sl : myLectures) {
+
+            // F이거나 NP이면 강의 목록에서 삭제하지 않음.
+            if(sl.getGpa() == "F" || sl.getGpa() == "NP") continue;
+
+            String lectureName = sl.getLecture().getName();
+
+            // result에 있는 강의명 중에 학생이 들은 강의가 존재한다면 result에서 해당 강의를 삭제함.
+            result.removeIf(lecture -> lecture.getName().equals(lectureName));
+        }
+
+        System.out.println(result);
+
+        return result;
+    }
+
+    public List<Lecture> recommendEssBalLectures(Long studentId) {
+
+//        List<Lecture> recommendList = new ArrayList<>();
+//        for (String lectureName : req_lec) {
+//            Lecture lecture = lectureRepository.findByLectureName(lectureName);
+//            recommendList.add(lecture);
+//        }
+
+        // 학생의 정보를 불러옴
+        Student student = studentRepository.findByIdWithLecture(studentId);
+
+
+        /** section과 sectionDetail에 따라 학점을 각각 관리하는 코드 */
+        // 필수+균형교양(광운인되기, 대학영어, 정보, 과학과기술, 예술과체육 등)에 대한 학생의 이수학점을 기록할 변수
+        Map<String, Integer> ess_Lec_Map = new HashMap<>();
+        Map<String, Integer> bal_Lec_Map = new HashMap<>();
+
+        ess_Lec_Map.put("광운인되기", 0);
+        ess_Lec_Map.put("대학영어", 0);
+        ess_Lec_Map.put("정보", 0);
+        ess_Lec_Map.put("융합적사고와글쓰기", 0);
+
+        bal_Lec_Map.put("융합적사고와글쓰기", 0);
+        bal_Lec_Map.put("과학과기술", 0);
+        bal_Lec_Map.put("인간과철학", 0);
+        bal_Lec_Map.put("사회와경제", 0);
+        bal_Lec_Map.put("글로벌문화와제2외국어", 0);
+        bal_Lec_Map.put("예술과체육", 0);
+
+        // 학생이 들었던 과목 리스트
+        List<StudentLecture> myLectures = student.getMyLectures();
+
+        // 내가 들었던 강의들에 대해 for문을 돌림
+        for (StudentLecture sl : myLectures) {
+
+            // 코드를 짧게 작성하기 위해 따로 초기화해줬음
+            Lecture lecture = sl.getLecture();
+            String section = lecture.getSection();
+            String sectionDetail = lecture.getSectionDetail();
+
+            // 받은 학점이 F or NP라면 continue 실행
+            if(sl.getGpa().equals("F")  || sl.getGpa().equals("NP")) continue;
+
+            /** 19학번 기준 */
+            // 교필과 교선에 대해서 먼저 따져줌 ( sectionDetail에 따라 처리해줘야 함 )
+            if(section.equals("교필") || section.equals("교선")) {
+                switch (sectionDetail) {
+                    case "광운인되기":
+                        // 광운인되기 강의는 학점이 1으로 고정이면서 강의가 1개이므로 그냥 put
+                        ess_Lec_Map.put("광운인되기", 1);
+                        break;
+                    case "대학영어":
+                        ess_Lec_Map.put(sectionDetail, 3);
+                        break;
+                    case "정보":
+                        // map 컬렉션의 value에 현재 강의의 credit을 더해줌
+                        ess_Lec_Map.compute(sectionDetail, (s, v) -> v + lecture.getCredit());
+                        break;
+                    case "융합적사고와글쓰기":
+                        // 단과대학이나 학과에 따라 균형교양, 필수교양으로 갈림. 그에 따라 코드 작성했음
+                        // 융사 강의는 학점이 3으로 고정이면서 강의가 1개이므로 3학점을 put
+                        if(student.getDepartment().getName().equals("경영학부") || student.getDepartment().getName().equals("국제통상학부") ||
+                                student.getDepartment().getCollegeName().equals("자연대") || student.getDepartment().getCollegeName().equals("소융대"))
+                            bal_Lec_Map.put(sectionDetail, 3);
+                        else {
+                            ess_Lec_Map.put(sectionDetail, 3);
+                        }
+                        break;
+                    case "과학과기술":
+                    case "인간과철학":
+                    case "사회와경제":
+                    case "글로벌문화와제2외국어":
+                    case "예술과체육":
+                        // map 컬렉션의 value에 현재 강의의 credit을 더해줌
+                        bal_Lec_Map.compute(sectionDetail, (s, v) -> v + lecture.getCredit());
+                        break;
+                    default:
+                        /** 여기에 에러 출력하는 코드 작성해야함 */
+                        break;
+                }
+            }
+        }
+
+
+        Map<String, Integer> needs = new HashMap<>();
+        Map<String, Integer> needs_bal = new HashMap<>();
+        int fulfilled_count = 0;
+
+        if(ess_Lec_Map.get("광운인되기") < 1)
+            needs.put("광운인되기", 1);
+        if(ess_Lec_Map.get("대학영어") < 3)
+            needs.put("대학영어", 3);
+        if(ess_Lec_Map.get("정보") < 6)
+            needs.put("정보", 6 - ess_Lec_Map.get("정보"));
+
+        if(student.getDepartment().getName().equals("경영학부") || student.getDepartment().getName().equals("국제통상학부") ||
+                student.getDepartment().getCollegeName().equals("자연대") || student.getDepartment().getCollegeName().equals("소융대")){
+            if(bal_Lec_Map.get("융합적사고와글쓰기") < 3){
+                needs_bal.put("융합적사고와글쓰기",  3 - bal_Lec_Map.get("융합적사고와글쓰기"));
+            }
+            else{
+                fulfilled_count++;
+            }
+        }
+        else {
+            if(ess_Lec_Map.get("융합적사고와글쓰기") < 3)
+                needs.put("융합적사고와글쓰기",  3 - bal_Lec_Map.get("융합적사고와글쓰기"));
+        }
+
+
+        // 균형교양 학점이 3보다 낮다면, Map 변수 needs_bal<section, 부족한 학점>을 대입한다.
+        for (String key : bal_Lec_Map.keySet()) {
+            if (bal_Lec_Map.get(key) < 3) {
+                needs_bal.put(key, 3 - bal_Lec_Map.get(key));
+            } else {
+                // 충족했다면 "만족한 균형교양의 수 ++" 를 실행
+               fulfilled_count++;
+            }
+        }
+
+        // "만족한 균형교양의 수" 가 4 이상이라면 ( 19학번 소융대 기준 ) needs_bal을 다 비운다. 그 이유는 다음줄
+        if(fulfilled_count >= 4){
+            needs_bal.clear();;
+        }
+
+        // 필수교양 + 균형교양에서 필요한 section을 전부 needs 변수에 저장하기 위해서이다.
+        needs.putAll(needs_bal);
+
+        System.out.println("ess_Lec_Map");
+        System.out.println(ess_Lec_Map);
+
+        System.out.println("bal_Lec_Map");
+        System.out.println(bal_Lec_Map);
+
+        System.out.println("needs_bal");
+        System.out.println(needs_bal);
+
+        System.out.println("needs");
+        System.out.println(needs);
+
+
+        /** 학생에게 필요한 section들에 대해서 조회하는 과정  */
+        // needs의 key값을 set으로 저장 ( 다음줄을 위해서 )
+        Set<String> needSections = needs.keySet();
+
+        // needs 에 들어있는 section Set으로 lecture를 조회함
+        List<Lecture> result = lectureRepository.findBySectionSet(needSections);
+
+
+        /** 중복 제거를 위한 과정 */
+        // 중복되는 이름을 필터링하기 위해서 HashSet 컬렉션타입을 선언
+        Set<String> resultSet = new HashSet<>();
+        // result에서 강의명이 같은 강의들을 삭제함(HashSet에 기존 값이 있을 경우 add가 안돼서 false를 반환하기 때문)
+        result.removeIf(lecture -> !resultSet.add(lecture.getName()));
+
+
+        /** 학생이 들었던 강의를 결과에서 지우기 위한 과정 */
+        // 학생이 들은 강의들 중 "교필"과 "교선" 과목으로 필터링함.
+        myLectures = student.getMyLectures().stream()
+                .filter( l -> l.getLecture().getSection().equals("교필")||l.getLecture().getSection().equals("교선"))
+                .collect(Collectors.toList());
+
+        for (StudentLecture sl : myLectures) {
+
+            // F이거나 NP이면 강의 목록에서 삭제하지 않음.
+            if(sl.getGpa() == "F" || sl.getGpa() == "NP") continue;
+
+            String lectureName = sl.getLecture().getName();
+
+            // result에 있는 강의명 중에 학생이 들은 강의가 존재한다면 result에서 해당 강의를 삭제함.
+            result.removeIf(lecture -> lecture.getName().equals(lectureName));
+        }
+
+
+        return result;
+    }
+
 
     private Set<String> setRequiredLecture() {
 
@@ -175,87 +431,5 @@ public class RecommendLectureService {
         return req_lec;
     }
 
-    public void recommendLectures(Student student, Set<String> req_lec) {
-        List<Lecture> recommendList = new ArrayList<>();
-        for (String lectureName : req_lec) {
-            Lecture lecture = lectureRepository.findByLectureName(lectureName);
-            recommendList.add(lecture);
-        }
 
-
-        /** section과 sectionDetail에 따라 학점을 각각 관리하는 코드 */
-        // 필수+균형교양(광운인되기, 대학영어, 정보, 과학과기술, 예술과체육 등)에 대한 학생의 이수학점을 기록할 변수
-        Map<String, Integer> essBalMap = new HashMap<>();
-
-        essBalMap.put("광운인되기", 0);
-        essBalMap.put("대학영어", 0);
-        essBalMap.put("정보", 0);
-        essBalMap.put("융합적사고와글쓰기", 0);
-        essBalMap.put("과학과기술", 0);
-        essBalMap.put("인간과철학", 0);
-        essBalMap.put("사회와경제", 0);
-        essBalMap.put("글로벌문화와제2외국어", 0);
-        essBalMap.put("예술과체육", 0);
-
-
-        // 학생의 학번과 학과 불러오기 // 임의로 데이터베이스에 저장된 Id=3인 "이성훈"을 불러옴
-        Department department = departmentRepository.findOne(student.getDepartment().getId());
-
-        // 그에 맞는 졸업 학점 조건 불러오기
-        GradCondition gradCondition = new GradCondition();
-
-        if (student.getMultiDept() == null) {
-            gradCondition = gradConditionRepository.findByDeptAndAdmissionYearWithNoMultiDept(department, student.getAdmissionYear());
-        } else {
-            gradCondition = gradConditionRepository.findByDeptAndAdmissionYearWithMultiDept(department, student.getAdmissionYear());
-        }
-
-        // 학생이 들었던 과목 리스트
-        List<StudentLecture> myLectures = student.getMyLectures();
-
-        // 내가 들었던 강의들에 대해 for문을 돌림
-        for (StudentLecture sl : myLectures) {
-
-            // 코드를 짧게 작성하기 위해 따로 초기화해줬음
-            Lecture lecture = sl.getLecture();
-            String section = lecture.getSection();
-            String sectionDetail = lecture.getSectionDetail();
-
-            // 받은 학점이 F or NP라면 continue 실행
-            if (sl.getGpa() == "F" || sl.getGpa() == "NP") continue;
-
-
-            /** 19학번 기준 */
-            // 교필과 교선에 대해서 먼저 따져줌 ( sectionDetail에 따라 처리해줘야 함 )
-            if (section == "교필" || section == "교선") {
-                switch (sectionDetail) {
-                    case "광운인되기":
-                        // 광운인되기 강의는 학점이 1으로 고정이면서 강의가 1개이므로 그냥 put
-                        essBalMap.put("광운인되기", 1);
-                        break;
-                    case "대학영어":
-                        essBalMap.put(sectionDetail, 3);
-                        break;
-                    case "정보":
-                        // map 컬렉션의 value에 현재 강의의 credit을 더해줌
-                        essBalMap.compute(sectionDetail, (s, v) -> v + lecture.getCredit());
-                        break;
-                    case "융합적사고와글쓰기":
-                        // 융사 강의는 학점이 3으로 고정이면서 강의가 1개이므로 그냥 put
-                        essBalMap.put(sectionDetail, 3);
-                        break;
-                    case "과학과기술":
-                    case "인간과철학":
-                    case "사회와경제":
-                    case "글로벌문화와제2외국어":
-                        // map 컬렉션의 value에 현재 강의의 credit을 더해줌
-                        essBalMap.compute(sectionDetail, (s, v) -> v + lecture.getCredit());
-                        break;
-                    default:
-                        /** 여기에 에러 출력하는 코드 작성해야함 */
-                        break;
-                }
-            }
-        }
-    }
 }

@@ -9,7 +9,7 @@ import javax.persistence.*;
 
 @Entity @Getter @Setter
 @Table(name = "timetable_lecture")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)//추가 (protected default constructor)
+@NoArgsConstructor
 public class TimeTableLecture {
 
     @Id @GeneratedValue
