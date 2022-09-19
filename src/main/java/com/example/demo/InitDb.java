@@ -103,6 +103,17 @@ public class InitDb {
             student1.addLectureToStudent(lecture18,"A0",2,2);
             student1.addLectureToStudent(lecture19,"A0",2,2);
 
+            //추가
+            TimeTableLecture timeTableLecture1 = TimeTableLecture.createTimeTableLecture(lecture18);
+            TimeTableLecture timeTableLecture2 = TimeTableLecture.createTimeTableLecture(lecture22);
+            TimeTable timeTable1 = TimeTable.createTimetable(student3,"시간표2",2,2,true,timeTableLecture1);
+            TimeTable timeTable2 = TimeTable.createTimetable(student3,"시간표1",2,2,false,timeTableLecture1);
+            timeTable1.addTimeTableLecture(timeTableLecture2);
+
+            em.persist(timeTableLecture1);
+            em.persist(timeTableLecture2);
+            em.persist(timeTable1);
+            em.persist(timeTable2);
         }
 
         private void persistLectures(Lecture... lectures) {

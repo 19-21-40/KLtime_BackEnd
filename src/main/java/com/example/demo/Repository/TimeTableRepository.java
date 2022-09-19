@@ -84,4 +84,14 @@ public class TimeTableRepository {
                 .getSingleResult();
     }
 
+    //기본 시간표 중복 때문에 추가(수연)
+    public List<TimeTable> findDupliPrimary(Student student, int grade, int semester, boolean isPrimary){
+        return em.createQuery("select t from TimeTable t where t.student =:student and t.grade =: grade and t.semester=:semester and t.isPrimary=:isPrimary", TimeTable.class)
+                .setParameter("student", student)
+                .setParameter("grade", grade)
+                .setParameter("semester", semester)
+                .setParameter("isPrimary", isPrimary)
+                .getResultList();
+    }
+
 }

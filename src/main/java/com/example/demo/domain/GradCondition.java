@@ -10,7 +10,8 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)//protected default constructor
+@NoArgsConstructor
+//        (access = AccessLevel.PROTECTED)//protected default constructor
 public class GradCondition {
 
     @Id

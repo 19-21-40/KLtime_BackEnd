@@ -26,6 +26,19 @@ public class StudentRepository {
         return em.find(Student.class, id);
     }
 
+    //중복 학번때문에 추가(수연)
+
+    /**
+     * id 중복체크
+     * @param id
+     * @return
+     */
+    public List<Student> findDupliOne(Long id){
+        return em.createQuery("select s from Student s where s.id = :id", Student.class)
+                .setParameter("id", id)
+                .getResultList();
+    }
+
     public Student findByIdWithLecture(Long id) {
         return em.createQuery("select s from Student s join fetch s.myLectures sl join fetch sl.lecture l where s.id =:id", Student.class)
                 .setParameter("id", id)

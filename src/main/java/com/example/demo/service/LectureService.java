@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.Service;
 
 import com.example.demo.Repository.*;
 import com.example.demo.domain.Lecture;
@@ -54,7 +54,7 @@ public class LectureService {
         Lecture lecture = lectureRepository.findOne(lectureId);
 
         //시간표에서 강의 삭제
-        lecture.delete(timetableLecture);
+        timeTable.delete(timetableLecture);
     }
 
     /**

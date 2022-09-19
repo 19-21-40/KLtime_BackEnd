@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.Service;
 
 import com.example.demo.Repository.StudentRepository;
 import com.example.demo.domain.Student;
@@ -20,8 +20,16 @@ public class StudentService {
      */
     @Transactional
     public Long join(Student student){
+//        validateDuplicateStudent(student);
         studentRepository.save(student);
         return student.getId();
+    }
+
+    private void validateDuplicateStudent(Student student) {
+        List<Student> findStudents = studentRepository.findDupliOne(student.getId());
+        if (!findStudents.isEmpty()) {
+            throw new IllegalStateException("이미 존재하는 학번(ID)입니다.");
+        }
     }
     
     //나머지는 추천 알고리즘에서 쓰일 것 같음

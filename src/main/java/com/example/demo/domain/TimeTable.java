@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,11 +57,10 @@ public class TimeTable {
     //==비즈니스 로직==//
 
     /**
-     * 시간표 삭제
+     * 시간표 내 강의 삭제
      */
-    public void delete() {
-        lectures.remove(this);
+    public void delete(TimeTableLecture timeTableLecture) {
+        lectures.remove(timeTableLecture);
     }
-
 
 }
