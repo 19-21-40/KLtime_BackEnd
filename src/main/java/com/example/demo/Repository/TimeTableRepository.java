@@ -3,6 +3,7 @@ package com.example.demo.Repository;
 import com.example.demo.domain.Department;
 import com.example.demo.domain.Student;
 import com.example.demo.domain.TimeTable;
+import com.example.demo.domain.TimeTableLecture;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +47,7 @@ public class TimeTableRepository {
      * 학생 별시간표 조회
      */
     public List<TimeTable> findByStudent(Student student){
-        return em.createQuery("select d from TimeTable d where d.student = :student", TimeTable.class)
+        return em.createQuery("select t from TimeTable t where t.student = :student", TimeTable.class)
                 .setParameter("student", student)
                 .getResultList();
     }
@@ -92,6 +93,13 @@ public class TimeTableRepository {
                 .setParameter("semester", semester)
                 .setParameter("isPrimary", isPrimary)
                 .getResultList();
+    }
+
+    /**
+     * 시간표 삭제
+     */
+    public void delete(TimeTable timeTable) {
+        em.remove(timeTable);
     }
 
 }

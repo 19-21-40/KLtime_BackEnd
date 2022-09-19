@@ -15,6 +15,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -31,6 +32,8 @@ public class LectureServiceTest {
     TimeTableRepository timeTableRepository;
     @Autowired
     TimeTableLectureRepository timeTableLectureRepository;
+    @Autowired
+    EntityManager em;
 
     @Test
     @Rollback(false)
@@ -60,13 +63,14 @@ public class LectureServiceTest {
     @Rollback(false)
     public void 강의_삭제() throws Exception {
         //given
-        TimeTable timeTable1 =  timeTableRepository.findOne(33L);
-        Lecture lecture1 = lectureRepository.findOne(25L);
+        TimeTable timeTable1 =  timeTableRepository.findOne(35L);
+        Lecture lecture1 = lectureRepository.findOne(26L);
         TimeTableLecture timeTableLecture = timeTableLectureRepository.findOne(32L);
         //when
-        lectureService.deleteLecture(timeTable1.getId(), lecture1.getId(),timeTableLecture);
+        lectureService.deleteLecture(timeTable1.getId(),timeTableLecture);
+        em.flush();
         //then
-        assertEquals("시간표에 강의 추가",1,timeTable1.getLectures().size());
+        assertEquals("시간표에 강의 삭제 ",0,timeTable1.getLectures().size());
     }
 
 }

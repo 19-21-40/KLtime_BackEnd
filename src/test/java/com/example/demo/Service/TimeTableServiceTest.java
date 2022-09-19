@@ -16,6 +16,8 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+
 import static org.junit.Assert.*;
 
 @SpringBootTest
@@ -30,7 +32,7 @@ public class TimeTableServiceTest {
     @Autowired
     StudentRepository studentRepository;
     @Autowired
-    LectureRepository lectureRepository;
+    EntityManager em;
 
 
     @Test
@@ -46,7 +48,7 @@ public class TimeTableServiceTest {
 
     //원래 delete쿼리가 안나가나...?
     @Test
-    @Rollback(false)
+//    @Rollback(false)
     public void 시간표_삭제() throws Exception {
         //given
 //        Long timetableId = timeTableService.addTimeTable(5L,1,true,"시간표1",30L);
