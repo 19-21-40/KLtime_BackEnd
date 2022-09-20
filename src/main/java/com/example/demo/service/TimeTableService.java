@@ -54,8 +54,10 @@ public class TimeTableService {
         Student student = studentRepository.findById(studentId);
         TimeTable timeTable = timeTableRepository.findOne(timetableId);
 
+
         //시간표 삭제(참빛에 물어보고 하기)
-        student.delete(timeTable);
+        timeTableRepository.delete(timeTable);
+//        student.delete(timeTable);
     }
 
     /**

@@ -9,12 +9,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
 public class GradConditionRepository {
 
     private final EntityManager em;
+    
 
     public Long save(GradCondition gradCondition) {
         em.persist(gradCondition);
@@ -48,6 +50,7 @@ public class GradConditionRepository {
                 .getSingleResult();
         return result;
     }
+
 
 
 }
