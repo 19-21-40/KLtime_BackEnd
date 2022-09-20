@@ -34,7 +34,7 @@ public class RecommendLectureService {
         Student student = studentRepository.findByIdWithLecture(studentId);
 
         // 학생의 학번과 학과 불러오기 // 임의로 데이터베이스에 저장된 Id=3인 "이성훈"을 불러옴
-        Department department = departmentRepository.findById(student.getDepartment().getId()).get();
+        Department department = departmentRepository.findById(student.getDepartment().getId());
 
         // 그에 맞는 졸업 학점 조건 불러오기
         GradCondition gradCondition;
@@ -229,7 +229,7 @@ public class RecommendLectureService {
      * @Param StudentId
      * @Return List<Lecture>
      * */
-    public List<Lecture> recommendEssBalLectures(Long studentId) {
+    public List<Lecture> recommendEssBalLecturesWithNoDup(Long studentId) {
 
 //        List<Lecture> recommendList = new ArrayList<>();
 //        for (String lectureName : req_lec) {

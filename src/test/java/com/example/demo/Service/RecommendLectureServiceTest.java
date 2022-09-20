@@ -43,7 +43,7 @@ public class RecommendLectureServiceTest {
         Student student = studentRepository.findById(3L);
 
         //when
-        recommendLectureService.recommendEssBalLectures(student.getId());
+        recommendLectureService.recommendEssBalLecturesWithNoDup(student.getId());
 
         //then
     }

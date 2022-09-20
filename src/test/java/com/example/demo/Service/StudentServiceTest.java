@@ -30,8 +30,8 @@ public class StudentServiceTest {
 //    @Rollback(false)
     public void 회원가입() throws Exception {
         //given
-        Department 소프트웨어학부 = departmentRepository.findOne(1L);
-        Student student = new Student("김철수", 소프트웨어학부, 2, 2021);
+        Department department = departmentRepository.findById(1L);
+        Student student = new Student("김철수", department, 2, 2021);
         //when
         Long saveId = studentService.join(student);
         //then
@@ -43,8 +43,8 @@ public class StudentServiceTest {
 //    @Rollback(false)
     public void 증복_회원_예외() throws Exception {
         //given
-        Department 소프트웨어학부 = departmentRepository.findOne(1L);
-        Department 컴퓨터정보공학부 = departmentRepository.findOne(2L);
+        Department 소프트웨어학부 = departmentRepository.findById(1L);
+        Department 컴퓨터정보공학부 = departmentRepository.findById(2L);
         Student student1 = studentRepository.findById(5L);
         Student student2 = new Student("김수연", 소프트웨어학부, 2, 2021);
         //when

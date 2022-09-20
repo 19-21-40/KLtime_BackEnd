@@ -21,9 +21,6 @@ public class GradCondition {
     private int essBalCredit;
     private int basicCredit;
 
-    public GradCondition(){
-
-    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dept_id")
@@ -31,6 +28,10 @@ public class GradCondition {
     private int mainCredit;
     private boolean isMultiDept;
     private Integer multiCredit;
+
+    public GradCondition() {
+
+    }
 
     public GradCondition(int admissionYear, int gradCredit, int essBalCredit, int basicCredit, Department department, int mainCredit, boolean isMultiDept) {
         this.admissionYear = admissionYear;

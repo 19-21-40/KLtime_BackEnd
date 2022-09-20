@@ -67,7 +67,7 @@ class DepartmentRepositoryTest {
         departmentRepository.save(department1);
         departmentRepository.save(department2);
         //then
-        assertEquals(department1,departmentRepository.findOne(department1.getId()));
+        assertEquals(department1,departmentRepository.findById(department1.getId()));
     }
 
     @Test

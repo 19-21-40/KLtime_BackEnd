@@ -2,10 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.Repository.*;
 import com.example.demo.Service.RecommendLectureService;
-import com.example.demo.domain.Credit;
-import com.example.demo.domain.Department;
-import com.example.demo.domain.GradCondition;
-import com.example.demo.domain.Lecture;
+import com.example.demo.domain.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -21,44 +18,85 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor
 public class HomeController {
 
-    //private final (연관관계 주입)
+    private final RecommendLectureService recommendLectureService;
+    private final GradConditionRepository gradConditionRepository;
+    private final StudentRepository studentRepository;
 
     /**
      * 졸업요건 + 학점
      */
     @GetMapping("/api/GradConditionAndCredit")
-    public Result mainCredit() {
-        List<GradCondition> Gradconditions = a;
-        List<GradConditionDto> collectGradCondition = Gradconditions.stream()
-                .map(gradCondition->new GradConditionDto(gradCondition))
-                .collect(toList());
+    public CreditAndGradResult Credit() {
 
-        List<Credit> Credits = b;
-        List<CreditDto> collectCredit = Credits.stream()
-                .map(credit->new CreditDto(credit))
-                .collect(toList());
+        Long studentId = 3L;
 
-        return new Result(collectGradCondition,collectCredit);
+        Student student = studentRepository.findByIdWithDepartment(3L);
+
+        GradCondition gradcondition;
+        if (student.getMultiDept() == null) {
+           gradcondition = gradConditionRepository.findByDeptAndAdmissionYearWithNoMultiDept(student.getDepartment(), student.getAdmissionYear());
+        } else {
+           gradcondition = gradConditionRepository.findByDeptAndAdmissionYearWithMultiDept(student.getDepartment(), student.getAdmissionYear());
+        }
+
+        recommendLectureService.checkAndSaveCredit(3L);
+
+        Credit credit = student.getCredit();
+
+        GradConditionDto gradConditionDto = new GradConditionDto(gradcondition);
+        CreditDto creditDto = new CreditDto(credit);
+
+        return new CreditAndGradResult(gradConditionDto,creditDto);
     }
 
     /**
      * 강의 리스트
      */
-    @GetMapping("/api/lecturelist")
-    public List<LectureDto> LectureList() {
-        List<Lecture> lectures = c;
+    @GetMapping("/api/mainlecturelist")
+    public LectureResult mainLectureList() {
+        Long studentId = 3L;
+        List<Lecture> lectures = recommendLectureService.recommendMainLectureWithNoDup(studentId);
         List<LectureDto> lecturelist = lectures.stream()
                 .map(lecture->new LectureDto(lecture))
                 .collect(toList());
 
-        return lecturelist;
+        return new LectureResult(lecturelist);
+    }
+
+
+    @GetMapping("/api/essBallecturelist")
+    public LectureResult essBalLectureList() {
+        Long studentId = 3L;
+        List<Lecture> lectures = recommendLectureService.recommendEssBalLecturesWithNoDup(studentId);
+        List<LectureDto> lecturelist = lectures.stream()
+                .map(lecture->new LectureDto(lecture))
+                .collect(toList());
+
+        return new LectureResult(lecturelist);
+    }
+
+    @GetMapping("/api/basiclecturelist")
+    public LectureResult basicLectureList() {
+        Long studentId = 3L;
+        List<Lecture> lectures = recommendLectureService.recommendBasicLectureWithNoDup(studentId);
+        List<LectureDto> lecturelist = lectures.stream()
+                .map(lecture->new LectureDto(lecture))
+                .collect(toList());
+
+        return new LectureResult(lecturelist);
     }
 
     @Data
     @AllArgsConstructor
-   static class Result<A,B>{
+   static class CreditAndGradResult<A,B>{
         private A gradcondition;
         private B credit;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class LectureResult<T>{
+        private T data;
     }
 
     @Data
@@ -70,7 +108,7 @@ public class HomeController {
         private int essCredit; //학생의 필수교양 학점
         private int balCredit; //학생의 균형교양 학점
         private int basicCredit; //학생의 기초교양 학점
-        private int mathCredit; //학생의 수학ㄷ영역(기초교양) 학점
+        private int mathCredit; //학생의 수학영역(기초교양) 학점
         private int scienceCredit; //학생의 과학영역(기초교양) 학점
 
         public CreditDto(Credit credit) {
@@ -91,16 +129,14 @@ public class HomeController {
         private String section;
         private String sectionDetail;
         private int level;
-        private String departmentName;
-        private String notes;
+        private int credit;
 
         public LectureDto(Lecture lecture) {
             name=lecture.getName();
             section=lecture.getSection();
             sectionDetail=lecture.getSectionDetail();
             level=lecture.getLevel();
-            departmentName=lecture.getDepartmentName();
-            notes=lecture.getNotes();
+            credit=lecture.getCredit();
         }
     }
 
@@ -120,7 +156,7 @@ public class HomeController {
             gradCredit=gradCondition.getGradCredit();
             mainCredit=gradCondition.getMainCredit();
             essBalCredit=gradCondition.getEssBalCredit();
-            basicCredit=gradCondition.getMultiCredit();
+            basicCredit=gradCondition.getBasicCredit();
         }
     }
 

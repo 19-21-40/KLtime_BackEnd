@@ -50,9 +50,8 @@ public class DepartmentRepository {
     /**
      * 학과(부) 조회
      */
-    public Optional<Department> findById(Long id) {
-        Department department = em.find(Department.class, id);
-        return Optional.ofNullable(department);
+    public Department findById(Long id) {
+        return em.find(Department.class, id);
     }
 
     /**

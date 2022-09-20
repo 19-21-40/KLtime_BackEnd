@@ -45,6 +45,12 @@ public class StudentRepository {
                 .getSingleResult();
     }
 
+    public Student findByIdWithDepartment(Long id) {
+        return em.createQuery("select s from Student s join fetch s.department where s.id =:id", Student.class)
+                .setParameter("id", id)
+                .getSingleResult();
+    }
+
 
     public List<Student> findByLecture(Lecture lecture) {
         return em.createQuery("select s from Student s left join s.myLectures sl where sl.lecture =:lecture", Student.class)

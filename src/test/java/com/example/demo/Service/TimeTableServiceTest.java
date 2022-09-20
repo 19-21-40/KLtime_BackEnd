@@ -48,12 +48,12 @@ public class TimeTableServiceTest {
 
     //원래 delete쿼리가 안나가나...?
     @Test
-//    @Rollback(false)
+    @Rollback(false)
     public void 시간표_삭제() throws Exception {
         //given
 //        Long timetableId = timeTableService.addTimeTable(5L,1,true,"시간표1",30L);
         //when
-        timeTableService.deleteTimeTable(5L,35L);
+        timeTableService.deleteTimeTable(5L,34L);
         //then
     }
 
