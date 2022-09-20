@@ -19,6 +19,7 @@ public class LectureService {
     private final LectureRepository lectureRepository;
     private final StudentRepository studentRepository;
     private final TimeTableRepository timeTableRepository;
+    private final TimeTableLectureRepository timeTableLectureRepository;
     private final TimeSlotRepository timeSlotRepository;
 
     /**
@@ -47,14 +48,14 @@ public class LectureService {
     /**
      * 시간표에서 강의 삭제(커스텀 포함)
      */
+    //timeTableLectureRepository 에서 delete 쿼리를 날려주면 굳이 timetableId 인자를 쓸 필요가 없어짐.. 레포지토리에 추가해야함
     @Transactional
-    public void deleteLecture(Long timetableId, Long lectureId, TimeTableLecture timetableLecture) {
+    public void deleteLecture(Long timetableId, TimeTableLecture timetableLecture) {
         //엔티티 조회
         TimeTable timeTable = timeTableRepository.findOne(timetableId);
-        Lecture lecture = lectureRepository.findOne(lectureId);
 
         //시간표에서 강의 삭제
-        lecture.delete(timetableLecture);
+        timeTableLectureRepository.delete(timetableLecture);
     }
 
     /**

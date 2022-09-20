@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -47,12 +49,15 @@ public class TimeTableService {
      * 시간표 삭제(cascade 초반에 설정했으니 그냥 아무생각없이 삭제함..)
      */
     @Transactional
-    public void deleteTimeTable(Long timetableId){
+    public void deleteTimeTable(Long studentId, Long timetableId){
         //시간표 엔티티 조회
+        Student student = studentRepository.findById(studentId);
         TimeTable timeTable = timeTableRepository.findOne(timetableId);
 
+
         //시간표 삭제(참빛에 물어보고 하기)
-        timeTable.delete();
+        timeTableRepository.delete(timeTable);
+//        student.delete(timeTable);
     }
 
     /**
@@ -63,11 +68,19 @@ public class TimeTableService {
         //엔티티 조회
         Student student = studentRepository.findById(studentId);
         TimeTable timeTable = timeTableRepository.findOne(timetableId);
+        validateDuplicatePrimary(timeTable, student, semester);
 
         //기본 시간표 변경
         TimeTable primaryTimeTable= timeTableRepository.findByStudentAndGradeAndSemesterAndPrimary(student, student.getGrade(), semester, true);
         primaryTimeTable.setPrimary(false);
         timeTable.setPrimary(true);
+    }
+
+    private void validateDuplicatePrimary(TimeTable timeTable, Student student, int semester) {
+        List<TimeTable> findPrimarys = timeTableRepository.findDupliPrimary(student, student.getGrade(),semester,true);
+        if (!findPrimarys.isEmpty()) {
+            throw new IllegalStateException("기본 시간표가 이미 존재합니다.");
+        }
     }
 
     /**

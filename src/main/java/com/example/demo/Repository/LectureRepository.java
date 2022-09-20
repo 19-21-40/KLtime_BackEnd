@@ -131,6 +131,7 @@ public class LectureRepository {
                 .setParameter("lectureName",name)
                 .getSingleResult();
     }
+
 //
 //    /**
 //     * 교수명으로 강의 목록 찾기

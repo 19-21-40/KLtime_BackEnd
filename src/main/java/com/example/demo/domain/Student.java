@@ -14,7 +14,8 @@ import java.util.stream.Collectors;
 @Entity
 public class Student {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     @Column(name = "student_id")
     private Long id;
     private String name;
@@ -46,7 +47,7 @@ public class Student {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<TimeTable> timetables = new ArrayList<>();
 
-
+    //생성자
     public Student(String name, Department department, int grade, int admissionYear) {
         this.name = name;
         this.department = department;
@@ -68,6 +69,8 @@ public class Student {
     }
 
 
+    //==비즈니스 로직==//
+
     /** 내가 들었던 강의들중 LectureName과 같은게 있다면 requiredLectures에서 삭제함*/
     public void CheckIfListenLectures( Set<String> requiredLectures ){
         Iterator<String> iterate = requiredLectures.iterator();
@@ -85,6 +88,13 @@ public class Student {
         if(myLectures.stream().anyMatch(sl -> (sl.getGpa()!="F" && sl.getGpa()!="NP"    // F나 NP가 아닌지 확인
                 && sl.getLecture().getName().contains(lectureName))))
             requiredLectures.removeIf(lecture -> lecture.contains(lectureName));
+    }
+
+    /**
+     * 시간표 삭제
+     */
+    public void delete(TimeTable timeTable){
+        timetables.remove(timeTable);
     }
 
 }
