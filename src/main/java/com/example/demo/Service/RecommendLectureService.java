@@ -24,12 +24,17 @@ public class RecommendLectureService {
     private final DepartmentRepository departmentRepository;
 
 
+    /**
+     * 학생의 수강과목을 조회하여 student.Credit 객체에 저장함
+     * @Param studentId
+     * @Return void
+     * */
     public void checkAndSaveCredit(Long studentId) {
 
         Student student = studentRepository.findByIdWithLecture(studentId);
 
         // 학생의 학번과 학과 불러오기 // 임의로 데이터베이스에 저장된 Id=3인 "이성훈"을 불러옴
-        Department department = departmentRepository.findOne(student.getDepartment().getId());
+        Department department = departmentRepository.findById(student.getDepartment().getId()).get();
 
         // 그에 맞는 졸업 학점 조건 불러오기
         GradCondition gradCondition;
@@ -132,6 +137,11 @@ public class RecommendLectureService {
         //필수_전공_과목들_수강하였는지_체크();
     }
 
+    /**
+     * 전공 과목들에 대해서 (중복 강의 없이) 출력함
+     * @Param studentId
+     * @Return List<Lecture>
+     * */
     public List<Lecture> recommendMainLectureWithNoDup(Long studentId) {
 
         // 학생의 정보들을 불러옴
@@ -167,8 +177,13 @@ public class RecommendLectureService {
         System.out.println(result);
 
         return result;
-    }
 
+    }
+    /**
+     * 기초교양 과목들에 대해서 (중복 강의 없이) 출력함
+     * @Param StudentId
+     * @Return List<Lecture>
+     * */
     public List<Lecture> recommendBasicLectureWithNoDup(Long studentId) {
 
         // 학생의 정보들을 불러옴
@@ -208,6 +223,12 @@ public class RecommendLectureService {
         return result;
     }
 
+
+    /**
+     * 필수교양+균형교양 과목들에 대해서 (중복 강의 없이) 출력함
+     * @Param StudentId
+     * @Return List<Lecture>
+     * */
     public List<Lecture> recommendEssBalLectures(Long studentId) {
 
 //        List<Lecture> recommendList = new ArrayList<>();
@@ -320,6 +341,7 @@ public class RecommendLectureService {
 
         // 균형교양 학점이 3보다 낮다면, Map 변수 needs_bal<section, 부족한 학점>을 대입한다.
         for (String key : bal_Lec_Map.keySet()) {
+            if ( key == "융합적사고와글쓰기") continue;
             if (bal_Lec_Map.get(key) < 3) {
                 needs_bal.put(key, 3 - bal_Lec_Map.get(key));
             } else {
@@ -416,6 +438,11 @@ public class RecommendLectureService {
     }
 
 
+    /**
+     * (학과 및 학번에 따라 다름) 학생의 필수과목들중에서 학생이 수강한 과목들을 배제하고 출력함
+     * @Param Student
+     * @Return Set<String> req_lec (남아있는 필수 과목들)
+     * */
     public Set<String> computeRequiredLecture(Student student) {
 
         // 학생에게 필요한 과목(교필, 기필, 전필, 전선)리스트를 String으로 저장
