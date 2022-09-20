@@ -1,5 +1,8 @@
 package com.example.demo.domain;
 
+import com.example.demo.dto.StudentDTO;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,12 +15,15 @@ import java.util.stream.Collectors;
 
 @Getter @Setter
 @Entity
+@Data
 public class Student {
 
     @Id @GeneratedValue
     @Column(name = "student_id")
     private Long id;
+    private String number;
     private String name;
+    private String password;
     private String email;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
@@ -59,6 +65,14 @@ public class Student {
     }
 
 
+    public static Student from(StudentDTO studentDTO){
+        Student student=new Student();
+        student.setNumber(studentDTO.getNumber());
+        student.setName(studentDTO.getName());
+        student.setPassword(student.getPassword());
+        student.setEmail(student.getEmail());
+        return student;
+    }
 
     /** 양방향 편의 메서드 */
     public void addLectureToStudent(Lecture lecture, String gpa, int takesGrade, int takesSemester) {
