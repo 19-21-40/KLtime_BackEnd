@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -69,8 +70,9 @@ public class Student {
         Student student=new Student();
         student.setNumber(studentDTO.getNumber());
         student.setName(studentDTO.getName());
-        student.setPassword(student.getPassword());
-        student.setEmail(student.getEmail());
+        student.setPassword(studentDTO.getPassword());
+        student.setEmail(studentDTO.getEmail());
+        student.setCredit(new Credit());
         return student;
     }
 
