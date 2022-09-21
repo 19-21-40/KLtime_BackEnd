@@ -140,9 +140,9 @@ public class LectureRepository {
 
     /**
      * Section을 Set 타입으로 조회함 */
-    public List<Lecture> findBySectionSet(Set<String> sectionSet) {
-        return em.createQuery("select l from Lecture l where l.section in :sectionSet")
-                .setParameter("sectionSet", sectionSet)
+    public List<Lecture> findBySectionDetailSet(Set<String> sectionDetailSet) {
+        return em.createQuery("select l from Lecture l where l.sectionDetail in :sectionDetailSet")
+                .setParameter("sectionDetailSet", sectionDetailSet)
                 .getResultList();
     }
 
@@ -239,5 +239,9 @@ public class LectureRepository {
     }
 
 
-
+    public List<Lecture> findBySectionDetail(String sectionDetail) {
+        return em.createQuery("select l from Lecture l where l.sectionDetail =:sectionDetail", Lecture.class)
+                .setParameter("sectionDetail", sectionDetail)
+                .getResultList();
+    }
 }

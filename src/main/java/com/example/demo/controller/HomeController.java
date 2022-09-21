@@ -9,7 +9,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -25,7 +28,7 @@ public class HomeController {
     /**
      * 졸업요건 + 학점
      */
-    @GetMapping("/api/GradConditionAndCredit")
+    @GetMapping("/api/gradconditionAndCredit")
     public CreditAndGradResult Credit() {
 
         Long studentId = 3L;
@@ -52,7 +55,7 @@ public class HomeController {
     /**
      * 강의 리스트
      */
-    @GetMapping("/api/mainlecturelist")
+    @GetMapping("/api/mainLecturelist")
     public LectureResult mainLectureList() {
         Long studentId = 3L;
         List<Lecture> lectures = recommendLectureService.recommendMainLectureWithNoDup(studentId);
@@ -64,10 +67,52 @@ public class HomeController {
     }
 
 
-    @GetMapping("/api/essBallecturelist")
+    @GetMapping("/api/essBalLecturelist")
     public LectureResult essBalLectureList() {
         Long studentId = 3L;
-        List<Lecture> lectures = recommendLectureService.recommendEssBalLecturesWithNoDup(studentId);
+        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendEssBalLecturesWithNoDup(studentId);
+        Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
+        for (String sectionDetail : lectureListMap.keySet()) {
+            List<LectureDto> dtoResult = lectureListMap.get(sectionDetail).stream().map(lecture -> new LectureDto(lecture))
+                    .collect(toList());
+            lectureListMapDto.put(sectionDetail, dtoResult);
+        }
+
+        return new LectureResult(lectureListMapDto);
+    }
+
+    @GetMapping("/api/essLecturelist")
+    public LectureResult essLectureList() {
+        Long studentId = 3L;
+        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendOnlyEssLecturesWithNoDup(studentId);
+        Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
+        for (String sectionDetail : lectureListMap.keySet()) {
+            List<LectureDto> dtoResult = lectureListMap.get(sectionDetail).stream().map(lecture -> new LectureDto(lecture))
+                    .collect(toList());
+            lectureListMapDto.put(sectionDetail, dtoResult);
+        }
+
+        return new LectureResult(lectureListMapDto);
+    }
+
+    @GetMapping("/api/balLecturelist")
+    public LectureResult balLectureList() {
+        Long studentId = 3L;
+        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendOnlyBalLecturesWithNoDup(studentId);
+        Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
+        for (String sectionDetail : lectureListMap.keySet()) {
+            List<LectureDto> dtoResult = lectureListMap.get(sectionDetail).stream().map(lecture -> new LectureDto(lecture))
+                    .collect(toList());
+            lectureListMapDto.put(sectionDetail, dtoResult);
+        }
+
+        return new LectureResult(lectureListMapDto);
+    }
+
+    @GetMapping("/api/basicLecturelist")
+    public LectureResult basicLectureList() {
+        Long studentId = 3L;
+        List<Lecture> lectures = recommendLectureService.recommendBasicLectureWithNoDup(studentId);
         List<LectureDto> lecturelist = lectures.stream()
                 .map(lecture->new LectureDto(lecture))
                 .collect(toList());
@@ -75,10 +120,21 @@ public class HomeController {
         return new LectureResult(lecturelist);
     }
 
-    @GetMapping("/api/basiclecturelist")
-    public LectureResult basicLectureList() {
+    @GetMapping("/api/basicScienceLecturelist")
+    public LectureResult basicScienceLectureList() {
         Long studentId = 3L;
-        List<Lecture> lectures = recommendLectureService.recommendBasicLectureWithNoDup(studentId);
+        List<Lecture> lectures = recommendLectureService.recommendBasicScienceLectureWithNoDup(studentId);
+        List<LectureDto> lecturelist = lectures.stream()
+                .map(lecture->new LectureDto(lecture))
+                .collect(toList());
+
+        return new LectureResult(lecturelist);
+    }
+
+    @GetMapping("/api/mathLecturelist")
+    public LectureResult mathLectureList() {
+        Long studentId = 3L;
+        List<Lecture> lectures = recommendLectureService.recommendMathLectureWithNoDup(studentId);
         List<LectureDto> lecturelist = lectures.stream()
                 .map(lecture->new LectureDto(lecture))
                 .collect(toList());

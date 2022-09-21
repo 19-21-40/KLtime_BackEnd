@@ -99,7 +99,6 @@ public class TimeTableRepository {
      * 시간표 삭제
      */
     public void delete(TimeTable timeTable) {
-        TimeTable timeTable1 =
         em.remove(timeTable);
     }
 

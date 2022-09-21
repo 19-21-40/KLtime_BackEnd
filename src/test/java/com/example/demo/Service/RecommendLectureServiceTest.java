@@ -2,6 +2,7 @@ package com.example.demo.Service;
 
 import com.example.demo.Repository.LectureRepository;
 import com.example.demo.Repository.StudentRepository;
+import com.example.demo.domain.Lecture;
 import com.example.demo.domain.Student;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,6 +12,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @SpringBootTest
@@ -46,6 +49,30 @@ public class RecommendLectureServiceTest {
         recommendLectureService.recommendEssBalLecturesWithNoDup(student.getId());
 
         //then
+    }
+
+    @Test
+    public void 균형교양과목만_출력테스트() {
+        //given
+        Student student = studentRepository.findById(3L);
+
+        //when
+        Map<String, List<Lecture>> result = recommendLectureService.recommendOnlyBalLecturesWithNoDup(student.getId());
+
+        //then
+        System.out.println(result);
+    }
+
+    @Test
+    public void 필수교양과목만_출력테스트() {
+        //given
+        Student student = studentRepository.findById(3L);
+
+        //when
+        Map<String, List<Lecture>> result = recommendLectureService.recommendOnlyEssLecturesWithNoDup(student.getId());
+
+        //then
+        System.out.println(result);
     }
 
     @Test
