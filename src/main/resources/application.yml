@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/back-prototype
+    url: jdbc:h2:tcp://localhost/~/backprototype
     username: sa
     password:
     driver-class-name: org.h2.Driver
