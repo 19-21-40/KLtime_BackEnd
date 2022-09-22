@@ -10,7 +10,6 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)//protected default constructor
 public class GradCondition {
 
     @Id
@@ -22,12 +21,17 @@ public class GradCondition {
     private int essBalCredit;
     private int basicCredit;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dept_id")
     private Department department;
     private int mainCredit;
     private boolean isMultiDept;
     private Integer multiCredit;
+
+    public GradCondition() {
+
+    }
 
     public GradCondition(int admissionYear, int gradCredit, int essBalCredit, int basicCredit, Department department, int mainCredit, boolean isMultiDept) {
         this.admissionYear = admissionYear;

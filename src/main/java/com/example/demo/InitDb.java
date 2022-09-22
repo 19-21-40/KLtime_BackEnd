@@ -86,12 +86,18 @@ public class InitDb {
             Lecture lecture22 = new Lecture("H030-2-7777-02", "객체지향프로그래밍", "김진우", "전선", "null", 3, 2, "소프트웨어학부", 2022, "2학기");
             Lecture lecture23 = new Lecture("H030-2-8487-01", "오픈소스소프트웨어개발", "문승현", "전선", "null", 3, 2, "소프트웨어학부", 2022, "2학기");
 
+            Lecture lecture24 = new Lecture("0000-1-5909-01", "공학과디자인", "유미란", "교선", "과학과기술", 3, 2, "공통", 2022, "2학기");
+            Lecture lecture25 = new Lecture("0000-1-5909-02", "공학과디자인", "유미란", "교선", "과학과기술", 3, 2, "공통", 2022, "2학기");
+            Lecture lecture26 = new Lecture("0000-1-4283-01", "공학교양세미나", "김충혁", "교선", "과학과기술", 3, 2, "공통", 2022, "2학기");
+
+            Lecture lecture27 = new Lecture("0000-1-8128-01", "광운인되기", "김정권", "교필", "광운인되기", 1, 1, "공통", 2022, "2학기");
+
 
             persistLectures(lecture1, lecture2, lecture3, lecture4, lecture5, lecture6, lecture7, lecture8);
             persistLectures(lecture9, lecture10, lecture11, lecture12, lecture13, lecture14, lecture15, lecture16);
-            persistLectures(lecture17, lecture18, lecture19, lecture20, lecture21, lecture22, lecture23);
+            persistLectures(lecture17, lecture18, lecture19, lecture20, lecture21, lecture22, lecture23, lecture24, lecture25, lecture26, lecture27);
 
-            student1.addLectureToStudent(lecture1, "F", 1,2);
+            student1.addLectureToStudent(lecture1, "A0", 1,2);
             student1.addLectureToStudent(lecture4, "A+", 1,2);
             student1.addLectureToStudent(lecture6, "A0", 1, 2);
             student1.addLectureToStudent(lecture7, "A+", 1,2);
@@ -103,6 +109,17 @@ public class InitDb {
             student1.addLectureToStudent(lecture18,"A0",2,2);
             student1.addLectureToStudent(lecture19,"A0",2,2);
 
+            //추가
+            TimeTableLecture timeTableLecture1 = TimeTableLecture.createTimeTableLecture(lecture18);
+            TimeTableLecture timeTableLecture2 = TimeTableLecture.createTimeTableLecture(lecture22);
+            TimeTable timeTable1 = TimeTable.createTimetable(student3,"시간표2",2,2,true,timeTableLecture1,timeTableLecture2);
+//            TimeTable timeTable2 = TimeTable.createTimetable(student3,"시간표1",2,2,false,timeTableLecture1);
+//            timeTable1.addTimeTableLecture(timeTableLecture2);
+
+            em.persist(timeTableLecture1);
+            em.persist(timeTableLecture2);
+            em.persist(timeTable1);
+//            em.persist(timeTable2);
         }
 
         private void persistLectures(Lecture... lectures) {

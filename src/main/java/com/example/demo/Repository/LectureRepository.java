@@ -1,5 +1,6 @@
 package com.example.demo.Repository;
 
+import com.example.demo.domain.Department;
 import com.example.demo.domain.Lecture;
 import com.example.demo.domain.LectureTimeSlot;
 import com.example.demo.domain.TimeSlot;
@@ -14,6 +15,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 @Repository
@@ -129,11 +131,21 @@ public class LectureRepository {
                 .setParameter("lectureName",name)
                 .getSingleResult();
     }
+
 //
 //    /**
 //     * 교수명으로 강의 목록 찾기
 //     */
 //
+
+    /**
+     * Section을 Set 타입으로 조회함 */
+    public List<Lecture> findBySectionDetailSet(Set<String> sectionDetailSet) {
+        return em.createQuery("select l from Lecture l where l.sectionDetail in :sectionDetailSet")
+                .setParameter("sectionDetailSet", sectionDetailSet)
+                .getResultList();
+    }
+
 
     /**
      * 구분 2개로 강의 목록 찾기
@@ -145,6 +157,14 @@ public class LectureRepository {
         return em.createQuery("select l from Lecture l where l.section =:section1 or l.section =:section2", Lecture.class)
                 .setParameter("section1", section1)
                 .setParameter("section2", section2)
+                .getResultList();
+    }
+
+    public List<Lecture> findMainLecturesByTwoSection(Department studentDept) {
+        return em.createQuery("select l from Lecture l where (l.section ='전필' or l.section ='전선') " +
+                        "and (l.departmentName =:StDeptName or l.departmentName =: StCollegeName)", Lecture.class)
+                .setParameter("StCollegeName", studentDept.getCollegeName())
+                .setParameter("StDeptName", studentDept.getName())
                 .getResultList();
     }
 //
@@ -219,5 +239,9 @@ public class LectureRepository {
     }
 
 
-
+    public List<Lecture> findBySectionDetail(String sectionDetail) {
+        return em.createQuery("select l from Lecture l where l.sectionDetail =:sectionDetail", Lecture.class)
+                .setParameter("sectionDetail", sectionDetail)
+                .getResultList();
+    }
 }

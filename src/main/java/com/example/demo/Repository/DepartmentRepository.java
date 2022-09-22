@@ -9,9 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-//@Transactional
 @RequiredArgsConstructor
 public class DepartmentRepository {
 
@@ -46,10 +46,11 @@ public class DepartmentRepository {
                 .getResultList();
     }
 
+
     /**
      * 학과(부) 조회
      */
-    public Department findOne(Long id) {
+    public Department findById(Long id) {
         return em.find(Department.class, id);
     }
 

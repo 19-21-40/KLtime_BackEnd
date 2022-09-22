@@ -122,16 +122,4 @@ public class Lecture {
         return "LectureNumber = " + lectureNumber + ", Name = " + name + ", Professor = " + professor;
     }
 
-
-    //==비즈니스 로직==//
-
-    /**
-     * 시간표 내의 강의 삭제
-     */
-    public void delete(TimeTableLecture timeTableLecture) {
-        tableListWhichAdd.remove(timeTableLecture);
-        }
-        
-
-
 }
