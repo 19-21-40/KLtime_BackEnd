@@ -278,7 +278,6 @@ public class RecommendLectureService {
         result.removeIf(lecture -> !resultSet.add(lecture.getName()));
 
 
-
         /** 학생이 들었던 강의를 결과에서 지우기 위한 과정 */
         // 학생이 들은 강의들 중 "기필"과 "기선" 과목으로 필터링함.
         List<StudentLecture> myLectures = student.getMyLectures().stream()
