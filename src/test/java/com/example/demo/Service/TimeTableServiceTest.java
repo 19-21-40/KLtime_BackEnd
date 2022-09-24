@@ -36,7 +36,6 @@ public class TimeTableServiceTest {
 
 
     @Test
-//    @Rollback(false)
     public void 시간표_추가() throws Exception {
         //given
         //when
@@ -48,7 +47,6 @@ public class TimeTableServiceTest {
 
     //원래 delete쿼리가 안나가나...?
     @Test
-    @Rollback(false)
     public void 시간표_삭제() throws Exception {
         //given
 //        Long timetableId = timeTableService.addTimeTable(5L,1,true,"시간표1",30L);
@@ -58,7 +56,6 @@ public class TimeTableServiceTest {
     }
 
     @Test
-    @Rollback(false)
     public void 기본시간표_변경() throws Exception {
         //given
         Long timetableId1 = timeTableService.addTimeTable(5L,1,true,"시간표1",30L);
@@ -72,7 +69,6 @@ public class TimeTableServiceTest {
     }
 
     @Test
-//    @Rollback(false)
     public void 중복_기본시간표_예외() throws Exception {
         //given
         Long timetableId1 = timeTableService.addTimeTable(5L,1,true,"시간표1",30L);
@@ -85,7 +81,6 @@ public class TimeTableServiceTest {
 
     //이건 중복되도 상관없겠지..?
     @Test
-    @Rollback(false)
     public void 시간표_이름_변경() throws Exception {
         //given
         Long timetableId = timeTableService.addTimeTable(5L,1,true,"시간표1",30L);

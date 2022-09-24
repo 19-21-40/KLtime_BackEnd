@@ -1,18 +1,16 @@
+server:
+  address: localhost
+  port: 8080
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/back-prototype
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: trs
+    url: jdbc:mysql://43.200.136.102:3306/TRS?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
+    username: trs
   jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    generate-ddl: true
+    show-sql: true
     hibernate:
       ddl-auto: create
-    properties:
-      hibernate:
-        format_sql: true
-logging:
-  level:
-    org.hibernate.SQL: debug
-# org.hibernate.type: trace
-
-#jwt.password: testPassword

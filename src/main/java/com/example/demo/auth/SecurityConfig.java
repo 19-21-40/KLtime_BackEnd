@@ -21,7 +21,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeRequests().antMatchers("/","/auth/**").permitAll()
+                .authorizeRequests().antMatchers("/","/auth/**","/api/**").permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterAfter(
