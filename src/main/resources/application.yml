@@ -7,10 +7,11 @@ spring:
     password: trs
     url: jdbc:mysql://43.200.136.102:3306/TRS?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
     username: trs
+
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     generate-ddl: true
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
