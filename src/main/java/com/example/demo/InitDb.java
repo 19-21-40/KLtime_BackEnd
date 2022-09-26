@@ -9,16 +9,18 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 
+
 @Component
 @RequiredArgsConstructor
 public class InitDb {
 
+
     private final InitService initService;
 
-    @PostConstruct
-    public void init(){
-        initService.dbInit1();
-    }
+//    @PostConstruct
+//    public void init(){
+//        initService.dbInit1();
+//    }
 
     @Component
     @Transactional
@@ -29,7 +31,6 @@ public class InitDb {
 
 
         public void dbInit1(){
-
             Department department1 = new Department("소프트웨어학부", "소융대");
             Department department2 = new Department("컴퓨터정보공학부", "소융대");
 

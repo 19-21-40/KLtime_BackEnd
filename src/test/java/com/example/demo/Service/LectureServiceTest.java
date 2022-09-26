@@ -36,7 +36,6 @@ public class LectureServiceTest {
     EntityManager em;
 
     @Test
-    @Rollback(false)
     public void 강의_검색() throws Exception {
         //given
         LectureSearch lectureSearch = new LectureSearch();
@@ -48,7 +47,6 @@ public class LectureServiceTest {
     }
 
     @Test
-    @Rollback(false)
     public void 강의_추가() throws Exception {
         //given
         TimeTable timeTable1 =  timeTableRepository.findOne(33L);
@@ -60,7 +58,6 @@ public class LectureServiceTest {
     }
 
     @Test
-    @Rollback(false)
     public void 강의_삭제() throws Exception {
         //given
         TimeTable timeTable1 =  timeTableRepository.findOne(35L);
