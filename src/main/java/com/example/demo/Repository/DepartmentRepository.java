@@ -37,13 +37,11 @@ public class DepartmentRepository {
 //        }
 //    }
 
-    /**
-     * 이름으로 학과(부) 조회 (중복 검증때문에 추가함)
-     */
-    public List<Department> findByName(String name){
+
+    public Department findByName(String name){
         return em.createQuery("select d from Department d where d.name = :name", Department.class)
                 .setParameter("name", name)
-                .getResultList();
+                .getSingleResult();
     }
 
 

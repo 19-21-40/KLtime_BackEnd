@@ -38,13 +38,7 @@ public class RecommendLectureService {
         Department department = departmentRepository.findById(student.getDepartment().getId());
 
         // 그에 맞는 졸업 학점 조건 불러오기
-        GradCondition gradCondition;
-
-        if (student.getMultiDept() == null) {
-            gradCondition = gradConditionRepository.findByDeptAndAdmissionYearWithNoMultiDept(department, student.getAdmissionYear());
-        } else {
-            gradCondition = gradConditionRepository.findByDeptAndAdmissionYearWithMultiDept(department, student.getAdmissionYear());
-        }
+        GradCondition gradCondition = gradConditionRepository.findByDeptAndAdmissionYear(department, student.getAdmissionYear());
 
         Credit temporalCredit = new Credit();
 

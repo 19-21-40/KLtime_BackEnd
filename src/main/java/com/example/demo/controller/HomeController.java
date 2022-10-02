@@ -35,12 +35,7 @@ public class HomeController {
 
         Student student = studentRepository.findByIdWithDepartment(3L);
 
-        GradCondition gradcondition;
-        if (student.getMultiDept() == null) {
-           gradcondition = gradConditionRepository.findByDeptAndAdmissionYearWithNoMultiDept(student.getDepartment(), student.getAdmissionYear());
-        } else {
-           gradcondition = gradConditionRepository.findByDeptAndAdmissionYearWithMultiDept(student.getDepartment(), student.getAdmissionYear());
-        }
+        GradCondition gradcondition = gradConditionRepository.findByDeptAndAdmissionYear(student.getDepartment(), student.getAdmissionYear());
 
         recommendLectureService.checkAndSaveCredit(3L);
 
@@ -210,7 +205,7 @@ public class HomeController {
         public GradConditionDto(GradCondition gradCondition) {
             admissionYear=gradCondition.getAdmissionYear();
             gradCredit=gradCondition.getGradCredit();
-            mainCredit=gradCondition.getMainCredit();
+            mainCredit=gradCondition.getMainCreditIfMulti();
             essBalCredit=gradCondition.getEssBalCredit();
             basicCredit=gradCondition.getBasicCredit();
         }
