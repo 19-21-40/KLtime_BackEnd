@@ -34,11 +34,15 @@ public class RecommendLectureService {
 
         Student student = studentRepository.findByIdWithLecture(studentId);
 
-        // 학생의 학번과 학과 불러오기 // 임의로 데이터베이스에 저장된 Id=3인 "이성훈"을 불러옴
-        Department department = departmentRepository.findById(student.getDepartment().getId());
-
         // 그에 맞는 졸업 학점 조건 불러오기
-        GradCondition gradCondition = gradConditionRepository.findByDeptAndAdmissionYear(department, student.getAdmissionYear());
+        GradCondition gradCondition = gradConditionRepository.findByDeptAndAdmissionYear(student.getDepartment(), student.getAdmissionYear());
+
+        GradCondition gradConditionOfMulti;
+
+        if(student.getMultiMajor()==null){
+            gradConditionOfMulti = gradConditionRepository.findByDeptAndAdmissionYear(student.getMultiDept(), student.getAdmissionYear());
+        }
+
 
         Credit temporalCredit = new Credit();
 
@@ -64,42 +68,89 @@ public class RecommendLectureService {
             // totalCredit에 현재강의의 학점을 더해줌
             temporalCredit.addTotalCredit(lecture.getCredit());
 
-
-            /** 19학번 기준 */
             // 교필과 교선에 대해서 먼저 따져줌 ( sectionDetail에 따라 처리해줘야 함 )
-            if (section.equals("교필") || section.equals("교선")) {
-                switch (sectionDetail) {
-                    case "광운인되기":
-                        temporalCredit.addEssCredit(1);
-                        break;
-                    case "대학영어":
-                    case "정보":
-                        temporalCredit.addEssCredit(3);
-                        break;
-                    case "융합적사고와글쓰기":
-                        // 단과대학이나 학과에 따라 균형교양, 필수교양으로 갈림. 그에 따라 코드 작성했음
-                        if (student.getDepartment().getName().equals("경영학부") || student.getDepartment().getName().equals("국제통상학부") ||
-                                student.getDepartment().getCollegeName().equals("자연대") || student.getDepartment().getCollegeName().equals("소융대"))
-                            temporalCredit.addBalCredit(3);
-                        else {
+
+
+            /** 18, 19학번 기준 */
+            if(student.getAdmissionYear() == 2018 || student.getAdmissionYear() == 2019){
+                if (section.equals("교필") || section.equals("교선")) {
+                    switch (sectionDetail) {
+                        case "광운인되기":
+                            temporalCredit.addEssCredit(1);
+                            break;
+                        case "대학영어":
+                        case "정보":
                             temporalCredit.addEssCredit(3);
-                        }
-                        break;
-                    case "과학과기술":
-                    case "인간과철학":
-                    case "사회와경제":
-                    case "글로벌문화와제2외국어":
-                        temporalCredit.addBalCredit(lecture.getCredit());
-                        break;
-                    default:
-                        /** 여기에 에러 출력하는 코드 작성해야함 */
-                        break;
+                            break;
+                        case "융합적사고와글쓰기":
+                            // 단과대학이나 학과에 따라 균형교양, 필수교양으로 갈림. 그에 따라 코드 작성했음
+                            if (student.getDepartment().getName().equals("경영학부") || student.getDepartment().getName().equals("국제통상학부") ||
+                                    student.getDepartment().getCollegeName().equals("자연과학대학") || student.getDepartment().getCollegeName().equals("소프트웨어융합대학"))
+                                temporalCredit.addBalCredit(3);
+                            else {
+                                temporalCredit.addEssCredit(3);
+                            }
+                            break;
+                        case "언어와표현":
+                            if(lecture.getName().equals("말하기와소통") || lecture.getName().equals("읽기와쓰기")){
+                                if (student.getDepartment().getName().equals("경영학부") || student.getDepartment().getName().equals("국제통상학부") ||
+                                        student.getDepartment().getCollegeName().equals("자연과학대학") || student.getDepartment().getCollegeName().equals("소프트웨어융합대학"))
+                                    temporalCredit.addBalCredit(3);
+                                else {
+                                    temporalCredit.addEssCredit(3);
+                                }
+                                break;
+                            }
+                        case "과학과기술":
+                        case "인간과철학":
+                        case "사회와경제":
+                        case "글로벌문화와제2외국어":
+                            temporalCredit.addBalCredit(lecture.getCredit());
+                            break;
+                        default:
+                            /** 여기에 에러 출력하는 코드 작성해야함 */
+                            break;
+                    }
+                }
+            }
+            /** 20,21,22학번 기준 */
+            if(student.getAdmissionYear() == 2020 || student.getAdmissionYear() == 2021 || student.getAdmissionYear() == 2022) {
+                if (section.equals("교필") || section.equals("교선")) {
+                    switch (sectionDetail) {
+                        case "광운인되기":
+                            temporalCredit.addEssCredit(1);
+                            break;
+                        case "대학영어":
+                        case "정보":
+                            temporalCredit.addEssCredit(3);
+                            break;
+                        case "융합적사고와글쓰기":
+                            temporalCredit.addEssCredit(3);
+                            break;
+                        case "과학과기술":
+                        case "인간과철학":
+                        case "사회와경제":
+                        case "글로벌문화와제2외국어":
+                            temporalCredit.addBalCredit(lecture.getCredit());
+                            break;
+                        default:
+                            /** 여기에 에러 출력하는 코드 작성해야함 */
+                            break;
+                    }
                 }
             }
 
-            // 전공학점에 대해 따짐
-            if (section == "전필" || section == "전선") {
+
+            // 현재 학과 전공학점에 대해 따짐
+            if ((lecture.getDepartmentName() == student.getDepartment().getName()) && (section == "전필" || section == "전선")) {
                 temporalCredit.addMainCredit(lecture.getCredit());
+            }
+
+            // 복수전공의 경우 복수전공 학과 전공학점을 계산함
+            if(student.getMultiMajor()==null) {
+                if ((lecture.getDepartmentName() == student.getMultiDept().getName()) && (section == "전필" || section == "전선")) {
+                    temporalCredit.addMultiCredit(lecture.getCredit());
+                }
             }
 
             // 기초교양학점에 대해 따짐
@@ -116,12 +167,8 @@ public class RecommendLectureService {
             // 또한 대학영어, 융사는 단과대학에 따라서 듣는 학기가 정해져있음
 
         }
-        System.out.println("---------------------------------------------");
-        System.out.println(temporalCredit.getTotalCredit() + ", " + temporalCredit.getBalCredit());
 
         student.setCredit(temporalCredit);
-
-        System.out.println(student.getCredit().getTotalCredit());
 
 
         // 학점이 얼마나 부족한지 각각 정리
@@ -168,8 +215,7 @@ public class RecommendLectureService {
             // result에 있는 강의명 중에 학생이 들은 강의가 존재한다면 result에서 해당 강의를 삭제함.
             result.removeIf(lecture -> lecture.getName().equals(lectureName));
         }
-
-        System.out.println(result);
+        
 
         return result;
 
@@ -294,7 +340,7 @@ public class RecommendLectureService {
 
         return result;
     }
-
+/*******************************************************************************************여기서부터*****************************************/
 
     /**
      * 균형교양 과목들에 대해서 sectionDetail로 나눠서 (중복 강의 없이) 출력함
@@ -308,12 +354,19 @@ public class RecommendLectureService {
 
         Map<String, Integer> bal_Lec_Map = new HashMap<>();
 
-        bal_Lec_Map.put("융합적사고와글쓰기", 0);
         bal_Lec_Map.put("과학과기술", 0);
         bal_Lec_Map.put("인간과철학", 0);
         bal_Lec_Map.put("사회와경제", 0);
         bal_Lec_Map.put("글로벌문화와제2외국어", 0);
         bal_Lec_Map.put("예술과체육", 0);
+
+        if(student.getAdmissionYear() == 2018 || student.getAdmissionYear() == 2019){
+            if(student.getDepartment().getName().equals("경영학부") || student.getDepartment().getName().equals("국제통상학부") ||
+                    student.getDepartment().getCollegeName().equals("자연과학대학") || student.getDepartment().getCollegeName().equals("소프트웨어융합대학"))
+            {
+                bal_Lec_Map.put("융합적사고와글쓰기", 0);
+            }
+        }
 
         // 학생이 들었던 과목 리스트
         List<StudentLecture> myLectures = student.getMyLectures();
@@ -329,30 +382,33 @@ public class RecommendLectureService {
             // 받은 학점이 F or NP라면 continue 실행
             if(sl.getGpa().equals("F")  || sl.getGpa().equals("NP")) continue;
 
-            /** 19학번 기준 */
+            /** 18,19학번 기준 */
             // 교필과 교선에 대해서 먼저 따져줌 ( sectionDetail에 따라 처리해줘야 함 )
-            if(section.equals("교필") || section.equals("교선")) {
-                switch (sectionDetail) {
-                    case "융합적사고와글쓰기":
-                        // 단과대학이나 학과에 따라 균형교양, 필수교양으로 갈림. 그에 따라 코드 작성했음
-                        // 융사 강의는 학점이 3으로 고정이면서 강의가 1개이므로 3학점을 put
-                        if(student.getDepartment().getName().equals("경영학부") || student.getDepartment().getName().equals("국제통상학부") ||
-                                student.getDepartment().getCollegeName().equals("자연대") || student.getDepartment().getCollegeName().equals("소융대"))
-                            bal_Lec_Map.put(sectionDetail, 3);
-                        break;
-                    case "과학과기술":
-                    case "인간과철학":
-                    case "사회와경제":
-                    case "글로벌문화와제2외국어":
-                    case "예술과체육":
-                        // map 컬렉션의 value에 현재 강의의 credit을 더해줌
-                        bal_Lec_Map.compute(sectionDetail, (s, v) -> v + lecture.getCredit());
-                        break;
-                    default:
-                        /** 여기에 에러 출력하는 코드 작성해야함 */
-                        break;
+            if(student.getAdmissionYear() == 2018 || student.getAdmissionYear() == 2019) {
+                if(section.equals("교필") || section.equals("교선")) {
+                    switch (sectionDetail) {
+                        case "융합적사고와글쓰기":
+                            // 단과대학이나 학과에 따라 균형교양, 필수교양으로 갈림. 그에 따라 코드 작성했음
+                            // 융사 강의는 학점이 3으로 고정이면서 강의가 1개이므로 3학점을 put
+                            if(student.getDepartment().getName().equals("경영학부") || student.getDepartment().getName().equals("국제통상학부") ||
+                                    student.getDepartment().getCollegeName().equals("자연과학대학") || student.getDepartment().getCollegeName().equals("소프트웨어융합대학"))
+                                bal_Lec_Map.put(sectionDetail, 3);
+                            break;
+                        case "과학과기술":
+                        case "인간과철학":
+                        case "사회와경제":
+                        case "글로벌문화와제2외국어":
+                        case "예술과체육":
+                            // map 컬렉션의 value에 현재 강의의 credit을 더해줌
+                            bal_Lec_Map.compute(sectionDetail, (s, v) -> v + lecture.getCredit());
+                            break;
+                        default:
+                            /** 여기에 에러 출력하는 코드 작성해야함 */
+                            break;
+                    }
                 }
             }
+
         }
 
         // 충족한 sectionDetail의 수
@@ -361,7 +417,7 @@ public class RecommendLectureService {
         Set<String> needs_bal = new HashSet<>();
 
         if(student.getDepartment().getName().equals("경영학부") || student.getDepartment().getName().equals("국제통상학부") ||
-                student.getDepartment().getCollegeName().equals("자연대") || student.getDepartment().getCollegeName().equals("소융대")){
+                student.getDepartment().getCollegeName().equals("자연과학대학") || student.getDepartment().getCollegeName().equals("소프트웨어융합대학")){
             if(bal_Lec_Map.get("융합적사고와글쓰기") < 3){
                 needs_bal.add("융합적사고와글쓰기");
             }
@@ -498,7 +554,7 @@ public class RecommendLectureService {
                         // 단과대학이나 학과에 따라 균형교양, 필수교양으로 갈림. 그에 따라 코드 작성했음
                         // 융사 강의는 학점이 3으로 고정이면서 강의가 1개이므로 3학점을 put
                         if(student.getDepartment().getName().equals("경영학부") || student.getDepartment().getName().equals("국제통상학부") ||
-                                student.getDepartment().getCollegeName().equals("자연대") || student.getDepartment().getCollegeName().equals("소융대"))
+                                student.getDepartment().getCollegeName().equals("자연과학대학") || student.getDepartment().getCollegeName().equals("소프트웨어융합대학"))
                             break;
                         else {
                             ess_Lec_Map.put(sectionDetail, 3);
@@ -522,7 +578,7 @@ public class RecommendLectureService {
 
         // not 연산 붙였음 (주의)
         if(!(student.getDepartment().getName().equals("경영학부") || student.getDepartment().getName().equals("국제통상학부") ||
-                student.getDepartment().getCollegeName().equals("자연대") || student.getDepartment().getCollegeName().equals("소융대"))) {
+                student.getDepartment().getCollegeName().equals("자연과학대학") || student.getDepartment().getCollegeName().equals("소프트웨어융합대학"))) {
             if (ess_Lec_Map.get("융합적사고와글쓰기") < 3)
                 needs.add("융합적사고와글쓰기");
         }
@@ -636,7 +692,7 @@ public class RecommendLectureService {
                         // 단과대학이나 학과에 따라 균형교양, 필수교양으로 갈림. 그에 따라 코드 작성했음
                         // 융사 강의는 학점이 3으로 고정이면서 강의가 1개이므로 3학점을 put
                         if(student.getDepartment().getName().equals("경영학부") || student.getDepartment().getName().equals("국제통상학부") ||
-                                student.getDepartment().getCollegeName().equals("자연대") || student.getDepartment().getCollegeName().equals("소융대"))
+                                student.getDepartment().getCollegeName().equals("자연과학대학") || student.getDepartment().getCollegeName().equals("소프트웨어융합대학"))
                             break;
                         else {
                             ess_Lec_Map.put(sectionDetail, 3);
@@ -661,7 +717,7 @@ public class RecommendLectureService {
 
         // not 연산 붙였음 (주의)
         if(!(student.getDepartment().getName().equals("경영학부") || student.getDepartment().getName().equals("국제통상학부") ||
-                student.getDepartment().getCollegeName().equals("자연대") || student.getDepartment().getCollegeName().equals("소융대"))) {
+                student.getDepartment().getCollegeName().equals("자연과학대학") || student.getDepartment().getCollegeName().equals("소프트웨어융합대학"))) {
             if (ess_Lec_Map.get("융합적사고와글쓰기") < 3)
                 needs.add("융합적사고와글쓰기");
         }
