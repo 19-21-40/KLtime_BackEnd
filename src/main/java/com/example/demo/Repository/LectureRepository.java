@@ -139,8 +139,8 @@ public class LectureRepository {
 //
 
     /**
-     * Section을 Set 타입으로 조회함 */
-    public List<Lecture> findBySectionDetailSet(Set<String> sectionDetailSet) {
+     * Section에 대해 Set타입으로 2022년 강의를 조회함 */
+    public List<Lecture> findBySectionDetailSet2022(Set<String> sectionDetailSet) {
         return em.createQuery("select l from Lecture l where l.sectionDetail in :sectionDetailSet")
                 .setParameter("sectionDetailSet", sectionDetailSet)
                 .getResultList();
@@ -148,7 +148,7 @@ public class LectureRepository {
 
 
     /**
-     * 구분 2개로 강의 목록 찾기
+     * 구분 2개로 연도구분없이 강의 목록 찾기
      * 이성훈이 만듬
      */
 
@@ -160,9 +160,38 @@ public class LectureRepository {
                 .getResultList();
     }
 
+    /**
+     * 구분 2개로 2022년 강의 목록 찾기
+     * 이성훈이 만듬
+     */
+    public List<Lecture> findByTwoSection2022(String section1, String section2) {
+        return em.createQuery("select l from Lecture l where (l.section =:section1 or l.section =:section2) and l.yearOfLecture =2022", Lecture.class)
+                .setParameter("section1", section1)
+                .setParameter("section2", section2)
+                .getResultList();
+    }
+
+    /**
+     * 학생의 학과와 단과대학으로 연도구분없이 전필 전선 과목 찾기
+     * @param studentDept
+     * @return
+     */
     public List<Lecture> findMainLecturesByTwoSection(Department studentDept) {
         return em.createQuery("select l from Lecture l where (l.section ='전필' or l.section ='전선') " +
                         "and (l.departmentName =:StDeptName or l.departmentName =: StCollegeName)", Lecture.class)
+                .setParameter("StCollegeName", studentDept.getCollegeName())
+                .setParameter("StDeptName", studentDept.getName())
+                .getResultList();
+    }
+
+    /**
+     * 학생의 학과와 단과대학으로 2022년 전필 전선 과목 찾기
+     * @param studentDept
+     * @return
+     */
+    public List<Lecture> findMainLecturesByTwoSection2022(Department studentDept) {
+        return em.createQuery("select l from Lecture l where (l.section ='전필' or l.section ='전선') " +
+                        "and (l.departmentName =:StDeptName or l.departmentName =: StCollegeName) and l.yearOfLecture=2022", Lecture.class)
                 .setParameter("StCollegeName", studentDept.getCollegeName())
                 .setParameter("StDeptName", studentDept.getName())
                 .getResultList();
@@ -244,4 +273,12 @@ public class LectureRepository {
                 .setParameter("sectionDetail", sectionDetail)
                 .getResultList();
     }
+
+    public List<Lecture> findBySectionDetail2022(String sectionDetail) {
+        return em.createQuery("select l from Lecture l where l.sectionDetail =:sectionDetail and l.yearOfLecture=2022", Lecture.class)
+                .setParameter("sectionDetail", sectionDetail)
+                .getResultList();
+    }
+
+
 }
