@@ -1,9 +1,6 @@
 package com.example.demo.Repository;
 
-import com.example.demo.domain.Department;
-import com.example.demo.domain.Lecture;
-import com.example.demo.domain.LectureTimeSlot;
-import com.example.demo.domain.TimeSlot;
+import com.example.demo.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +22,10 @@ public class LectureRepository {
 
     private final EntityManager em;
 
-    public void save(Lecture lecture) { em.persist(lecture); }
+    public Long save(Lecture lecture) {
+        em.persist(lecture);
+        return lecture.getId();
+    }
 
     /*
      * ====================================단일 데이터=================================
@@ -166,6 +166,13 @@ public class LectureRepository {
                 .setParameter("StCollegeName", studentDept.getCollegeName())
                 .setParameter("StDeptName", studentDept.getName())
                 .getResultList();
+    }
+
+    /**
+     * 커스텀 강의 삭제
+     */
+    public void delete(Lecture lecture) {
+        em.remove(lecture);
     }
 //
 //    /**
