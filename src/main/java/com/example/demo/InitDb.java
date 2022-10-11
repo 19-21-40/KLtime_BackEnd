@@ -1,6 +1,8 @@
 package com.example.demo;
 
 
+import com.example.demo.Repository.DepartmentRepository;
+import com.example.demo.Repository.GradConditionRepository;
 import com.example.demo.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -8,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Component
@@ -17,10 +21,13 @@ public class InitDb {
 
     private final InitService initService;
 
-//    @PostConstruct
-//    public void init(){
+    @PostConstruct
+    public void init(){
+
 //        initService.dbInit1();
-//    }
+
+
+    }
 
     @Component
     @Transactional
@@ -28,99 +35,115 @@ public class InitDb {
     static class InitService {
 
         private final EntityManager em;
-
+        private final DepartmentRepository departmentRepository;
+        private final GradConditionRepository gradConditionRepository;
 
         public void dbInit1(){
-            Department department1 = new Department("소프트웨어학부", "소융대");
-            Department department2 = new Department("컴퓨터정보공학부", "소융대");
-
-            em.persist(department1);
-            em.persist(department2);
 
 
-            Student student1 = new Student("이성훈", department1, 2, 2019);
-            Student student2 = new Student("나부겸", department1, 2, 2019);
-            Student student3 = new Student("김수연", department2, 2, 2021);
-
-            em.persist(student1);
-            em.persist(student2);
-            em.persist(student3);
-
-            GradCondition gradCondition1 = new GradCondition(2019, 133, 22, 21, department1, 60, false);
-            GradCondition gradCondition2 = new GradCondition(2019, 133, 22, 21, department1, 54, true);
-            gradCondition2.setMultiCredit(54);
-            GradCondition gradCondition3 = new GradCondition(2019, 133, 22, 24, department2, 60, false);
-
-            em.persist(gradCondition1);
-            em.persist(gradCondition2);
-            em.persist(gradCondition3);
-
-            Lecture lecture1 = new Lecture("H000-1-3362-01", "대학영어", "고현아", "교필", "대학영어", 3, 1, "공통", 2019, "2학기");
-            Lecture lecture2 = new Lecture("H000-1-3362-02", "대학영어", "브라이언", "교필", "대학영어", 3, 1, "공통", 2022, "2학기");
-            Lecture lecture3 = new Lecture("H000-1-3362-03", "대학영어", "김지희", "교필", "대학영어", 3, 1, "공통", 2022, "2학기");
-
-            Lecture lecture4 = new Lecture("7000-1-3095-02", "융합적사고와글쓰기", "전도현", "교필", "융합적사고와글쓰기", 3, 1, "공통", 2022, "2학기");
-            Lecture lecture5 = new Lecture("H000-1-3362-03", "융합적사고와글쓰기", "손미영", "교필", "융합적사고와글쓰기", 3, 1, "공통", 2022, "2학기");
-
-            Lecture lecture6 = new Lecture("H030-1-8297-01", "컴퓨팅사고", "손미영", "교필", "정보", 3, 1, "소프트웨어학부", 2019, "2학기");
-
-            Lecture lecture7 = new Lecture("H030-1-5714-01", "고급C프로그래밍및설계", "안우현", "기필", "null", 3, 1, "소프트웨어학부", 2019, "2학기");
-            Lecture lecture8 = new Lecture("H030-1-5714-01", "선형대수학", "김상목", "기선", "수학", 3, 2, "소프트웨어학부", 2022, "2학기");
-
-            Lecture lecture9 = new Lecture("0000-1-8583-01", "글로벌시대의쟁점과현안", "전진호", "교선", "사회와경제", 3, 1, "공통", 2019, "2학기");
-            Lecture lecture10 = new Lecture("0000-1-5901-01", "기술경영과마케팅", "김찬모", "교선", "사회와경제", 3, 1, "공통", 2022, "2학기");
-            Lecture lecture11 = new Lecture("0000-1-0670-01", "법과생활", "손명지", "교선", "사회와경제", 3, 1, "공통", 2022, "2학기");
-            Lecture lecture12 = new Lecture("0000-1-0806-01", "생활속의경제", "이수욱", "교선", "사회와경제", 3, 1, "공통", 2022, "2학기");
-
-            Lecture lecture13 = new Lecture("0000-1-3589-01", "독일어1", "조규희", "교선", "글로벌문화와제2외국어", 3, 1, "공통", 2019, "2학기");
-            Lecture lecture14 = new Lecture("0000-1-3812-01", "스페인어1", "김찬모", "교선", "글로벌문화와제2외국어", 3, 1, "공통", 2022, "2학기");
-            Lecture lecture15 = new Lecture("0000-1-5688-01", "일본문화읽기", "손명지", "교선", "글로벌문화와제2외국어", 3, 1, "공통", 2022, "2학기");
-            Lecture lecture16 = new Lecture("0000-1-6524-01", "일본어듣기와쓰기", "이수욱", "교선", "글로벌문화와제2외국어", 3, 1, "공통", 2022, "2학기");
-
-            Lecture lecture17 = new Lecture("H030-2-1243-02", "자료구조", "김용혁", "전필", "null", 3, 2, "소프트웨어학부", 2022, "2학기");
-            Lecture lecture18 = new Lecture("H030-2-3395-01", "시스템소프트웨어", "안우현", "전선", "null", 3, 2, "소프트웨어학부", 2022, "2학기");
-
-            Lecture lecture19 = new Lecture("H000-1-3417-01 ", "대학화학및실험2", "최한", "기선", "기초과학", 3, 1, "공통", 2022, "2학기");
-
-            Lecture lecture20 = new Lecture("H030-2-1243-03", "자료구조", "김용혁", "전필", "null", 3, 2, "소프트웨어학부", 2022, "2학기");
-            Lecture lecture21 = new Lecture("H030-2-3405-02", "자료구조실습", "김용혁", "전필", "null", 2, 2, "소프트웨어학부", 2022, "2학기");
-            Lecture lecture22 = new Lecture("H030-2-7777-02", "객체지향프로그래밍", "김진우", "전선", "null", 3, 2, "소프트웨어학부", 2022, "2학기");
-            Lecture lecture23 = new Lecture("H030-2-8487-01", "오픈소스소프트웨어개발", "문승현", "전선", "null", 3, 2, "소프트웨어학부", 2022, "2학기");
-
-            Lecture lecture24 = new Lecture("0000-1-5909-01", "공학과디자인", "유미란", "교선", "과학과기술", 3, 2, "공통", 2022, "2학기");
-            Lecture lecture25 = new Lecture("0000-1-5909-02", "공학과디자인", "유미란", "교선", "과학과기술", 3, 2, "공통", 2022, "2학기");
-            Lecture lecture26 = new Lecture("0000-1-4283-01", "공학교양세미나", "김충혁", "교선", "과학과기술", 3, 2, "공통", 2022, "2학기");
-
-            Lecture lecture27 = new Lecture("0000-1-8128-01", "광운인되기", "김정권", "교필", "광운인되기", 1, 1, "공통", 2022, "2학기");
 
 
-            persistLectures(lecture1, lecture2, lecture3, lecture4, lecture5, lecture6, lecture7, lecture8);
-            persistLectures(lecture9, lecture10, lecture11, lecture12, lecture13, lecture14, lecture15, lecture16);
-            persistLectures(lecture17, lecture18, lecture19, lecture20, lecture21, lecture22, lecture23, lecture24, lecture25, lecture26, lecture27);
+//            List<Department> departments = departmentRepository.findByCollege("전자정보공과대학");
+//
+//            for (Department department : departments) {
+//                GradCondition gradCondition = new GradCondition(department, 2018, 22, 24, 60, 54, null, 54, 21, 133);
+//                em.persist(gradCondition);
+//            }
+//
+//            Department department0 = departmentRepository.findByName("컴퓨터정보공학부");
+//            GradCondition gradCondition00 = new GradCondition(department0, 2018, 22, 24, 60, 54, null, 54, 21, 133);
+//
+//            Department department1 = departmentRepository.findByName("소프트웨어학부");
+//            GradCondition gradCondition10 = new GradCondition(department1, 2018, 22, 21, 60, 54, null, 54, 21, 133);
+//
+//            Department department2 = departmentRepository.findByName("정보융합학부");
+//            GradCondition gradCondition20 = new GradCondition(department2, 2018, 22, 9, 60, 54, null, 54, 21, 133);
+//
+//            Department department3 = departmentRepository.findByName("건축공학과");
+//            GradCondition gradCondition30 = new GradCondition(department3, 2018, 22, 24, 60, 54, null, 54, 21, 133);
+//
+//            Department department4 = departmentRepository.findByName("화학공학과");
+//            GradCondition gradCondition40 = new GradCondition(department4, 2018, 22, 24, 60, 54, null, 54, 21, 133);
+//
+//            Department department5 = departmentRepository.findByName("환경공학과");
+//            GradCondition gradCondition50 = new GradCondition(department5, 2018, 22, 24, 60, 54, null, 54, 21, 133);
+//
+//            Department department6 = departmentRepository.findByName("건축학과");
+//            GradCondition gradCondition60 = new GradCondition(department6, 2018, 22, null, 120, 120, null, 99, 45, 163);
+//
+//            Department department7 = departmentRepository.findByName("수학과");
+//            GradCondition gradCondition70 = new GradCondition(department7, 2018, 16, null, 54, 45, 70, 45, 21, 133);
+//
+//            Department department8 = departmentRepository.findByName("전자바이오물리학과");
+//            GradCondition gradCondition80 = new GradCondition(department8, 2018, 22, 16, 60, 54, 70, 54, 21, 133);
+//
+//            Department department9 = departmentRepository.findByName("화학과");
+//            GradCondition gradCondition90 = new GradCondition(department9, 2018, 22, null, 60, 54, 70, 54, 21, 133);
+//
+//            Department department10 = departmentRepository.findByName("생할체육학과");
+//            GradCondition gradCondition100 = new GradCondition(department10, 2018, 22, null, 60, 54, 70, 54, 21, 133);
+//
+//            Department department11 = departmentRepository.findByName("정보콘텐츠학과");
+//            GradCondition gradCondition110 = new GradCondition(department11, 2018, 30, null, 45, 39, 60, 39, 21, 120);
+//
+//            Department department12 = departmentRepository.findByName("국어국문학과");
+//            GradCondition gradCondition120 = new GradCondition(department12, 2018, 22, null, 51, 45, 70, 45, 21, 130);
+//
+//            Department department13 = departmentRepository.findByName("영어산업학과");
+//            GradCondition gradCondition130 = new GradCondition(department13, 2018, 22, null, 45, 45, 70, 45, 21, 130);
+//
+//            Department department14 = departmentRepository.findByName("산업심리학과");
+//            GradCondition gradCondition140 = new GradCondition(department14, 2018, 22, null, 51, 45, 66, 45, 21, 130);
+//
+//            Department department15 = departmentRepository.findByName("미디어영상학부");
+//            GradCondition gradCondition150 = new GradCondition(department15, 2018, 22, null, 45, 45, 70, 45, 21, 130);
+//
+//            Department department16 = departmentRepository.findByName("동북아문화산업학부");
+//            GradCondition gradCondition160 = new GradCondition(department16, 2018, 22, null, 66, 45, null, 45, 21, 130);
+//
+//            Department department17 = departmentRepository.findByName("행정학과");
+//            GradCondition gradCondition170 = new GradCondition(department17, 2018, 22, null, 45, 45, 60, 45, 30, 130);
+//
+//            Department department18 = departmentRepository.findByName("법학부");
+//            GradCondition gradCondition180 = new GradCondition(department18, 2018, 22, null, 45, 36, 60, 36, 21, 130);
+//
+//            Department department19 = departmentRepository.findByName("자산관리학과");
+//            GradCondition gradCondition190 = new GradCondition(department19, 2018, 30, null, 45, 39, 60, 39, 21, 120);
+//
+//            Department department20 = departmentRepository.findByName("국제학부");
+//            GradCondition gradCondition200 = new GradCondition(department20, 2018, 22, null, 45, 45, 60, 45, 21, 130);
+//
+//            Department department21 = departmentRepository.findByName("경영학부");
+//            GradCondition gradCondition210 = new GradCondition(department21, 2018, 22, null, 45, 45, 70, 45, 21, 130);
+//
+//            Department department22 = departmentRepository.findByName("국제통상학부");
+//            GradCondition gradCondition220 = new GradCondition(department22, 2018, 22, null, 57, 45, null, 45, 21, 130);
+//
+//            em.persist(gradCondition00);
+//            em.persist(gradCondition10);
+//            em.persist(gradCondition20);
+//            em.persist(gradCondition30);
+//            em.persist(gradCondition40);
+//            em.persist(gradCondition50);
+//            em.persist(gradCondition60);
+//            em.persist(gradCondition70);
+//            em.persist(gradCondition80);
+//            em.persist(gradCondition90);
+//            em.persist(gradCondition100);
+//            em.persist(gradCondition110);
+//            em.persist(gradCondition120);
+//            em.persist(gradCondition130);
+//            em.persist(gradCondition140);
+//            em.persist(gradCondition150);
+//            em.persist(gradCondition160);
+//            em.persist(gradCondition170);
+//            em.persist(gradCondition180);
+//            em.persist(gradCondition190);
+//            em.persist(gradCondition200);
+//            em.persist(gradCondition210);
+//            em.persist(gradCondition220);
 
-            student1.addLectureToStudent(lecture1, "A0", 1,2);
-            student1.addLectureToStudent(lecture4, "A+", 1,2);
-            student1.addLectureToStudent(lecture6, "A0", 1, 2);
-            student1.addLectureToStudent(lecture7, "A+", 1,2);
-            student1.addLectureToStudent(lecture9, "B+", 1, 1);
-            student1.addLectureToStudent(lecture10, "B0", 2, 2);
-            student1.addLectureToStudent(lecture11, "F", 2,2);
-            student1.addLectureToStudent(lecture13,"C+",1,2);
-            student1.addLectureToStudent(lecture17,"B+",2,2);
-            student1.addLectureToStudent(lecture18,"A0",2,2);
-            student1.addLectureToStudent(lecture19,"A0",2,2);
 
-            //추가
-            TimeTableLecture timeTableLecture1 = TimeTableLecture.createTimeTableLecture(lecture18);
-            TimeTableLecture timeTableLecture2 = TimeTableLecture.createTimeTableLecture(lecture22);
-            TimeTable timeTable1 = TimeTable.createTimetable(student3,"시간표2",2,2,true,timeTableLecture1,timeTableLecture2);
-//            TimeTable timeTable2 = TimeTable.createTimetable(student3,"시간표1",2,2,false,timeTableLecture1);
-//            timeTable1.addTimeTableLecture(timeTableLecture2);
-
-            em.persist(timeTableLecture1);
-            em.persist(timeTableLecture2);
-            em.persist(timeTable1);
-//            em.persist(timeTable2);
         }
 
         private void persistLectures(Lecture... lectures) {
