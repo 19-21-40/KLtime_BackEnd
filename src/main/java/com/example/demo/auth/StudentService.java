@@ -4,6 +4,7 @@ import com.example.demo.Repository.StudentRepository;
 import com.example.demo.domain.Student;
 import lombok.RequiredArgsConstructor;
 //import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,13 +35,12 @@ public class StudentService {
         return studentRepository.save(student);
     }
 
-    public Student getByCredentials(final String number, final String password ){
+    public Student getByCredentials(final String number, final String password , final PasswordEncoder encoder){
         final Student originalStudent = studentRepository.findByNumberAndPassword(number,password);
-
-//        if(originalStudent !=null && encoder.matches(password,originalStudent.getPassword())){
-//            return originalStudent;
-//        }
-        return originalStudent;
+        if(originalStudent !=null && encoder.matches(password,originalStudent.getPassword())){
+            return originalStudent;
+        }
+        return null;
     }
 
 
