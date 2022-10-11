@@ -39,12 +39,12 @@ public class StudentLecture {
 
 
     //==생성 메서드==//
-    public static StudentLecture createStudentLecture(Student student, Lecture lecture,String Gpa,int grade){
+    public static StudentLecture createStudentLecture(Student student, Lecture lecture,String Gpa){
         StudentLecture studentLecture =  new StudentLecture();
         studentLecture.setStudent(student);
         studentLecture.setLecture(lecture);
         studentLecture.setGpa(Gpa);
-        studentLecture.setTakesGrade(grade);
+//        studentLecture.setTakesGrade(grade); //일단 grade 보류(파라미터에서도 삭제)
         studentLecture.setTakesSemester(lecture.getSemester());
         return studentLecture;
     }

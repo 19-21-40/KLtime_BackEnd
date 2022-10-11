@@ -29,6 +29,7 @@ public class TimeTable {
     private int grade;
     private int semester;
     private boolean isPrimary;
+    private int yearOfTimetable; //추가
 
     //==연관관계 메서드==//
     public void setStudent(Student student) {
@@ -41,11 +42,11 @@ public class TimeTable {
     }
 
     //==생성 메서드==//
-    public static TimeTable createTimetable( Student student, String tableName, int grade, int semester, boolean isPrimary, TimeTableLecture... lectures) {
+    public static TimeTable createTimetable( Student student, String tableName, int yearOfTimetable, int semester, boolean isPrimary, TimeTableLecture... lectures) {
         TimeTable timeTable = new TimeTable();
         timeTable.setStudent(student);
         timeTable.setTableName(tableName);
-        timeTable.setGrade(grade);
+        timeTable.setGrade(yearOfTimetable);
         timeTable.setSemester(semester);
         timeTable.setPrimary(isPrimary);
         for (TimeTableLecture timeTableLecture : lectures) {

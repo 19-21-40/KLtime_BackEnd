@@ -18,13 +18,13 @@ public class StudentLectureRepository {
         return em.find(StudentLecture.class, id);
     }
 
-    public List<StudentLecture> findByStudentAndGradeAndSemester(Student student, int takesGrade, int takesSemester){
+    public List<StudentLecture> findByStudentAndYearAndSemester(Student student, int yearOfLecture, int takesSemester){
         return em.createQuery("select sl from StudentLecture sl" +
                         " where sl.student =:student" +
-                        " and sl.takesGrade =: takesGrade" +
+                        " and sl.lecture.yearOfLecture =: yearOfLecture" +
                         " and sl.takesSemester =:takesSemester", StudentLecture.class)
                 .setParameter("student", student)
-                .setParameter("takesGrade", takesGrade)
+                .setParameter("yearOfLecture", yearOfLecture)
                 .setParameter("takesSemester", takesSemester)
                 .getResultList();
     }
