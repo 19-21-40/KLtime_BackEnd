@@ -1,13 +1,13 @@
 package com.example.demo.domain;
 
 import com.example.demo.dto.StudentDTO;
-import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 //import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,6 +30,7 @@ public class Student {
     private String password;
     private String email;
 
+    //메인 시간표에 담긴 강의들이 저장됨
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<StudentLecture> myLectures = new ArrayList<>();
 
@@ -66,7 +67,6 @@ public class Student {
     public Student() {
     }
 
-
     public static Optional<Student> from(StudentDTO studentDTO){
         Pattern pattern = Pattern.compile("^(.+)@(.+)$");
         Matcher matcher = pattern.matcher(studentDTO.getEmail());
@@ -84,11 +84,21 @@ public class Student {
         return Optional.of(student);
     }
 
-    /** 양방향 편의 메서드 */
+    //==연관관계 메서드==//
     public void addLectureToStudent(Lecture lecture, String gpa, int takesGrade, int takesSemester) {
         StudentLecture st = new StudentLecture(this,lecture, gpa, takesGrade, takesSemester);
-
         this.getMyLectures().add(st);
+    }
+
+    //수연 추가
+    public void addStudentLecture(StudentLecture studentLecture){
+        myLectures.add(studentLecture);
+        studentLecture.setStudent(this);
+    }
+
+    //(gpa 인자로 안받는 경우)
+    public void addLectureToStudent(Lecture lecture,int takesGrade, int takesSemester){
+        addLectureToStudent(lecture,null,takesGrade,takesSemester);
     }
 
 
@@ -116,8 +126,9 @@ public class Student {
     /**
      * 시간표 삭제
      */
-    public void delete(TimeTable timeTable){
-        timetables.remove(timeTable);
-    }
+//    public void deleteTimeTable(TimeTable timeTable){
+//        timetables.remove(timeTable);
+//    }
+
 
 }

@@ -1,9 +1,6 @@
 package com.example.demo.Repository;
 
-import com.example.demo.domain.Department;
-import com.example.demo.domain.Lecture;
-import com.example.demo.domain.Student;
-import com.example.demo.domain.StudentLecture;
+import com.example.demo.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -98,4 +95,5 @@ public class StudentRepository {
                 .getSingleResult();
 
     }
+
 }

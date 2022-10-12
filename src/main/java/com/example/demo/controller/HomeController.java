@@ -133,7 +133,6 @@ public class HomeController {
 
         return new LectureResult(lectureListMapDto);
     }
-
     @GetMapping("/api/basicScienceLecturelist")
     public LectureResult basicScienceLectureList() {
         Long studentId = 3L;

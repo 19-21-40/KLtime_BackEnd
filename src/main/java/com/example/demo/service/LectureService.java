@@ -1,10 +1,7 @@
 package com.example.demo.Service;
 
 import com.example.demo.Repository.*;
-import com.example.demo.domain.Lecture;
-import com.example.demo.domain.Student;
-import com.example.demo.domain.TimeTable;
-import com.example.demo.domain.TimeTableLecture;
+import com.example.demo.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,12 +12,9 @@ import java.util.List;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class LectureService {
+    //studentlectures 는 과거/현재 상관없이 메인시간표에 담긴 강의들
 
     private final LectureRepository lectureRepository;
-    private final StudentRepository studentRepository;
-    private final TimeTableRepository timeTableRepository;
-    private final TimeTableLectureRepository timeTableLectureRepository;
-    private final TimeSlotRepository timeSlotRepository;
 
     /**
      * 강의 검색
@@ -30,49 +24,38 @@ public class LectureService {
         return lectureRepository.findAll(lectureSearch);
     }
 
+
     /**
-     * 시간표에서 강의 한개 추가(커스텀 포함)
+     * 커스텀 강의 추가(누구의 커스텀인지는 어떻게 알지..? 변수 추가해야하나)
      */
     @Transactional
-    public void addLecture(Long studentId, Long timetableId, Long lectureId) {
+    public Long addCustom(String name,
+                          String professor,
+                          String section,
+                          String sectionDetail,
+                          int credit,
+                          int level,
+                          String departmentName,
+                          int yearOfLecture,
+                          int semester){
         //엔티티 조회
-        Student student = studentRepository.findById(studentId);
-        TimeTable timeTable = timeTableRepository.findOne(timetableId);
-        Lecture lecture = lectureRepository.findOne(lectureId);
-        TimeTableLecture timeTableLecture = TimeTableLecture.createTimeTableLecture(lecture);
+        Lecture customLecture = Lecture.createLecture(name,professor,section,sectionDetail,credit,level,departmentName,yearOfLecture,semester);
 
-        //시간표강의 생성(강의 추가)
-        timeTable.addTimeTableLecture(timeTableLecture);
+        //커스텀 강의 추가
+        Long customLectureId=lectureRepository.save(customLecture);
+
+        return customLectureId;
     }
-
-    /**
-     * 시간표에서 강의 삭제(커스텀 포함)
-     */
-    //timeTableLectureRepository 에서 delete 쿼리를 날려주면 굳이 timetableId 인자를 쓸 필요가 없어짐.. 레포지토리에 추가해야함
-    @Transactional
-    public void deleteLecture(Long timetableId, TimeTableLecture timetableLecture) {
-        //엔티티 조회
-        TimeTable timeTable = timeTableRepository.findOne(timetableId);
-
-        //시간표에서 강의 삭제
-        timeTableLectureRepository.delete(timetableLecture);
-    }
-
-    /**
-     * 커스텀 강의 추가
-     */
-//    @Transactional
-//    public void addCustom(Long timetableId){
-//        //엔티티 조회
-//        TimeTable timeTable = timeTableRepository.findOne(timetableId);
-//
-//
-//    }
 
     /**
      * 커스텀 강의 삭제
      */
-//    @Transactional
+    @Transactional
+    public void deleteCustom(Lecture lecture){
+        if(lecture.isCustom()==true){
+            lectureRepository.delete(lecture);
+        }
+    }
 
     /**
      * 해당 시간표와 요일, 시간이 겹치는 강의들 조회
