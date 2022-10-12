@@ -35,12 +35,7 @@ public class HomeController {
 
         Student student = studentRepository.findByIdWithDepartment(3L);
 
-        GradCondition gradcondition;
-        if (student.getMultiDept() == null) {
-           gradcondition = gradConditionRepository.findByDeptAndAdmissionYearWithNoMultiDept(student.getDepartment(), student.getAdmissionYear());
-        } else {
-           gradcondition = gradConditionRepository.findByDeptAndAdmissionYearWithMultiDept(student.getDepartment(), student.getAdmissionYear());
-        }
+        GradCondition gradcondition = gradConditionRepository.findByDeptAndAdmissionYear(student.getDepartment(), student.getAdmissionYear());
 
         recommendLectureService.checkAndSaveCredit(3L);
 
@@ -58,24 +53,33 @@ public class HomeController {
     @GetMapping("/api/mainLecturelist")
     public LectureResult mainLectureList() {
         Long studentId = 3L;
-        List<Lecture> lectures = recommendLectureService.recommendMainLectureWithNoDup(studentId);
-        List<LectureDto> lecturelist = lectures.stream()
-                .map(lecture->new LectureDto(lecture))
-                .collect(toList());
 
-        return new LectureResult(lecturelist);
+        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendMainLectureWithNoDup(studentId);
+
+        Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
+        for (String s : lectureListMap.keySet()) {
+            List<LectureDto> lecturelistDto = lectureListMap.get(s).stream()
+                    .map(lecture -> new LectureDto(lecture))
+                    .collect(toList());
+            lectureListMapDto.put(s, lecturelistDto);
+        }
+
+        return new LectureResult(lectureListMapDto);
     }
 
 
     @GetMapping("/api/essBalLecturelist")
     public LectureResult essBalLectureList() {
         Long studentId = 3L;
+
         Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendEssBalLecturesWithNoDup(studentId);
+
         Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
-        for (String sectionDetail : lectureListMap.keySet()) {
-            List<LectureDto> dtoResult = lectureListMap.get(sectionDetail).stream().map(lecture -> new LectureDto(lecture))
+        for (String section : lectureListMap.keySet()) {
+            List<LectureDto> lecturelistDto = lectureListMap.get(section).stream()
+                    .map(lecture -> new LectureDto(lecture))
                     .collect(toList());
-            lectureListMapDto.put(sectionDetail, dtoResult);
+            lectureListMapDto.put(section, lecturelistDto);
         }
 
         return new LectureResult(lectureListMapDto);
@@ -84,12 +88,15 @@ public class HomeController {
     @GetMapping("/api/essLecturelist")
     public LectureResult essLectureList() {
         Long studentId = 3L;
+
         Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendOnlyEssLecturesWithNoDup(studentId);
+
         Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
-        for (String sectionDetail : lectureListMap.keySet()) {
-            List<LectureDto> dtoResult = lectureListMap.get(sectionDetail).stream().map(lecture -> new LectureDto(lecture))
+        for (String section : lectureListMap.keySet()) {
+            List<LectureDto> lecturelistDto = lectureListMap.get(section).stream()
+                    .map(lecture -> new LectureDto(lecture))
                     .collect(toList());
-            lectureListMapDto.put(sectionDetail, dtoResult);
+            lectureListMapDto.put(section, lecturelistDto);
         }
 
         return new LectureResult(lectureListMapDto);
@@ -100,10 +107,11 @@ public class HomeController {
         Long studentId = 3L;
         Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendOnlyBalLecturesWithNoDup(studentId);
         Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
-        for (String sectionDetail : lectureListMap.keySet()) {
-            List<LectureDto> dtoResult = lectureListMap.get(sectionDetail).stream().map(lecture -> new LectureDto(lecture))
+        for (String section : lectureListMap.keySet()) {
+            List<LectureDto> lecturelistDto = lectureListMap.get(section).stream()
+                    .map(lecture -> new LectureDto(lecture))
                     .collect(toList());
-            lectureListMapDto.put(sectionDetail, dtoResult);
+            lectureListMapDto.put(section, lecturelistDto);
         }
 
         return new LectureResult(lectureListMapDto);
@@ -112,33 +120,51 @@ public class HomeController {
     @GetMapping("/api/basicLecturelist")
     public LectureResult basicLectureList() {
         Long studentId = 3L;
-        List<Lecture> lectures = recommendLectureService.recommendBasicLectureWithNoDup(studentId);
-        List<LectureDto> lecturelist = lectures.stream()
-                .map(lecture->new LectureDto(lecture))
-                .collect(toList());
 
-        return new LectureResult(lecturelist);
+        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendBasicLectureWithNoDup(studentId);
+
+        Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
+        for (String s : lectureListMap.keySet()) {
+            List<LectureDto> lecturelistDto = lectureListMap.get(s).stream()
+                    .map(lecture -> new LectureDto(lecture))
+                    .collect(toList());
+            lectureListMapDto.put(s, lecturelistDto);
+        }
+
+        return new LectureResult(lectureListMapDto);
     }
     @GetMapping("/api/basicScienceLecturelist")
     public LectureResult basicScienceLectureList() {
         Long studentId = 3L;
-        List<Lecture> lectures = recommendLectureService.recommendBasicScienceLectureWithNoDup(studentId);
-        List<LectureDto> lecturelist = lectures.stream()
-                .map(lecture->new LectureDto(lecture))
-                .collect(toList());
 
-        return new LectureResult(lecturelist);
+        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendBasicScienceLectureWithNoDup(studentId);
+
+        Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
+        for (String s : lectureListMap.keySet()) {
+            List<LectureDto> lecturelistDto = lectureListMap.get(s).stream()
+                    .map(lecture -> new LectureDto(lecture))
+                    .collect(toList());
+            lectureListMapDto.put(s, lecturelistDto);
+        }
+
+        return new LectureResult(lectureListMapDto);
     }
 
     @GetMapping("/api/mathLecturelist")
     public LectureResult mathLectureList() {
         Long studentId = 3L;
-        List<Lecture> lectures = recommendLectureService.recommendMathLectureWithNoDup(studentId);
-        List<LectureDto> lecturelist = lectures.stream()
-                .map(lecture->new LectureDto(lecture))
-                .collect(toList());
 
-        return new LectureResult(lecturelist);
+        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendMathLectureWithNoDup(studentId);
+
+        Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
+        for (String s : lectureListMap.keySet()) {
+            List<LectureDto> lecturelistDto = lectureListMap.get(s).stream()
+                    .map(lecture -> new LectureDto(lecture))
+                    .collect(toList());
+            lectureListMapDto.put(s, lecturelistDto);
+        }
+
+        return new LectureResult(lectureListMapDto);
     }
 
     @Data
@@ -195,6 +221,8 @@ public class HomeController {
         }
     }
 
+
+
     @Data
     @AllArgsConstructor
     static class GradConditionDto {
@@ -209,7 +237,7 @@ public class HomeController {
         public GradConditionDto(GradCondition gradCondition) {
             admissionYear=gradCondition.getAdmissionYear();
             gradCredit=gradCondition.getGradCredit();
-            mainCredit=gradCondition.getMainCredit();
+            mainCredit=gradCondition.getMainCreditIfMulti();
             essBalCredit=gradCondition.getEssBalCredit();
             basicCredit=gradCondition.getBasicCredit();
         }
