@@ -31,13 +31,13 @@ public class HomeController {
     @GetMapping("/api/gradconditionAndCredit")
     public CreditAndGradResult Credit() {
 
-        Long studentId = 3L;
+        String studentNumber = "2019203029";
 
-        Student student = studentRepository.findByIdWithDepartment(3L);
+        Student student = studentRepository.findByStudentNumWithLecture(studentNumber);
 
         GradCondition gradcondition = gradConditionRepository.findByDeptAndAdmissionYear(student.getDepartment(), student.getAdmissionYear());
 
-        recommendLectureService.checkAndSaveCredit(3L);
+        recommendLectureService.checkAndSaveCredit(studentNumber);
 
         Credit credit = student.getCredit();
 
@@ -52,9 +52,9 @@ public class HomeController {
      */
     @GetMapping("/api/mainLecturelist")
     public LectureResult mainLectureList() {
-        Long studentId = 3L;
+        String studentNumber = "2019203029";
 
-        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendMainLectureWithNoDup(studentId);
+        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendMainLectureWithNoDup(studentNumber);
 
         Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
         for (String s : lectureListMap.keySet()) {
@@ -70,9 +70,9 @@ public class HomeController {
 
     @GetMapping("/api/essBalLecturelist")
     public LectureResult essBalLectureList() {
-        Long studentId = 3L;
+        String studentNumber = "2019203029";
 
-        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendEssBalLecturesWithNoDup(studentId);
+        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendEssBalLecturesWithNoDup(studentNumber);
 
         Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
         for (String section : lectureListMap.keySet()) {
@@ -87,9 +87,9 @@ public class HomeController {
 
     @GetMapping("/api/essLecturelist")
     public LectureResult essLectureList() {
-        Long studentId = 3L;
+        String studentNumber = "2019203029";
 
-        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendOnlyEssLecturesWithNoDup(studentId);
+        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendOnlyEssLecturesWithNoDup(studentNumber);
 
         Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
         for (String section : lectureListMap.keySet()) {
@@ -104,8 +104,8 @@ public class HomeController {
 
     @GetMapping("/api/balLecturelist")
     public LectureResult balLectureList() {
-        Long studentId = 3L;
-        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendOnlyBalLecturesWithNoDup(studentId);
+        String studentNumber = "2019203029";
+        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendOnlyBalLecturesWithNoDup(studentNumber);
         Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
         for (String section : lectureListMap.keySet()) {
             List<LectureDto> lecturelistDto = lectureListMap.get(section).stream()
@@ -119,9 +119,9 @@ public class HomeController {
 
     @GetMapping("/api/basicLecturelist")
     public LectureResult basicLectureList() {
-        Long studentId = 3L;
+        String studentNumber = "2019203029";
 
-        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendBasicLectureWithNoDup(studentId);
+        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendBasicLectureWithNoDup(studentNumber);
 
         Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
         for (String s : lectureListMap.keySet()) {
@@ -135,9 +135,9 @@ public class HomeController {
     }
     @GetMapping("/api/basicScienceLecturelist")
     public LectureResult basicScienceLectureList() {
-        Long studentId = 3L;
+        String studentNumber = "2019203029";
 
-        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendBasicScienceLectureWithNoDup(studentId);
+        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendBasicScienceLectureWithNoDup(studentNumber);
 
         Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
         for (String s : lectureListMap.keySet()) {
@@ -152,9 +152,9 @@ public class HomeController {
 
     @GetMapping("/api/mathLecturelist")
     public LectureResult mathLectureList() {
-        Long studentId = 3L;
+        String studentNumber = "2019203029";
 
-        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendMathLectureWithNoDup(studentId);
+        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendMathLectureWithNoDup(studentNumber);
 
         Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
         for (String s : lectureListMap.keySet()) {

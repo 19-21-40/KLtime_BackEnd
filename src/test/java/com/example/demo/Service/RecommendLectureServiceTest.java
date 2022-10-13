@@ -35,7 +35,7 @@ public class RecommendLectureServiceTest {
         Student student = studentRepository.findById(3L);
 
         //when
-        recommendLectureService.recommendMainLectureWithNoDup(student.getId());
+        recommendLectureService.recommendMainLectureWithNoDup(student.getNumber());
 
         //then
     }
@@ -46,7 +46,7 @@ public class RecommendLectureServiceTest {
         Student student = studentRepository.findById(3L);
 
         //when
-        recommendLectureService.recommendEssBalLecturesWithNoDup(student.getId());
+        recommendLectureService.recommendEssBalLecturesWithNoDup(student.getNumber());
 
         //then
     }
@@ -57,7 +57,7 @@ public class RecommendLectureServiceTest {
         Student student = studentRepository.findById(3L);
 
         //when
-        Map<String, List<Lecture>> result = recommendLectureService.recommendOnlyBalLecturesWithNoDup(student.getId());
+        Map<String, List<Lecture>> result = recommendLectureService.recommendOnlyBalLecturesWithNoDup(student.getNumber());
 
         //then
         System.out.println(result);
@@ -69,7 +69,7 @@ public class RecommendLectureServiceTest {
         Student student = studentRepository.findById(3L);
 
         //when
-        Map<String, List<Lecture>> result = recommendLectureService.recommendOnlyEssLecturesWithNoDup(student.getId());
+        Map<String, List<Lecture>> result = recommendLectureService.recommendOnlyEssLecturesWithNoDup(student.getNumber());
 
         //then
         System.out.println(result);
@@ -82,7 +82,7 @@ public class RecommendLectureServiceTest {
         Set<String> req_lec = new HashSet<>();
 
         //when
-        recommendLectureService.recommendBasicLectureWithNoDup(student.getId());
+        recommendLectureService.recommendBasicLectureWithNoDup(student.getNumber());
 
         //then
 //        req_lec = recommendLectureService.computeRequiredLecture(student); // 교필, 전필, 전선만 다룸
@@ -97,7 +97,7 @@ public class RecommendLectureServiceTest {
         Student student = studentRepository.findById(3L);
 
         //when
-        recommendLectureService.checkAndSaveCredit(student.getId());
+        recommendLectureService.checkAndSaveCredit(student.getNumber());
 
         //then
 //        req_lec = recommendLectureService.computeRequiredLecture(student); // 교필, 전필, 전선만 다룸
