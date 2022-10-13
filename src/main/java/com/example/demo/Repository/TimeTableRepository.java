@@ -66,7 +66,7 @@ public class TimeTableRepository {
      * 학생, 년도, 학기 별 시간표 조회
      */
     //페치조인으로 수정해야 함(쿼리 한번만 나가도록)
-    public List<TimeTable> findByStudentAndYearAndSemester(Student student, int yearOfTimetable, int semester) {
+    public List<TimeTable> findByStudentAndYearAndSemester(Student student, int yearOfTimetable, String semester) {
         return em.createQuery("select t from TimeTable t where t.student =:student and t.yearOfTimetable =: yearOfTimetable and t.semester=:semester", TimeTable.class)
                 .setParameter("student", student)
                 .setParameter("yearOfTimetable", yearOfTimetable)
@@ -78,7 +78,7 @@ public class TimeTableRepository {
      * 학생, 년도, 학기, 이름 별 시간표 조회
      */
     //페치조인으로 수정해야 함(쿼리 한번만 나가도록)
-    public TimeTable findByStudentAndYearAndSemesterAndName(Student student, int yearOfTimetable, int semester, String tableName) {
+    public TimeTable findByStudentAndYearAndSemesterAndName(Student student, int yearOfTimetable, String semester, String tableName) {
         return em.createQuery("select t from TimeTable t where t.student =:student and t.yearOfTimetable =: yearOfTimetable and t.semester=:semester and t.tableName=:tableName", TimeTable.class)
                 .setParameter("student", student)
                 .setParameter("yearOfTimetable", yearOfTimetable)
@@ -91,7 +91,7 @@ public class TimeTableRepository {
     /**
      * 학생의 년도, 학기 별 기본 시간표 조회
      */
-    public TimeTable findByStudentAndYearAndSemesterAndPrimary(Student student, int yearOfTimetable, int semester, boolean isPrimary) {
+    public TimeTable findByStudentAndYearAndSemesterAndPrimary(Student student, int yearOfTimetable, String semester, boolean isPrimary) {
         return em.createQuery("select t from TimeTable t where t.student =:student and t.yearOfTimetable =: yearOfTimetable and t.semester=:semester and t.isPrimary=:isPrimary", TimeTable.class)
                 .setParameter("student", student)
                 .setParameter("yearOfTimetable", yearOfTimetable)
@@ -101,7 +101,7 @@ public class TimeTableRepository {
     }
 
     //기본 시간표 중복 때문에 추가(수연)
-    public List<TimeTable> findDupliPrimary(Student student, int yearOfTimetable, int semester, boolean isPrimary){
+    public List<TimeTable> findDupliPrimary(Student student, int yearOfTimetable, String semester, boolean isPrimary){
         return em.createQuery("select t from TimeTable t where t.student =:student and t.yearOfTimetable =: yearOfTimetable and t.semester=:semester and t.isPrimary=:isPrimary", TimeTable.class)
                 .setParameter("student", student)
                 .setParameter("yearOfTimetable", yearOfTimetable)
@@ -111,7 +111,7 @@ public class TimeTableRepository {
     }
 
     //시간표 이름 중복 때문에 추가(수연)
-    public List<TimeTable> findDupliTableName(Student student, int yearOfTimetable, int semester, boolean isPrimary,String tableName){
+    public List<TimeTable> findDupliTableName(Student student, int yearOfTimetable, String semester, boolean isPrimary,String tableName){
         return em.createQuery("select t from TimeTable t where t.student =:student and t.yearOfTimetable =: yearOfTimetable and t.semester=:semester and t.tableName=:tableName", TimeTable.class)
                 .setParameter("student", student)
                 .setParameter("yearOfTimetable", yearOfTimetable)

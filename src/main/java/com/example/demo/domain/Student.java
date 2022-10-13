@@ -85,7 +85,7 @@ public class Student {
     }
 
     //==연관관계 메서드==//
-    public void addLectureToStudent(Lecture lecture, String gpa, int takesGrade, int takesSemester) {
+    public void addLectureToStudent(Lecture lecture, String gpa, int takesGrade, String takesSemester) {
         StudentLecture st = new StudentLecture(this,lecture, gpa, takesGrade, takesSemester);
         this.getMyLectures().add(st);
     }
@@ -97,7 +97,7 @@ public class Student {
     }
 
     //(gpa 인자로 안받는 경우)
-    public void addLectureToStudent(Lecture lecture,int takesGrade, int takesSemester){
+    public void addLectureToStudent(Lecture lecture,int takesGrade, String takesSemester){
         addLectureToStudent(lecture,null,takesGrade,takesSemester);
     }
 

@@ -33,7 +33,7 @@ public class TimeTableController {
      * @return
      */
     @GetMapping("/timetablesAndLectues")
-    public tablesAndLectureResult timeTableList(@PathVariable String number, int year, int semester){
+    public tablesAndLectureResult timeTableList(@PathVariable String number, int year, String semester){
         Student student = studentRepository.findByNumber(number);
         List<TimeTable> timeTables = timeTableRepository.findByStudentAndYearAndSemester(student,year,semester);
         List <TimeTableDto> timeTableList=timeTables.stream()
@@ -52,7 +52,7 @@ public class TimeTableController {
      * 시간표 추가 시
      */
     @PostMapping("/timetables/{year}_{semester}")
-    public String addTimeTable(String number,@PathVariable("year") int year, @PathVariable("semester") int semester){
+    public String addTimeTable(String number,@PathVariable("year") int year, @PathVariable("semester") String semester){
         timeTableService.addTimeTable(number,year,semester);
         return "";
     }

@@ -27,7 +27,7 @@ public class TimeTable {
     private Student student;
     private String tableName;
     private int grade;
-    private int semester;
+    private String semester;
     private boolean isPrimary;
     private int yearOfTimetable; //추가
 
@@ -42,7 +42,7 @@ public class TimeTable {
     }
 
     //==생성 메서드==//
-    public static TimeTable createTimetable( Student student, String tableName, int yearOfTimetable, int semester, boolean isPrimary, TimeTableLecture... lectures) {
+    public static TimeTable createTimetable( Student student, String tableName, int yearOfTimetable, String semester, boolean isPrimary, TimeTableLecture... lectures) {
         TimeTable timeTable = new TimeTable();
         timeTable.setStudent(student);
         timeTable.setTableName(tableName);

@@ -3,6 +3,8 @@ package com.example.demo;
 
 import com.example.demo.Repository.DepartmentRepository;
 import com.example.demo.Repository.GradConditionRepository;
+import com.example.demo.Repository.LectureRepository;
+import com.example.demo.Repository.StudentRepository;
 import com.example.demo.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -24,7 +26,7 @@ public class InitDb {
     @PostConstruct
     public void init(){
 
-//        initService.dbInit1();
+        initService.dbInit1();
 
 
     }
@@ -37,10 +39,26 @@ public class InitDb {
         private final EntityManager em;
         private final DepartmentRepository departmentRepository;
         private final GradConditionRepository gradConditionRepository;
+        private final StudentRepository studentRepository;
+        private final LectureRepository lectureRepository;
+
 
         public void dbInit1(){
+            Student student = studentRepository.findByNumber("2019203029");
+            Lecture lecture1 = lectureRepository.findOne(247L);
+            Lecture lecture2 = lectureRepository.findOne(272L);
+            Lecture lecture3 = lectureRepository.findOne(293L);
+            Lecture lecture4 = lectureRepository.findOne(277L);
 
+            StudentLecture st1 = StudentLecture.createStudentLecture(student, lecture1, "C0");
+            StudentLecture st2 = StudentLecture.createStudentLecture(student, lecture2, "B+");
+            StudentLecture st3 = StudentLecture.createStudentLecture(student, lecture3, "A0");
+            StudentLecture st4 = StudentLecture.createStudentLecture(student, lecture4, "A+");
 
+            em.persist(st1);
+            em.persist(st2);
+            em.persist(st3);
+            em.persist(st4);
 
 
 //            List<Department> departments = departmentRepository.findByCollege("전자정보공과대학");
