@@ -35,11 +35,14 @@ public class RecommendLectureService {
         Student student = studentRepository.findByStudentNumWithLecture(studentNumber);
 
         // 그에 맞는 졸업 학점 조건 불러오기
+
         GradCondition gradCondition = gradConditionRepository.findByDeptAndAdmissionYear(student.getDepartment(), student.getAdmissionYear());
+        System.out.println(gradCondition.getDepartment().getId());
+
 
         GradCondition gradConditionOfMulti;
 
-        if(student.getMultiMajor()==null){
+        if(student.getMultiMajor()!=null){
             gradConditionOfMulti = gradConditionRepository.findByDeptAndAdmissionYear(student.getMultiDept(), student.getAdmissionYear());
         }
 
@@ -147,7 +150,7 @@ public class RecommendLectureService {
             }
 
             // 복수전공의 경우 복수전공 학과 전공학점을 계산함
-            if(student.getMultiMajor()==null) {
+            if(student.getMultiMajor()!=null) {
                 if ((lecture.getDepartmentName() == student.getMultiDept().getName()) && (section == "전필" || section == "전선")) {
                     temporalCredit.addMultiCredit(lecture.getCredit());
                 }
