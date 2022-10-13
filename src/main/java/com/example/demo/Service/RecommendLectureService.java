@@ -30,9 +30,9 @@ public class RecommendLectureService {
      * @Param studentId
      * @Return void
      * */
-    public void checkAndSaveCredit(Long studentId) {
+    public void checkAndSaveCredit(String studentNumber) {
 
-        Student student = studentRepository.findByIdWithLecture(studentId);
+        Student student = studentRepository.findByStudentNumWithLecture(studentNumber);
 
         // 그에 맞는 졸업 학점 조건 불러오기
         GradCondition gradCondition = gradConditionRepository.findByDeptAndAdmissionYear(student.getDepartment(), student.getAdmissionYear());
@@ -184,10 +184,10 @@ public class RecommendLectureService {
      * @Param studentId
      * @Return List<Lecture>
      * */
-    public Map<String, List<Lecture>> recommendMainLectureWithNoDup(Long studentId) {
+    public Map<String, List<Lecture>> recommendMainLectureWithNoDup(String studentNumber) {
 
         // 학생의 정보들을 불러옴
-        Student student = studentRepository.findByIdWithLecture(studentId);
+        Student student = studentRepository.findByStudnetNumWithDepartment(studentNumber);
 
         // result에 전필과 전선 과목들을 불러옴
         List<Lecture> result = lectureRepository.findMainLecturesByTwoSection2022(student.getDepartment());
@@ -230,10 +230,10 @@ public class RecommendLectureService {
      * @Param StudentId
      * @Return List<Lecture>
      * */
-    public Map<String, List<Lecture>> recommendBasicLectureWithNoDup(Long studentId) {
+    public Map<String, List<Lecture>> recommendBasicLectureWithNoDup(String studentNumber) {
 
         // 학생의 정보들을 불러옴
-        Student student = studentRepository.findByIdWithLecture(studentId);
+        Student student = studentRepository.findByStudentNumWithLecture(studentNumber);
 
         // result에 기초교양 과목들을 불러옴
         List<Lecture> result = lectureRepository.findByTwoSection2022("기필", "기선");
@@ -271,9 +271,9 @@ public class RecommendLectureService {
 
     }
 
-    public Map<String, List<Lecture>> recommendBasicScienceLectureWithNoDup(Long studentId) {
+    public Map<String, List<Lecture>> recommendBasicScienceLectureWithNoDup(String studentNumber) {
         // 학생의 정보들을 불러옴
-        Student student = studentRepository.findByIdWithLecture(studentId);
+        Student student = studentRepository.findByStudentNumWithLecture(studentNumber);
 
         // result에 기초교양 과목들을 불러옴
         List<Lecture> result = lectureRepository.findBySectionDetail2022("기초과학");
@@ -311,9 +311,9 @@ public class RecommendLectureService {
 
     }
 
-    public Map<String, List<Lecture>> recommendMathLectureWithNoDup(Long studentId) {
+    public Map<String, List<Lecture>> recommendMathLectureWithNoDup(String studentNumber) {
         // 학생의 정보들을 불러옴
-        Student student = studentRepository.findByIdWithLecture(studentId);
+        Student student = studentRepository.findByStudentNumWithLecture(studentNumber);
 
         // result에 기초교양 과목들을 불러옴
         List<Lecture> result = lectureRepository.findBySectionDetail2022("수학");
@@ -355,10 +355,10 @@ public class RecommendLectureService {
      * @Param StudentId
      * @Return Map<String, List>
      * */
-    public Map<String, List<Lecture>> recommendOnlyBalLecturesWithNoDup(Long studentId) {
+    public Map<String, List<Lecture>> recommendOnlyBalLecturesWithNoDup(String studentNumber) {
 
         // 학생의 정보를 불러옴
-        Student student = studentRepository.findByIdWithLecture(studentId);
+        Student student = studentRepository.findByStudentNumWithLecture(studentNumber);
 
         Map<String, Integer> bal_Lec_Map = new HashMap<>();
 
@@ -563,10 +563,10 @@ public class RecommendLectureService {
      * @Param StudentId
      * @Return Map<String, List>
      * */
-    public Map<String, List<Lecture>> recommendOnlyEssLecturesWithNoDup(Long studentId) {
+    public Map<String, List<Lecture>> recommendOnlyEssLecturesWithNoDup(String studentNumber) {
 
         // 학생의 정보를 불러옴
-        Student student = studentRepository.findByIdWithLecture(studentId);
+        Student student = studentRepository.findByStudentNumWithLecture(studentNumber);
 
         /** section과 sectionDetail에 따라 학점을 각각 관리하는 코드 */
         // 필수에 대한 학생의 이수학점을 기록할 변수
@@ -754,10 +754,10 @@ public class RecommendLectureService {
      * @Param StudentId
      * @Return Map<String, List>
      * */
-    public Map<String, List<Lecture>> recommendEssBalLecturesWithNoDup(Long studentId) {
+    public Map<String, List<Lecture>> recommendEssBalLecturesWithNoDup(String studentNumber) {
 
         // 학생의 정보를 불러옴
-        Student student = studentRepository.findByIdWithLecture(studentId);
+        Student student = studentRepository.findByStudentNumWithLecture(studentNumber);
 
         /** section과 sectionDetail에 따라 학점을 각각 관리하는 코드 */
         // 필수에 대한 학생의 이수학점을 기록할 변수

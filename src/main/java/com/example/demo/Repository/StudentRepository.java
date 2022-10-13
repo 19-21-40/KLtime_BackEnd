@@ -55,15 +55,15 @@ public class StudentRepository {
 
     }
 
-    public Student findByIdWithLecture(Long id) {
-        return em.createQuery("select s from Student s join fetch s.myLectures sl join fetch sl.lecture l where s.id =:id", Student.class)
-                .setParameter("id", id)
+    public Student findByStudentNumWithLecture(String number) {
+        return em.createQuery("select s from Student s join fetch s.myLectures sl join fetch sl.lecture l where s.number =:number", Student.class)
+                .setParameter("number", number)
                 .getSingleResult();
     }
 
-    public Student findByIdWithDepartment(Long id) {
-        return em.createQuery("select s from Student s join fetch s.department where s.id =:id", Student.class)
-                .setParameter("id", id)
+    public Student findByStudnetNumWithDepartment(String number) {
+        return em.createQuery("select s from Student s join fetch s.department where s.number =:number", Student.class)
+                .setParameter("number", number)
                 .getSingleResult();
     }
 
