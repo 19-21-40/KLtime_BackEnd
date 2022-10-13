@@ -1,5 +1,6 @@
 package com.example.demo.domain;
 
+import com.example.demo.Repository.DepartmentRepository;
 import com.example.demo.dto.StudentDTO;
 import lombok.Data;
 import lombok.Getter;
@@ -68,15 +69,14 @@ public class Student {
     }
 
     public static Optional<Student> from(StudentDTO studentDTO){
-        Pattern pattern = Pattern.compile("^(.+)@(.+)$");
+        Pattern pattern = Pattern.compile("^[a-z0-9]+(.[a-z0-9_.]+)*@kw.ac.kr");
         Matcher matcher = pattern.matcher(studentDTO.getEmail());
-        if(studentDTO.getNumber().length()!=10
-                || !matcher.matches()
-        )
+        if(studentDTO.getNumber().length()!=10 || !matcher.matches())
             return Optional.empty();
         Student student=new Student();
         student.setNumber(studentDTO.getNumber());
         student.setName(studentDTO.getName());
+        student.setGrade(studentDTO.getGrade());
         student.setEmail(studentDTO.getEmail());
         student.setCredit(new Credit());
         student.setSemester(studentDTO.getSemester());

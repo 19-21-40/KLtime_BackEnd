@@ -36,7 +36,7 @@ public class StudentService {
     }
 
     public Student getByCredentials(final String number, final String password , final PasswordEncoder encoder){
-        final Student originalStudent = studentRepository.findByNumberAndPassword(number,password);
+        final Student originalStudent = studentRepository.findByNumber(number);
         if(originalStudent !=null && encoder.matches(password,originalStudent.getPassword())){
             return originalStudent;
         }

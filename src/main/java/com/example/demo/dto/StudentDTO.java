@@ -11,10 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class StudentDTO {
     private String token;
+    private int grade;
     private String number;
     private String name;
     private String password;
-    private String department;
+    private String departmentName;
     private String semester;
     private String email;
 }

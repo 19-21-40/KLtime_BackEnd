@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
@@ -38,10 +40,15 @@ public class DepartmentRepository {
 //    }
 
 
-    public Department findByName(String name){
-        return em.createQuery("select d from Department d where d.name = :name", Department.class)
-                .setParameter("name", name)
-                .getSingleResult();
+    public Optional<Department> findByName(String name){
+        try {
+            return Optional.of(em.createQuery("select d from Department d where d.name = :name", Department.class)
+                    .setParameter("name", name)
+                    .getSingleResult());
+        }
+        catch (Exception e){
+            return Optional.empty();
+        }
     }
 
 
