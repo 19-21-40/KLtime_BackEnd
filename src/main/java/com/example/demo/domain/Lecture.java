@@ -29,13 +29,17 @@ public class Lecture {
     private int level;
     private String departmentName;
     private int yearOfLecture;
-    private String semester;
+    private int semester; //수정(수연)
     private String notes;
+
+    //추가(수연)
+    private boolean isCustom;
 
 
     @OneToMany(mappedBy = "lecture")
     private List<LectureTimeSlot> times = new ArrayList<>();
 
+    //이게 과연 어디에 쓰이는가..?
     @OneToMany(mappedBy = "lecture")
     private List<TimeTableLecture> tableListWhichAdd = new ArrayList<>();
 
@@ -49,7 +53,7 @@ public class Lecture {
     }
 
     // 이성훈이 만듬 ( Timeslot, TimeTable은 생성자에서 배제했음 )
-    public Lecture(String lectureNumber, String name, String professor, String section, String sectionDetail, int credit, int level, String departmentName, int yearOfLecture, String semester) {
+    public Lecture(String lectureNumber, String name, String professor, String section, String sectionDetail, int credit, int level, String departmentName, int yearOfLecture, int semester) {
         this.lectureNumber = lectureNumber;
         this.name = name;
         this.professor = professor;
@@ -66,7 +70,7 @@ public class Lecture {
 //    @JoinColumn(name = "preReq_lecture_id")
 //    private Lecture preReq;
 
-    //==연관관계 메서드==
+    //==ㄹ연관관계 메서드==//
 
 
     /**
@@ -97,8 +101,9 @@ public class Lecture {
             int level,
             String departmentName,
             int yearOfLecture,
-            String semester,
-            String notes){
+            int semester,
+            String notes,
+            boolean isCustom){
 
         Lecture lecture=new Lecture();
 
@@ -113,8 +118,24 @@ public class Lecture {
         lecture.setYearOfLecture(yearOfLecture);
         lecture.setSemester(semester);
         lecture.setNotes(notes);
+        lecture.setCustom(isCustom);
 
         return lecture;
+    }
+
+    //추가(수연)
+    //==커스텀강의 생성 메서드==//
+    public static Lecture createLecture(
+            String name,
+            String professor,
+            String section,
+            String sectionDetail,
+            int credit,
+            int level,
+            String departmentName,
+            int yearOfLecture,
+            int semester){
+        return createLecture(null,name,professor,section,sectionDetail,credit,level,departmentName,yearOfLecture,semester,null,true);
     }
     
     @Override

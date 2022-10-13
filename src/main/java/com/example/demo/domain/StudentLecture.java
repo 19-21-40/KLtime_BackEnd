@@ -35,6 +35,21 @@ public class StudentLecture {
 
     }
 
+    //==연관관계 메서드==//
+
+
+    //==생성 메서드==//
+    public static StudentLecture createStudentLecture(Student student, Lecture lecture,String Gpa){
+        StudentLecture studentLecture =  new StudentLecture();
+        studentLecture.setStudent(student);
+        studentLecture.setLecture(lecture);
+        studentLecture.setGpa(Gpa);
+//        studentLecture.setTakesGrade(grade); //일단 grade 보류(파라미터에서도 삭제)
+        studentLecture.setTakesSemester(lecture.getSemester());
+        return studentLecture;
+    }
+
+
     public StudentLecture(Student student, Lecture lecture, String gpa, int takesGrade, int takesSemester) {
         this.student = student;
         this.lecture = lecture;

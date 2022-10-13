@@ -1,10 +1,8 @@
 package com.example.demo.Service;
 
-import com.example.demo.Repository.LectureRepository;
-import com.example.demo.Repository.LectureSearch;
-import com.example.demo.Repository.TimeTableLectureRepository;
-import com.example.demo.Repository.TimeTableRepository;
+import com.example.demo.Repository.*;
 import com.example.demo.domain.Lecture;
+import com.example.demo.domain.Student;
 import com.example.demo.domain.TimeTable;
 import com.example.demo.domain.TimeTableLecture;
 import org.junit.Test;
@@ -29,9 +27,7 @@ public class LectureServiceTest {
     @Autowired
     LectureRepository lectureRepository;
     @Autowired
-    TimeTableRepository timeTableRepository;
-    @Autowired
-    TimeTableLectureRepository timeTableLectureRepository;
+    StudentRepository studentRepository;
     @Autowired
     EntityManager em;
 
@@ -46,28 +42,5 @@ public class LectureServiceTest {
         assertEquals("강의 검색",9,lectures.size());
     }
 
-    @Test
-    public void 강의_추가() throws Exception {
-        //given
-        TimeTable timeTable1 =  timeTableRepository.findOne(33L);
-        Lecture lecture1 = lectureRepository.findOne(25L);
-        //when
-        lectureService.addLecture(5L,timeTable1.getId(),lecture1.getId());
-        //then
-        assertEquals("시간표에 강의 추가",3,timeTable1.getLectures().size());
-    }
-
-    @Test
-    public void 강의_삭제() throws Exception {
-        //given
-        TimeTable timeTable1 =  timeTableRepository.findOne(35L);
-        Lecture lecture1 = lectureRepository.findOne(26L);
-        TimeTableLecture timeTableLecture = timeTableLectureRepository.findOne(32L);
-        //when
-        lectureService.deleteLecture(timeTable1.getId(),timeTableLecture);
-        em.flush();
-        //then
-        assertEquals("시간표에 강의 삭제 ",0,timeTable1.getLectures().size());
-    }
 
 }

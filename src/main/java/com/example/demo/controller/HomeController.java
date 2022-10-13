@@ -133,7 +133,6 @@ public class HomeController {
 
         return new LectureResult(lectureListMapDto);
     }
-
     @GetMapping("/api/basicScienceLecturelist")
     public LectureResult basicScienceLectureList() {
         String studentNumber = "2019203029";
