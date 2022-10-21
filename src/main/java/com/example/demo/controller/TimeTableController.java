@@ -52,9 +52,8 @@ public class TimeTableController {
      * 시간표 추가 시
      */
     @PostMapping("/timetables/{year}_{semester}")
-    public String addTimeTable(String number,@PathVariable("year") int year, @PathVariable("semester") int semester){
+    public void addTimeTable(String number,@PathVariable("year") int year, @PathVariable("semester") int semester){
         timeTableService.addTimeTable(number,year,semester);
-        return "redirect:/time"
     }
 
 

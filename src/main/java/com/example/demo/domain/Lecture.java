@@ -14,6 +14,8 @@ import java.util.List;
 @Setter
 public class Lecture {
 
+    //semester int->string 변경
+
     @Id
     @GeneratedValue
     @Column(name = "lecture_id")

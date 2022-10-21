@@ -65,6 +65,9 @@ public class LectureService {
 //        TimeTable timeTable = timeTableRepository.findOne(timetableId);
 //        Lecture lecture = lectureRepository.findOne(lectureId);
 //    }
+    /**
+     * 커스텀 강의 정보 변경(수정)=>편집버튼 누르면 수정됨
+     */
 
 
 
