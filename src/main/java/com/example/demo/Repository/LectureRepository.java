@@ -192,7 +192,7 @@ public class LectureRepository {
         em.remove(lecture);
         }
 
-     * 학생의 학과와 단과대학으로 2022년 전필 전선 과목 찾기
+     /** 학생의 학과와 단과대학으로 2022년 전필 전선 과목 찾기
      * @param studentDept
      * @return
      */

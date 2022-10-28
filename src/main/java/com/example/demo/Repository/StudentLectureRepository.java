@@ -18,7 +18,7 @@ public class StudentLectureRepository {
         return em.find(StudentLecture.class, id);
     }
 
-    public List<StudentLecture> findByStudentAndYearAndSemester(Student student, int yearOfLecture, int takesSemester){
+    public List<StudentLecture> findByStudentAndYearAndSemester(Student student, int yearOfLecture, String takesSemester){
         return em.createQuery("select sl from StudentLecture sl" +
                         " where sl.student =:student" +
                         " and sl.lecture.yearOfLecture =: yearOfLecture" +

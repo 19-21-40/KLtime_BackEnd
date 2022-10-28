@@ -37,7 +37,7 @@ public class LectureService {
                           int level,
                           String departmentName,
                           int yearOfLecture,
-                          int semester){
+                          String semester){
         //엔티티 조회
         Lecture customLecture = Lecture.createLecture(name,professor,section,sectionDetail,credit,level,departmentName,yearOfLecture,semester);
 
