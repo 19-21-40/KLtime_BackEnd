@@ -132,6 +132,7 @@ public class LectureRepository {
                 .getSingleResult();
     }
 
+
 //
 //    /**
 //     * 교수명으로 강의 목록 찾기
@@ -289,4 +290,14 @@ public class LectureRepository {
     }
 
 
+    /**
+     * 학정번호로 강의 찾기
+     * @param lectureNumber
+     * @return lecture
+     */
+    public Lecture findByLectureNum(String lectureNumber) {
+        return em.createQuery("select l from Lecture l where l.lectureNumber=:lectureNumber",Lecture.class)
+                .setParameter("lectureNumber", lectureNumber)
+                .getSingleResult();
+    }
 }

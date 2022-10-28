@@ -1,6 +1,7 @@
 package com.example.demo.Service;
 
 import com.example.demo.Repository.*;
+import com.example.demo.controller.TimeTableController;
 import com.example.demo.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,20 +30,12 @@ public class LectureService {
      * 커스텀 강의 추가(누구의 커스텀인지는 어떻게 알지..? 변수 추가해야하나)
      */
     @Transactional
-    public Long addCustom(String name,
-                          String professor,
-                          String section,
-                          String sectionDetail,
-                          int credit,
-                          int level,
-                          String departmentName,
-                          int yearOfLecture,
-                          String semester){
+    public Long addCustom(Lecture lecture){
         //엔티티 조회
-        Lecture customLecture = Lecture.createLecture(name,professor,section,sectionDetail,credit,level,departmentName,yearOfLecture,semester);
+        //Lecture customLecture = Lecture.createLecture(name,professor,section,sectionDetail,credit,level,departmentName,yearOfLecture,semester);
 
         //커스텀 강의 추가
-        Long customLectureId=lectureRepository.save(customLecture);
+        Long customLectureId=lectureRepository.save(lecture);
 
         return customLectureId;
     }
@@ -65,6 +58,7 @@ public class LectureService {
 //        TimeTable timeTable = timeTableRepository.findOne(timetableId);
 //        Lecture lecture = lectureRepository.findOne(lectureId);
 //    }
+
     /**
      * 커스텀 강의 정보 변경(수정)=>편집버튼 누르면 수정됨
      */

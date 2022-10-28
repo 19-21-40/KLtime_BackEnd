@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -168,7 +169,7 @@ public class TimeTableController {
     ){
         try {
             if (studentDTO.getToken() != null) {
-                Student student = studentRepository.findByNumber(studentDTO.getNumber());
+                //Student student = studentRepository.findByNumber(studentDTO.getNumber());
                 LectureSearch lectureSearch = new LectureSearch();
                 lectureSearch.setYearOfLecture(year);
                 lectureSearch.setSemester(semester);
@@ -256,15 +257,118 @@ public class TimeTableController {
         }
     }
 
+    /**
+     * 해당 년도/학기/시간표 내 강의 추가 (커스텀 X) -> 쿼리 확인
+     * @param studentDTO
+     * @param year
+     * @param semester
+     * @param tableName
+     * @param lectureNum
+     * @return new ResponseEntity<>(HttpStatus.OK)
+     */
+    @PostMapping("/addLecture/{tableName}/{lectureNum}")
+    public ResponseEntity<?> addLecture(
+            @RequestBody StudentDTO studentDTO,
+            @PathVariable(value = "year") int year,
+            @PathVariable(value = "semester") String semester,
+            @PathVariable(value = "tableName") String tableName,
+            @PathVariable(value = "lectureNum") String lectureNum
+            ){
+        try {
+            if (studentDTO.getToken() != null) {
+                //Student student = studentRepository.findByNumber(studentDTO.getNumber());
+                Lecture lecture = lectureRepository.findByLectureNum(lectureNum);
+                timeTableService.addLecture(studentDTO.getNumber(),year,semester,tableName,lecture);
 
+                return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
+            }else{
+                throw new IllegalStateException("토큰이 존재하지 않습니다.");
+            }
+        }catch (Exception e){
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
 
-//    @Data
-//    @AllArgsConstructor
-//    static class tablesAndLectureResult<A,B>{
-//        private A tableListDto;
-//        private B MyLectureListDto;
+    /**
+     * 해당 년도/학기/시간표 내 커스텀 강의 추가 (커스텀 O ) -> 쿼리 확인
+     * @param studentAndCustomResult
+     * @param year
+     * @param semester
+     * @param tableName
+     * @return new ResponseEntity<>(HttpStatus.OK)
+     */
+    @PostMapping("/addCustomLecture/{tableName}")
+    public ResponseEntity<?> addCustomLecture(
+            @RequestBody StudentAndCustomResult<StudentDTO, LectureDto> studentAndCustomResult,
+            @PathVariable(value = "year") int year,
+            @PathVariable(value = "semester") String semester,
+            @PathVariable(value = "tableName") String tableName
+    ){
+        try {
+            if (studentAndCustomResult.studentDto.getToken() != null) {
+                //Student student = studentRepository.findByNumber(studentDTO.getNumber());
+                Lecture lecture = Lecture.from(studentAndCustomResult.customLectureDto).
+                        orElseThrow(()->{throw new IllegalStateException("지정된 형식과 일치하지 않습니다.");});
+                timeTableService.addCustomLecture(studentAndCustomResult.studentDto.getNumber(),year,semester,tableName,lecture);
+
+                return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
+            }else{
+                throw new IllegalStateException("토큰이 존재하지 않습니다.");
+            }
+        }catch (Exception e){
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
+
+    /**
+     * 해당 년도/학기/시간표 내 커스텀 강의 추가 (커스텀 O ) -> 쿼리 확인
+     * @param studentAndCustomResult
+     * @param year
+     * @param semester
+     * @param tableName
+     * @return new ResponseEntity<>(HttpStatus.OK)
+     */
+//    @PostMapping("/deleteLecture/{tableName}")
+//    public ResponseEntity<?> deleteLecture(
+//            @RequestBody StudentAndCustomResult<StudentDTO, LectureDto> studentAndCustomResult,
+//            @PathVariable(value = "year") int year,
+//            @PathVariable(value = "semester") String semester,
+//            @PathVariable(value = "tableName") String tableName
+//    ){
+//        try {
+//            if (studentAndCustomResult.studentDto.getToken() != null) {
+//                //Student student = studentRepository.findByNumber(studentDTO.getNumber());
+//                Lecture lecture = Lecture.from(studentAndCustomResult.customLectureDto).
+//                        orElseThrow(()->{throw new IllegalStateException("지정된 형식과 일치하지 않습니다.");});
+//                timeTableService.addCustomLecture(studentAndCustomResult.studentDto.getNumber(),year,semester,tableName,lecture);
 //
+//                return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
+//            }else{
+//                throw new IllegalStateException("토큰이 존재하지 않습니다.");
+//            }
+//        }catch (Exception e){
+//            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
+//                    .error(e.getMessage())
+//                    .build();
+//            return ResponseEntity.badRequest().body(responseDTO);
+//        }
 //    }
+
+
+    //======================================LectureDto, TimeTableDto====================================//
+
+    @Data
+    @AllArgsConstructor
+    static class StudentAndCustomResult<A,B>{
+        private A studentDto;
+        private B customLectureDto;
+    }
 
     @Data
     @AllArgsConstructor
@@ -277,8 +381,6 @@ public class TimeTableController {
     static class TableResult<T>{
         private T totaltableList;
     }
-
-    //======================================LectureDto, TimeTableDto====================================//
 
     @Data
     @AllArgsConstructor
@@ -298,7 +400,7 @@ public class TimeTableController {
 
     @Data
     @AllArgsConstructor
-    static class LectureDto {
+    public static class LectureDto {
         private String name;
         private String professor;
         private String section;
@@ -307,6 +409,10 @@ public class TimeTableController {
         private int level;
         private String departmentName;
         private String notes;
+        private int yearOfLecture;
+        private String semester;
+        private boolean isCustom;
+        private List<LectureTimeSlot> times = new ArrayList<>();
 
         public LectureDto(Lecture lecture) {
             name=lecture.getName();
@@ -317,6 +423,11 @@ public class TimeTableController {
             level=lecture.getLevel();
             departmentName=lecture.getDepartmentName();
             notes=lecture.getNotes();
+            yearOfLecture=lecture.getYearOfLecture();
+            semester=lecture.getSemester();
+            times=lecture.getTimes();//??
+
+
         }
     }
 }

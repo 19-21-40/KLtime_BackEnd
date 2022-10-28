@@ -1,5 +1,7 @@
 package com.example.demo.domain;
 
+import com.example.demo.controller.TimeTableController;
+import com.example.demo.dto.StudentDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +10,11 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static java.lang.Integer.parseInt;
 
 @Entity
 @Getter
@@ -105,11 +112,26 @@ public class Lecture {
         }
     }
 
+    //LectureDto->Lecture 바꾸는 함수
+    public static Optional<Lecture> from(TimeTableController.LectureDto lectureDto){
+        Lecture lecture = createLecture(lectureDto.getName(), 
+                lectureDto.getProfessor(),
+                lectureDto.getSection(),
+                lectureDto.getSectionDetail(),
+                lectureDto.getCredit(),
+                lectureDto.getLevel(),
+                lectureDto.getDepartmentName(),
+                lectureDto.getYearOfLecture(),
+                lectureDto.getSemester());
+        return Optional.of(lecture);
+    }
+    
     public void setTimes(List<LectureTimeSlot> ltsList){
         this.times=ltsList;
         ltsList.forEach(lts->lts.setLecture(this));
     }
 
+    
     //==생성 메서드==//
     public static Lecture createLecture(
             String lectureNumber,
@@ -155,7 +177,17 @@ public class Lecture {
             String departmentName,
             int yearOfLecture,
             String semester){
-        return createLecture(null,name,professor,section,sectionDetail,credit,level,departmentName,yearOfLecture,semester,null,true);
+        return createLecture(null,name,
+                professor,
+                section,
+                sectionDetail,
+                credit,
+                level,
+                departmentName,
+                yearOfLecture,
+                semester,
+                null,
+                true);
     }
     
     @Override

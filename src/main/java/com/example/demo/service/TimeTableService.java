@@ -1,6 +1,7 @@
 package com.example.demo.Service;
 
 import com.example.demo.Repository.*;
+import com.example.demo.controller.TimeTableController;
 import com.example.demo.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -172,6 +173,7 @@ public class TimeTableService {
     public void addLecture(String number, int yearOfTimeTable, String semester,String tableName, Lecture lecture) {
         //엔티티 조회
         Student student = studentRepository.findByNumber(number);
+        //Lecture lecture = lectureRepository.findByLectureNum(lectureNum);
         TimeTable timeTable = timeTableRepository.findByStudentAndYearAndSemesterAndName(student,yearOfTimeTable,semester,tableName);
         TimeTableLecture timeTableLecture = TimeTableLecture.createTimeTableLecture(lecture);
 
@@ -179,7 +181,7 @@ public class TimeTableService {
         timeTable.addTimeTableLecture(timeTableLecture);
 
         //기본시간표라면, studentlecture 생성(추가)
-        if(timeTable.isPrimary()==true){
+        if(timeTable.isPrimary()){
             //GPA == null 을 일단 default로 함
             StudentLecture studentLecture = StudentLecture.createStudentLecture(student,lecture,null); //엔티티 조회
             student.addStudentLecture(studentLecture); //studentlecture 생성(추갸)
@@ -192,18 +194,10 @@ public class TimeTableService {
      * 오버로딩
      */
     @Transactional
-    public void addCustomLecture(String number, int yearOfTimetable, String tableName,
-                                 String name,
-                                 String professor,
-                                 String section,
-                                 String sectionDetail,
-                                 int credit,
-                                 int level,
-                                 String departmentName,
-                                 int yearOfLecture,
-                                 String semester) {
+    public void addCustomLecture(String number, int yearOfTimetable, String semester,String tableName, Lecture lecture)
+    {
         //커스텀 강의 추가(생성)
-        Long customLectureId = lectureService.addCustom(name,professor,section,sectionDetail,credit,level,departmentName,yearOfLecture,semester);
+        Long customLectureId = lectureService.addCustom(lecture);
         Lecture customLecture = lectureRepository.findOne(customLectureId);
         addLecture(number,yearOfTimetable,semester,tableName,customLecture); //오버로딩
     }
