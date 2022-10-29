@@ -23,11 +23,12 @@ public class LectureTimeSlot {
     @JoinColumn(name = "time_slot_id")
     private TimeSlot timeSlot;
 
+
     //==연관관계 메서드==
-    public void setLecture(Lecture lecture){
-        this.lecture=lecture;
-        lecture.getTimes().add(this);
-    }
+//    public void setLecture(Lecture lecture){
+//        this.lecture=lecture;
+//        lecture.getTimes().add(this);
+//    }
 
     public void setTimeSlot(TimeSlot timeSlot){
         this.timeSlot=timeSlot;

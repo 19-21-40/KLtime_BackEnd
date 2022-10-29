@@ -108,7 +108,7 @@ public class Lecture {
     public void addTimes(LectureTimeSlot lts) {
         if(!times.contains(lts)){
             this.times.add(lts);
-            lts.setLecture(this);
+            lts.setLecture(this); //굳이 여기서 연관관계 메서드 2번 할 필요 X (LectureTimeSlot의 setLecture 주석 처리 함)
         }
     }
 
@@ -122,7 +122,8 @@ public class Lecture {
                 lectureDto.getLevel(),
                 lectureDto.getDepartmentName(),
                 lectureDto.getYearOfLecture(),
-                lectureDto.getSemester());
+                lectureDto.getSemester(),
+                lectureDto.getTimes()); //추가(수연)
         return Optional.of(lecture);
     }
     
@@ -144,8 +145,10 @@ public class Lecture {
             String departmentName,
             int yearOfLecture,
             String semester,
+            List<LectureTimeSlot> times, //추가(수연)
             String notes,
-            boolean isCustom){
+            boolean isCustom
+            ){
 
         Lecture lecture=new Lecture();
 
@@ -159,6 +162,9 @@ public class Lecture {
         lecture.setDepartmentName(departmentName);
         lecture.setYearOfLecture(yearOfLecture);
         lecture.setSemester(semester);
+        for (LectureTimeSlot lectureTimeSlot : times) {
+            lecture.addTimes(lectureTimeSlot);
+        }
         lecture.setNotes(notes);
         lecture.setCustom(isCustom);
 
@@ -176,7 +182,8 @@ public class Lecture {
             int level,
             String departmentName,
             int yearOfLecture,
-            String semester){
+            String semester,
+            List<LectureTimeSlot> lectureTimeSlots){
         return createLecture(null,name,
                 professor,
                 section,
@@ -186,6 +193,7 @@ public class Lecture {
                 departmentName,
                 yearOfLecture,
                 semester,
+                lectureTimeSlots,
                 null,
                 true);
     }

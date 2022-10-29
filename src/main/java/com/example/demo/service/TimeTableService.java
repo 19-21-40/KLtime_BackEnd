@@ -91,7 +91,7 @@ public class TimeTableService {
         TimeTable timeTable = timeTableRepository.findByStudentAndYearAndSemesterAndName(student,yearOfTimetable,semester,tableName);
 
         //시간표 삭제 (cascade 때문에 timetablelectures도 같이 삭제됨)
-        if(timeTable.isPrimary()==false){
+        if(timeTable.isPrimary()==false){ //기본 시간표 아닐 때(경고 문구 날려줘야 하나?)
             timeTableRepository.delete(timeTable);
         }
 //        student.delete(timeTable);
@@ -194,11 +194,12 @@ public class TimeTableService {
      * 오버로딩
      */
     @Transactional
-    public void addCustomLecture(String number, int yearOfTimetable, String semester,String tableName, Lecture lecture)
+    public void addCustomLecture(String number, int yearOfTimetable, String semester,String tableName, Lecture lecture, List<TimeSlot> timeSlots)
     {
         //커스텀 강의 추가(생성)
-        Long customLectureId = lectureService.addCustom(lecture);
+        Long customLectureId = lectureService.addCustom(lecture,timeSlots);
         Lecture customLecture = lectureRepository.findOne(customLectureId);
+
         addLecture(number,yearOfTimetable,semester,tableName,customLecture); //오버로딩
     }
 
@@ -215,8 +216,7 @@ public class TimeTableService {
         TimeTableLecture timeTableLecture = timeTableLectureRepository.findByTimetableAndLecture(timeTable,lecture);
 
         //커스텀 강의라면, lecture 삭제
-
-        if(timeTableLecture.getLecture().isCustom()==true){
+        if(timeTableLecture.getLecture().isCustom()){
             Lecture customLecture=timeTableLecture.getLecture();
             lectureRepository.delete(customLecture);
         }
@@ -225,7 +225,7 @@ public class TimeTableService {
         timeTableLectureRepository.delete(timeTableLecture);
 
         //기본시간표라면, studentlecture 삭제
-        if(timeTable.isPrimary()==true){
+        if(timeTable.isPrimary()){
             //엔티티 조회
             StudentLecture studentLecture = studentLectureRepository.findById(timeTableLecture.getLecture().getId());
             studentLectureRepository.delete(studentLecture);

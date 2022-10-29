@@ -16,6 +16,7 @@ public class LectureService {
     //studentlectures 는 과거/현재 상관없이 메인시간표에 담긴 강의들
 
     private final LectureRepository lectureRepository;
+    private final TimeSlotRepository timeSlotRepository;
 
     /**
      * 강의 검색
@@ -30,12 +31,23 @@ public class LectureService {
      * 커스텀 강의 추가(누구의 커스텀인지는 어떻게 알지..? 변수 추가해야하나)
      */
     @Transactional
-    public Long addCustom(Lecture lecture){
+    public Long addCustom(Lecture lecture,List<TimeSlot> timeSlots){
         //엔티티 조회
         //Lecture customLecture = Lecture.createLecture(name,professor,section,sectionDetail,credit,level,departmentName,yearOfLecture,semester);
 
-        //커스텀 강의 추가
+        //커스텀 강의 추가(생성 후 저장)
         Long customLectureId=lectureRepository.save(lecture);
+
+
+        for(int i=0;i<timeSlots.size();i++){
+            //생성한 커스텀 강의에 있는 시간으로 TimeSlot 들 생성(추가)
+
+//            TimeSlot.createTimeSlot(timeSlot.getDayName(),timeSlot.getStartTime(),timeSlot.getEndTime());
+            timeSlotRepository.save(timeSlots.get(i)); //TimeSlot 저장
+
+            LectureTimeSlot lectureTimeSlot = LectureTimeSlot.createLectureTimeSlot(timeSlots.get(i)); //LectureTimeSlot 생성
+            lecture.addTimes(lectureTimeSlot); //LectureTimeSlot 생성(추가)
+        }
 
         return customLectureId;
     }

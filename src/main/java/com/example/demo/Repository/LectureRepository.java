@@ -269,6 +269,16 @@ public class LectureRepository {
 //     */
 
 
+
+    public Lecture findByTimeSlotAndCustom(boolean isCustom, TimeSlot timeSlot){
+        return em.createQuery("select L from Lecture L left join L.times t where t.timeSlot=:timeSlot and L.isCustom=:isCustom"
+                        ,Lecture.class)
+                .setParameter("timeSlot",timeSlot)
+                .setParameter("isCustom", isCustom)
+                .getSingleResult();
+    }
+
+
     public List<Lecture> findByTimeSlot(TimeSlot timeSlot){
         return em.createQuery("select L from Lecture L left join L.times t where t.timeSlot=:timeSlot"
                         ,Lecture.class)

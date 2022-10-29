@@ -42,7 +42,14 @@ public class TimeTable {
     }
 
     //==생성 메서드==//
-    public static TimeTable createTimetable( Student student, String tableName, int yearOfTimetable, String semester, boolean isPrimary, TimeTableLecture... lectures) {
+    public static TimeTable createTimetable(
+            Student student,
+            String tableName,
+            int yearOfTimetable,
+            String semester,
+            boolean isPrimary,
+            TimeTableLecture... lectures
+    ){
         TimeTable timeTable = new TimeTable();
         timeTable.setStudent(student);
         timeTable.setTableName(tableName);
