@@ -26,10 +26,9 @@ public class TimeTable {
     @JoinColumn(name = "student_id")
     private Student student;
     private String tableName;
-    private int grade;
     private String semester;
+    private int yearOfTimetable;
     private boolean isPrimary;
-    private int yearOfTimetable; //추가
 
     //==연관관계 메서드==//
     public void setStudent(Student student) {
@@ -46,7 +45,7 @@ public class TimeTable {
         TimeTable timeTable = new TimeTable();
         timeTable.setStudent(student);
         timeTable.setTableName(tableName);
-        timeTable.setGrade(yearOfTimetable);
+        timeTable.setYearOfTimetable(yearOfTimetable);
         timeTable.setSemester(semester);
         timeTable.setPrimary(isPrimary);
         for (TimeTableLecture timeTableLecture : lectures) {
