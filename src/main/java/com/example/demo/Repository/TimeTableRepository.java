@@ -53,12 +53,12 @@ public class TimeTableRepository {
     }
 
     /**
-     * 학생과 학년 별 시간표 조회
+     * 학생과 학년 별 시간표 조회(연도로 수정해야함)
      */
-    public List<TimeTable> findByStudentAndYear(Student student, int grade){
-        return em.createQuery("select t from TimeTable t where t.student = :student and t.grade =: grade", TimeTable.class)
-                .setParameter("student", student)
-                .setParameter("grade", grade)
+    public List<TimeTable> findByStudentAndYear(Student student, Integer yearOfTimeTable){
+        return em.createQuery("select t from TimeTable t where t.student = :student and t.yearOfTimetable =: yearOfTimeTable", TimeTable.class)
+                .setParameter("student", student) // 아니 이거 진짜 grade 말고 year 만바꿨는데 이러니ㅜㅜ 아효....
+                .setParameter("yearOfTimeTable", yearOfTimeTable)
                 .getResultList();
     }
 
@@ -73,6 +73,7 @@ public class TimeTableRepository {
                 .setParameter("semester", semester)
                 .getResultList();
     }
+
 
     /**
      * 학생, 년도, 학기, 이름 별 시간표 조회

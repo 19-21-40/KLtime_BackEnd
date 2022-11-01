@@ -1,6 +1,7 @@
 package com.example.demo.Service;
 
 import com.example.demo.Repository.*;
+import com.example.demo.controller.TimeTableController;
 import com.example.demo.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ public class LectureService {
     //studentlectures 는 과거/현재 상관없이 메인시간표에 담긴 강의들
 
     private final LectureRepository lectureRepository;
+    private final TimeSlotRepository timeSlotRepository;
 
     /**
      * 강의 검색
@@ -29,20 +31,23 @@ public class LectureService {
      * 커스텀 강의 추가(누구의 커스텀인지는 어떻게 알지..? 변수 추가해야하나)
      */
     @Transactional
-    public Long addCustom(String name,
-                          String professor,
-                          String section,
-                          String sectionDetail,
-                          int credit,
-                          int level,
-                          String departmentName,
-                          int yearOfLecture,
-                          String semester){
+    public Long addCustom(Lecture lecture,List<TimeSlot> timeSlots){
         //엔티티 조회
-        Lecture customLecture = Lecture.createLecture(name,professor,section,sectionDetail,credit,level,departmentName,yearOfLecture,semester);
+        //Lecture customLecture = Lecture.createLecture(name,professor,section,sectionDetail,credit,level,departmentName,yearOfLecture,semester);
 
-        //커스텀 강의 추가
-        Long customLectureId=lectureRepository.save(customLecture);
+        //커스텀 강의 추가(생성 후 저장)
+        Long customLectureId=lectureRepository.save(lecture);
+
+
+        for(int i=0;i<timeSlots.size();i++){
+            //생성한 커스텀 강의에 있는 시간으로 TimeSlot 들 생성(추가)
+
+//            TimeSlot.createTimeSlot(timeSlot.getDayName(),timeSlot.getStartTime(),timeSlot.getEndTime());
+            timeSlotRepository.save(timeSlots.get(i)); //TimeSlot 저장
+
+            LectureTimeSlot lectureTimeSlot = LectureTimeSlot.createLectureTimeSlot(timeSlots.get(i)); //LectureTimeSlot 생성
+            lecture.addTimes(lectureTimeSlot); //LectureTimeSlot 생성(추가)
+        }
 
         return customLectureId;
     }
@@ -65,6 +70,10 @@ public class LectureService {
 //        TimeTable timeTable = timeTableRepository.findOne(timetableId);
 //        Lecture lecture = lectureRepository.findOne(lectureId);
 //    }
+
+    /**
+     * 커스텀 강의 정보 변경(수정)=>편집버튼 누르면 수정됨
+     */
 
 
 

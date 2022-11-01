@@ -87,9 +87,9 @@ public class LectureRepository {
         }
         //학부이름으로 검색
         if (lectureSearch.getCategory() != null) {
-            Predicate departmentName = cb.equal(l.get("departmentName"),
+            Predicate category = cb.equal(l.get("category"),
                     lectureSearch.getCategory());
-            criteria.add(departmentName);
+            criteria.add(category);
         }
         //년도 검색
         if (lectureSearch.getYearOfLecture()!=null) {
@@ -131,6 +131,7 @@ public class LectureRepository {
                 .setParameter("lectureName",name)
                 .getSingleResult();
     }
+
 
 //
 //    /**
@@ -275,6 +276,16 @@ public class LectureRepository {
 //     */
 
 
+
+    public Lecture findByTimeSlotAndCustom(boolean isCustom, TimeSlot timeSlot){
+        return em.createQuery("select L from Lecture L left join L.times t where t.timeSlot=:timeSlot and L.isCustom=:isCustom"
+                        ,Lecture.class)
+                .setParameter("timeSlot",timeSlot)
+                .setParameter("isCustom", isCustom)
+                .getSingleResult();
+    }
+
+
     public List<Lecture> findByTimeSlot(TimeSlot timeSlot){
         return em.createQuery("select L from Lecture L left join L.times t where t.timeSlot=:timeSlot"
                         ,Lecture.class)
@@ -296,4 +307,14 @@ public class LectureRepository {
     }
 
 
+    /**
+     * 학정번호로 강의 찾기
+     * @param lectureNumber
+     * @return lecture
+     */
+    public Lecture findByLectureNum(String lectureNumber) {
+        return em.createQuery("select l from Lecture l where l.lectureNumber=:lectureNumber",Lecture.class)
+                .setParameter("lectureNumber", lectureNumber)
+                .getSingleResult();
+    }
 }

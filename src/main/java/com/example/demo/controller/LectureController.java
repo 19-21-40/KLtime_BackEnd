@@ -17,11 +17,5 @@ public class LectureController {
 
     private final LectureService lectureService;
 
-    @GetMapping("/lectures")
-    public String lectureList(@ModelAttribute("lectureSearch") LectureSearch lectureSearch, Model model ) {
 
-        List<Lecture> lectures = lectureService.findLectures(lectureSearch);
-        model.addAttribute("lectures", lectures);
-        return "lecture/lectureList";
-    }
 }

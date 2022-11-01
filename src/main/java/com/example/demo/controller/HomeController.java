@@ -73,9 +73,7 @@ public class HomeController {
                     .build();
             return ResponseEntity.badRequest().body(responseDTO);
         }
-
     }
-
 
     /**
      * 강의 리스트
