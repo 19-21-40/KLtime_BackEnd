@@ -87,7 +87,7 @@ public class TimeTableController {
         private String sectionDetail;
         private int credit;
         private int level;
-        private String departmentName;
+        private String category;
         private String notes;
 
         public MyLectureDto(Lecture lecture) {
@@ -97,7 +97,7 @@ public class TimeTableController {
             sectionDetail=lecture.getSectionDetail();
             credit=lecture.getCredit();
             level=lecture.getLevel();
-            departmentName=lecture.getDepartmentName();
+            category=lecture.getCategory();
             notes=lecture.getNotes();
         }
     }

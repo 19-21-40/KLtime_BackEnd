@@ -86,9 +86,9 @@ public class LectureRepository {
             criteria.add(level);
         }
         //학부이름으로 검색
-        if (lectureSearch.getDepartmentName() != null) {
+        if (lectureSearch.getCategory() != null) {
             Predicate departmentName = cb.equal(l.get("departmentName"),
-                    lectureSearch.getDepartmentName());
+                    lectureSearch.getCategory());
             criteria.add(departmentName);
         }
         //년도 검색
@@ -178,9 +178,9 @@ public class LectureRepository {
      */
     public List<Lecture> findMainLecturesByTwoSection(Department studentDept) {
         return em.createQuery("select l from Lecture l where (l.section ='전필' or l.section ='전선') " +
-                        "and (l.departmentName =:StDeptName or l.departmentName =: StCollegeName)", Lecture.class)
-                .setParameter("StCollegeName", studentDept.getCollegeName())
-                .setParameter("StDeptName", studentDept.getName())
+                        "and (l.category like :stDeptName or l.category like :stCollegeName)", Lecture.class)
+                .setParameter("stCollegeName", '%' + studentDept.getCollegeName() + '%')
+                .setParameter("stDeptName", '%' + studentDept.getName() + '%')
                 .getResultList();
     }
 
@@ -198,11 +198,18 @@ public class LectureRepository {
      */
     public List<Lecture> findMainLecturesByTwoSection2022(Department studentDept) {
         return em.createQuery("select l from Lecture l where (l.section ='전필' or l.section ='전선') " +
-                        "and (l.departmentName =:StDeptName or l.departmentName =: StCollegeName) and l.yearOfLecture=2022", Lecture.class)
-                .setParameter("StCollegeName", studentDept.getCollegeName())
-                .setParameter("StDeptName", studentDept.getName())
+                        "and (l.category like :stDeptName or l.category like :stCollegeName) and l.yearOfLecture=2022", Lecture.class)
+                .setParameter("stCollegeName", '%' + studentDept.getCollegeName() + '%')
+                .setParameter("stDeptName", '%' + studentDept.getName() + '%')
                 .getResultList();
 
+    }
+
+    public List<Lecture> findByDepartment2022(Department studentDept) {
+        return em.createQuery("select l from Lecture l where (l.category like :stDeptName or l.category like :stCollegeName ) and l.yearOfLecture=2022", Lecture.class)
+                .setParameter("stCollegeName", '%' + studentDept.getCollegeName() + '%')
+                .setParameter("stDeptName", '%' + studentDept.getName() + '%')
+                .getResultList();
     }
 //
 //    /**

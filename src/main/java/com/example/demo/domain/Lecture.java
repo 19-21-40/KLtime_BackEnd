@@ -27,14 +27,11 @@ public class Lecture {
     private String sectionDetail;
     private int credit;
     private int level;
-    private String departmentName;
+    private String category;
     private int yearOfLecture;
     private String semester;
     private String notes;
 
-
-    private String preReq;
-    //추가(수연)
     private boolean isCustom;
 
 
@@ -54,8 +51,7 @@ public class Lecture {
         this.name = name;
     }
 
-    // 이성훈이 만듬 ( Timeslot, TimeTable은 생성자에서 배제했음 )
-    public Lecture(String lectureNumber, String name, String professor, String section, String sectionDetail, int credit, int level, String departmentName, int yearOfLecture, String semester) {
+    public Lecture(String lectureNumber, String name, String section, String sectionDetail, int credit, String professor, String category, int level, int yearOfLecture, String semester, String notes, boolean isCustom) {
         this.lectureNumber = lectureNumber;
         this.name = name;
         this.professor = professor;
@@ -63,32 +59,12 @@ public class Lecture {
         this.sectionDetail = sectionDetail;
         this.credit = credit;
         this.level = level;
-        this.departmentName = departmentName;
-        this.yearOfLecture = yearOfLecture;
-        this.semester = semester;
-    }
-
-    public Lecture(String lectureNumber, String name, String section, String sectionDetail, int credit, String professor, String departmentName, int level, int yearOfLecture, String semester, String notes, String preReq, boolean isCustom) {
-        this.lectureNumber = lectureNumber;
-        this.name = name;
-        this.professor = professor;
-        this.section = section;
-        this.sectionDetail = sectionDetail;
-        this.credit = credit;
-        this.level = level;
-        this.departmentName = departmentName;
+        this.category = category;
         this.yearOfLecture = yearOfLecture;
         this.semester = semester;
         this.notes = notes;
-        this.preReq = preReq;
         this.isCustom = isCustom;
     }
-
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "preReq_lecture_id")
-
-
-    //==ㄹ연관관계 메서드==//
 
 
     /**
@@ -117,7 +93,7 @@ public class Lecture {
             String sectionDetail,
             int credit,
             int level,
-            String departmentName,
+            String category,
             int yearOfLecture,
             String semester,
             String notes,
@@ -132,7 +108,7 @@ public class Lecture {
         lecture.setSectionDetail(sectionDetail);
         lecture.setCredit(credit);
         lecture.setLevel(level);
-        lecture.setDepartmentName(departmentName);
+        lecture.setCategory(category);
         lecture.setYearOfLecture(yearOfLecture);
         lecture.setSemester(semester);
         lecture.setNotes(notes);
@@ -150,10 +126,10 @@ public class Lecture {
             String sectionDetail,
             int credit,
             int level,
-            String departmentName,
+            String category,
             int yearOfLecture,
             String semester){
-        return createLecture(null,name,professor,section,sectionDetail,credit,level,departmentName,yearOfLecture,semester,null,true);
+        return createLecture(null,name,professor,section,sectionDetail,credit,level,category,yearOfLecture,semester,null,true);
     }
     
     @Override

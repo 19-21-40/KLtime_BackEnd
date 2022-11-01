@@ -37,8 +37,6 @@ public class RecommendLectureService {
         // 그에 맞는 졸업 학점 조건 불러오기
 
         GradCondition gradCondition = gradConditionRepository.findByDeptAndAdmissionYear(student.getDepartment(), student.getAdmissionYear());
-        System.out.println(gradCondition.getDepartment().getId());
-
 
         GradCondition gradConditionOfMulti;
 
@@ -145,13 +143,13 @@ public class RecommendLectureService {
 
 
             // 현재 학과 전공학점에 대해 따짐
-            if ((lecture.getDepartmentName() == student.getDepartment().getName()) && (section == "전필" || section == "전선")) {
+            if ((lecture.getCategory().contains(student.getDepartment().getName())) && (section == "전필" || section == "전선")) {
                 temporalCredit.addMainCredit(lecture.getCredit());
             }
 
             // 복수전공의 경우 복수전공 학과 전공학점을 계산함
             if(student.getMultiMajor()!=null) {
-                if ((lecture.getDepartmentName() == student.getMultiDept().getName()) && (section == "전필" || section == "전선")) {
+                if ((lecture.getCategory().contains(student.getMultiDept().getName())) && (section == "전필" || section == "전선")) {
                     temporalCredit.addMultiCredit(lecture.getCredit());
                 }
             }

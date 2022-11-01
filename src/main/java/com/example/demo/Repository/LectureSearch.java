@@ -13,7 +13,7 @@ public class LectureSearch {
     private String sectionDetail;
     private Integer credit;
     private Integer level;
-    private String departmentName;
+    private String category;
     private Integer yearOfLecture;
     private String semester;
 }
