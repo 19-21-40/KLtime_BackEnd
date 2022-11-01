@@ -26,8 +26,8 @@ public class TimeTable {
     @JoinColumn(name = "student_id")
     private Student student;
     private String tableName;
-    private int grade;
-    private int semester;
+    private int year;
+    private String semester;
     private boolean isPrimary;
     private int yearOfTimetable; //추가
 
