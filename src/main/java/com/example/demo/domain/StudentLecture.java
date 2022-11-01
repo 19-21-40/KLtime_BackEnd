@@ -29,7 +29,7 @@ public class StudentLecture {
     private String gpa; //수정
     private String comment;
     private int takesGrade;
-    private int takesSemester;
+    private String takesSemester;
 
     public StudentLecture(){
 
@@ -50,7 +50,7 @@ public class StudentLecture {
     }
 
 
-    public StudentLecture(Student student, Lecture lecture, String gpa, int takesGrade, int takesSemester) {
+    public StudentLecture(Student student, Lecture lecture, String gpa, int takesGrade, String takesSemester) {
         this.student = student;
         this.lecture = lecture;
         this.gpa = gpa;

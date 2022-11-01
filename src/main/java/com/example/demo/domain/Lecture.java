@@ -29,9 +29,11 @@ public class Lecture {
     private int level;
     private String departmentName;
     private int yearOfLecture;
-    private int semester; //수정(수연)
+    private String semester;
     private String notes;
 
+
+    private String preReq;
     //추가(수연)
     private boolean isCustom;
 
@@ -53,7 +55,7 @@ public class Lecture {
     }
 
     // 이성훈이 만듬 ( Timeslot, TimeTable은 생성자에서 배제했음 )
-    public Lecture(String lectureNumber, String name, String professor, String section, String sectionDetail, int credit, int level, String departmentName, int yearOfLecture, int semester) {
+    public Lecture(String lectureNumber, String name, String professor, String section, String sectionDetail, int credit, int level, String departmentName, int yearOfLecture, String semester) {
         this.lectureNumber = lectureNumber;
         this.name = name;
         this.professor = professor;
@@ -66,9 +68,25 @@ public class Lecture {
         this.semester = semester;
     }
 
+    public Lecture(String lectureNumber, String name, String section, String sectionDetail, int credit, String professor, String departmentName, int level, int yearOfLecture, String semester, String notes, String preReq, boolean isCustom) {
+        this.lectureNumber = lectureNumber;
+        this.name = name;
+        this.professor = professor;
+        this.section = section;
+        this.sectionDetail = sectionDetail;
+        this.credit = credit;
+        this.level = level;
+        this.departmentName = departmentName;
+        this.yearOfLecture = yearOfLecture;
+        this.semester = semester;
+        this.notes = notes;
+        this.preReq = preReq;
+        this.isCustom = isCustom;
+    }
+
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "preReq_lecture_id")
-//    private Lecture preReq;
+
 
     //==ㄹ연관관계 메서드==//
 
@@ -101,7 +119,7 @@ public class Lecture {
             int level,
             String departmentName,
             int yearOfLecture,
-            int semester,
+            String semester,
             String notes,
             boolean isCustom){
 
@@ -134,7 +152,7 @@ public class Lecture {
             int level,
             String departmentName,
             int yearOfLecture,
-            int semester){
+            String semester){
         return createLecture(null,name,professor,section,sectionDetail,credit,level,departmentName,yearOfLecture,semester,null,true);
     }
     
