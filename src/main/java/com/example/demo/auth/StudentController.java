@@ -1,6 +1,7 @@
 package com.example.demo.auth;
 
 import com.example.demo.Repository.DepartmentRepository;
+import com.example.demo.Service.TimeTableService;
 import com.example.demo.domain.Department;
 import com.example.demo.domain.Student;
 import com.example.demo.dto.ResponseDTO;
@@ -23,6 +24,7 @@ public class StudentController {
     private final StudentService studentService;
     private final DepartmentRepository departmentRepository;
     private final TokenProvider tokenProvider;
+    private final TimeTableService timeTableService;
 
     private final PasswordEncoder passwordEncoder =new BCryptPasswordEncoder();
 
@@ -42,6 +44,10 @@ public class StudentController {
                     .name(registeredStudent.getName())
                     .email(registeredStudent.getEmail())
                     .build();
+            
+            //수연 추가 (회원 가입 후, 기본 시간표 생성)
+            timeTableService.addDefaultTimeTable(responseStudentDTO.getNumber());
+            
             return ResponseEntity.ok().body(responseStudentDTO);
         }
         catch (Exception e) {

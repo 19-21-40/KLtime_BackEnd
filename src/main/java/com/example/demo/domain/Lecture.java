@@ -1,5 +1,7 @@
 package com.example.demo.domain;
 
+import com.example.demo.controller.TimeTableController;
+import com.example.demo.dto.StudentDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,11 +10,18 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static java.lang.Integer.parseInt;
 
 @Entity
 @Getter
 @Setter
 public class Lecture {
+
+    //semester int->string 변경
 
     @Id
     @GeneratedValue
@@ -75,15 +84,31 @@ public class Lecture {
     public void addTimes(LectureTimeSlot lts) {
         if(!times.contains(lts)){
             this.times.add(lts);
-            lts.setLecture(this);
+            lts.setLecture(this); //굳이 여기서 연관관계 메서드 2번 할 필요 X (LectureTimeSlot의 setLecture 주석 처리 함)
         }
     }
 
+    //LectureDto->Lecture 바꾸는 함수
+    public static Optional<Lecture> from(TimeTableController.LectureDto lectureDto){
+        Lecture lecture = createLecture(lectureDto.getName(), 
+                lectureDto.getProfessor(),
+                lectureDto.getSection(),
+                lectureDto.getSectionDetail(),
+                lectureDto.getCredit(),
+                lectureDto.getLevel(),
+                lectureDto.getCategory(),
+                lectureDto.getYearOfLecture(),
+                lectureDto.getSemester(),
+                lectureDto.getTimes()); //추가(수연)
+        return Optional.of(lecture);
+    }
+    
     public void setTimes(List<LectureTimeSlot> ltsList){
         this.times=ltsList;
         ltsList.forEach(lts->lts.setLecture(this));
     }
 
+    
     //==생성 메서드==//
     public static Lecture createLecture(
             String lectureNumber,
@@ -96,8 +121,10 @@ public class Lecture {
             String category,
             int yearOfLecture,
             String semester,
+            List<LectureTimeSlot> times, //추가(수연)
             String notes,
-            boolean isCustom){
+            boolean isCustom
+            ){
 
         Lecture lecture=new Lecture();
 
@@ -111,6 +138,9 @@ public class Lecture {
         lecture.setCategory(category);
         lecture.setYearOfLecture(yearOfLecture);
         lecture.setSemester(semester);
+        for (LectureTimeSlot lectureTimeSlot : times) {
+            lecture.addTimes(lectureTimeSlot);
+        }
         lecture.setNotes(notes);
         lecture.setCustom(isCustom);
 
@@ -128,8 +158,10 @@ public class Lecture {
             int level,
             String category,
             int yearOfLecture,
-            String semester){
-        return createLecture(null,name,professor,section,sectionDetail,credit,level,category,yearOfLecture,semester,null,true);
+            String semester,
+            List<LectureTimeSlot> lectureTimeSlots){
+        return createLecture(null,name,professor,section,sectionDetail,credit,level,category,yearOfLecture,semester,lectureTimeSlots,null,true);
+
     }
     
     @Override
