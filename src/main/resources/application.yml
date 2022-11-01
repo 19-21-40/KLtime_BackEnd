@@ -4,10 +4,6 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-
-#    url: jdbc:mysql://localhost:3306/local_trs
-#    username: root
-#    password: qwerty1670
     url: jdbc:mysql://43.200.136.102:3306/TRS?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
     username: trs
     password: trs
@@ -17,4 +13,4 @@ spring:
     generate-ddl: true
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
