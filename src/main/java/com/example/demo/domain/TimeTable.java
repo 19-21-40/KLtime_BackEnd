@@ -14,7 +14,7 @@ import java.util.List;
 public class TimeTable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     @Column(name = "timetable_id")
     private Long id;
 
