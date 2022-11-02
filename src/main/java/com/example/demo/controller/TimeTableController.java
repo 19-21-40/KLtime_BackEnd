@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.Repository.*;
-import com.example.demo.Service.RecommendLectureService;
 import com.example.demo.Service.TimeTableService;
 import com.example.demo.domain.*;
 import com.example.demo.dto.ResponseDTO;
@@ -9,19 +8,17 @@ import com.example.demo.dto.StudentDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping({"/api/timetable/{year}/{semester}","api/timetable/2022/2학기"})
+@RequestMapping("/api/timetable/{year}/{semester}")
 public class TimeTableController {
 
     private final TimeTableRepository timeTableRepository;
@@ -30,6 +27,7 @@ public class TimeTableController {
     private final StudentLectureRepository studentLectureRepository;
     private final StudentRepository studentRepository;
     private final TimeTableService timeTableService;
+    private final TimeSlotRepository timeSlotRepository;
 
     //lecture domain 수정하고 난뒤에, 컨트롤러 3개의 LectureDTO 의 스펙을 수정해야함.
     //테이블리스트 안의 테이블들의 강의리스트들을 같이 받도록 수정해야함
@@ -37,8 +35,8 @@ public class TimeTableController {
     /**
      * 시간표 페이지 처음 접속 시 & 년도/학기 변경(선택)시 (해당 년도/학기의 기본시간표가 떠야 함) -> 2022/2학기만 안됨...?
      * @param studentDTO
-     * @param year (default = 2022)
-     * @param semester (default = 2)
+     * @param year
+     * @param semester
      * @return ResponseEntity.ok().body(new TimeTableController.TableResult(timeTableList));
      */
     @PostMapping("/main")
@@ -170,13 +168,14 @@ public class TimeTableController {
         try {
             if (studentDTO.getToken() != null) {
                 //Student student = studentRepository.findByNumber(studentDTO.getNumber());
-                LectureSearch lectureSearch = new LectureSearch();
-                lectureSearch.setYearOfLecture(year);
-                lectureSearch.setSemester(semester);
-                List<Lecture> lectures = lectureRepository.findAll(lectureSearch);
+//                LectureSearch lectureSearch = new LectureSearch();
+//                lectureSearch.setYearOfLecture(year);
+//                lectureSearch.setSemester(semester);
+//                List<Lecture> lectures = lectureRepository.findAll(lectureSearch);
+                List<Lecture> lectures = lectureRepository.findByLectureWithTimeslotByYearAndSemester(year,semester);
                 
                 List<LectureDto> searchLectureLists = lectures.stream()
-                        .map(searchlecture -> new LectureDto(searchlecture))
+                        .map(lecture -> new LectureDto(lecture))
                         .collect(Collectors.toList());
 
                 return ResponseEntity.ok().body(new LectureResult<>(searchLectureLists));
@@ -293,8 +292,50 @@ public class TimeTableController {
         }
     }
 
+//    /**
+//     * 해당 년도/학기/시간표 내 커스텀 강의 추가 (커스텀 O )
+//     * @param studentAndCustomResult
+//     * @param year
+//     * @param semester
+//     * @param tableName
+//     * @return new ResponseEntity<>(HttpStatus.OK)
+//     */
+//    @PostMapping("/addCustomLecture/{tableName}")
+//    public ResponseEntity<?> addCustomLecture(
+//            @RequestBody StudentAndCustomResult<StudentDTO, LectureDto, List<TimeSlotDto>> studentAndCustomResult,
+//            @PathVariable(value = "year") int year,
+//            @PathVariable(value = "semester") String semester,
+//            @PathVariable(value = "tableName") String tableName
+//    ){
+//        try {
+//            if (studentAndCustomResult.studentDto.getToken() != null) {
+//                //Student student = studentRepository.findByNumber(studentDTO.getNumber());
+//                Lecture lecture = Lecture.from(studentAndCustomResult.customLectureDto).
+//                        orElseThrow(()->{throw new IllegalStateException("지정된 형식과 일치하지 않습니다.");});
+//
+//                List<TimeSlot> timeSlots = new ArrayList<>();
+//                for(int i=0;i<studentAndCustomResult.getTimeSlotDtoList().size();i++){
+//                    TimeSlot timeSlot = TimeSlot.from(studentAndCustomResult.getTimeSlotDtoList().get(i)).
+//                            orElseThrow(()->{throw new IllegalStateException("지정된 형식과 일치하지 않습니다.");});
+//                    timeSlots.add(timeSlot);
+//                }
+//
+//                timeTableService.addCustomLecture( studentAndCustomResult.studentDto.getNumber(), year, semester, tableName,lecture, timeSlots);
+//
+//                return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
+//            }else{
+//                throw new IllegalStateException("토큰이 존재하지 않습니다.");
+//            }
+//        }catch (Exception e){
+//            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
+//                    .error(e.getMessage())
+//                    .build();
+//            return ResponseEntity.badRequest().body(responseDTO);
+//        }
+//    }
     /**
      * 해당 년도/학기/시간표 내 커스텀 강의 추가 (커스텀 O )
+     *
      * @param studentAndCustomResult
      * @param year
      * @param semester
@@ -307,33 +348,43 @@ public class TimeTableController {
             @PathVariable(value = "year") int year,
             @PathVariable(value = "semester") String semester,
             @PathVariable(value = "tableName") String tableName
-    ){
+    ) {
         try {
             if (studentAndCustomResult.studentDto.getToken() != null) {
                 //Student student = studentRepository.findByNumber(studentDTO.getNumber());
-                Lecture lecture = Lecture.from(studentAndCustomResult.customLectureDto).
-                        orElseThrow(()->{throw new IllegalStateException("지정된 형식과 일치하지 않습니다.");});
+                List<TimeSlot>timeSlots=studentAndCustomResult.timeSlotDtoList.stream().map((timeSlotDto)-> {
+                    return timeSlotRepository.findByTimeSlot(timeSlotDto.getDay(), timeSlotDto.getStartTime(), timeSlotDto.getEndTime())
+                            .orElseGet(() -> {
+                                return TimeSlot.from(timeSlotDto).orElseThrow(()->new IllegalStateException("error"));
+                            });
+                }).collect(Collectors.toList());
+                Lecture lecture = Lecture.from(studentAndCustomResult.customLectureDto,timeSlots).
+                        orElseThrow(() -> {
+                            throw new IllegalStateException("지정된 형식과 일치하지 않습니다.");
+                        });
 
-                List<TimeSlot> timeSlots = new ArrayList<>();
-                for(int i=0;i<studentAndCustomResult.getTimeSlotDtoList().size();i++){
-                    TimeSlot timeSlot = TimeSlot.from(studentAndCustomResult.getTimeSlotDtoList().get(i)).
-                            orElseThrow(()->{throw new IllegalStateException("지정된 형식과 일치하지 않습니다.");});
-                    timeSlots.add(timeSlot);
-                }
+//                for(int i=0;i<studentAndCustomResult.getTimeSlotDtoList().size();i++){
+//                    TimeSlot timeSlot = TimeSlot.from(studentAndCustomResult.getTimeSlotDtoList().get(i)).
+//                            orElseThrow(()->{throw new IllegalStateException("지정된 형식과 일치하지 않습니다.");});
+//                    timeSlots.add(timeSlot);
+//                }
 
-                timeTableService.addCustomLecture( studentAndCustomResult.studentDto.getNumber(), year, semester, tableName,lecture, timeSlots);
+                timeTableService.addCustomLecture(studentAndCustomResult.studentDto.getNumber(), year, semester, tableName, lecture, timeSlots);
 
                 return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
-            }else{
+            } else {
                 throw new IllegalStateException("토큰이 존재하지 않습니다.");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             ResponseDTO<Object> responseDTO = ResponseDTO.builder()
                     .error(e.getMessage())
                     .build();
             return ResponseEntity.badRequest().body(responseDTO);
+//            return ResponseEntity.badRequest().body(studentAndCustomResult);
         }
     }
+
+
 
     /**
      * 해당 년도/학기/시간표 내 커스텀 강의 삭제 (커스텀 O )
@@ -402,21 +453,26 @@ public class TimeTableController {
     @Data
     @AllArgsConstructor
     public static class TimeSlotDto{
-        private String dayName;
+        private String day;
         private String startTime;
         private String endTime;
 
         public TimeSlotDto(TimeSlot timeSlot){
-            dayName=timeSlot.getDayName();
+            day =timeSlot.getDayName();
             startTime=timeSlot.getStartTime();
             endTime=timeSlot.getEndTime();
         }
+
+
     }
+
+
 
     @Data
     @AllArgsConstructor
     static class TimeTableDto {
         private String tableName;
+
         private boolean isPrimary;
 
         //렉처리스트 추가(수연)
@@ -442,7 +498,7 @@ public class TimeTableController {
         private String notes;
         private int yearOfLecture;
         private String semester;
-        private List<LectureTimeSlot> times = new ArrayList<>(); //추가
+        private List<TimeSlot> times = new ArrayList<>(); //추가
 
         public LectureDto(Lecture lecture) {
             name=lecture.getName();
@@ -455,7 +511,7 @@ public class TimeTableController {
             notes=lecture.getNotes();
             yearOfLecture=lecture.getYearOfLecture();
             semester=lecture.getSemester();
-            times=lecture.getTimes();
+            times=lecture.getTimes().stream().map(lectureTimeSlot -> lectureTimeSlot.getTimeSlot()).collect(Collectors.toList());
         }
     }
 }

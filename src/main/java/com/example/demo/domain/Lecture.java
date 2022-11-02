@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
 
@@ -24,7 +25,7 @@ public class Lecture {
     //semester int->string 변경
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "lecture_id")
     private Long id;
 
@@ -88,8 +89,8 @@ public class Lecture {
         }
     }
 
-    //LectureDto->Lecture 바꾸는 함수
-    public static Optional<Lecture> from(TimeTableController.LectureDto lectureDto){
+    //LectureDto->Lecture 바꾸는 함수 (커스텀 강의 만들 때만 쓰임)
+    public static Optional<Lecture> from(TimeTableController.LectureDto lectureDto,List<TimeSlot> timeSlots){
         Lecture lecture = createLecture(lectureDto.getName(), 
                 lectureDto.getProfessor(),
                 lectureDto.getSection(),
@@ -99,7 +100,8 @@ public class Lecture {
                 lectureDto.getCategory(),
                 lectureDto.getYearOfLecture(),
                 lectureDto.getSemester(),
-                lectureDto.getTimes()); //추가(수연)
+                timeSlots.stream().map(LectureTimeSlot::createLectureTimeSlot).collect(Collectors.toList())
+        ); //수정(수연)
         return Optional.of(lecture);
     }
     
