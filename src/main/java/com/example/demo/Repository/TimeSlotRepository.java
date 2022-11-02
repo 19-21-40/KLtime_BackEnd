@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -41,16 +42,16 @@ public class TimeSlotRepository {
      * @param endTime 종료시간
      * @return
      */
-    public TimeSlot findByTimeSlot(String dayName,String startTime, String endTime){
+    public Optional<TimeSlot> findByTimeSlot(String dayName, String startTime, String endTime){
         try {
-            return em.createQuery("select Ts from TimeSlot Ts"
+            return Optional.ofNullable(em.createQuery("select Ts from TimeSlot Ts"
                             + " where Ts.startTime=:startTime and Ts.endTime=:endTime and Ts.dayName=:dayName", TimeSlot.class)
                     .setParameter("startTime", startTime)
                     .setParameter("endTime", endTime)
                     .setParameter("dayName", dayName)
-                    .getSingleResult();
+                    .getSingleResult());
         } catch (NoResultException e){
-            return new TimeSlot();
+            return Optional.empty();
         }
     }
 

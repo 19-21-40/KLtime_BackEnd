@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Entity
@@ -38,11 +36,11 @@ public class TimeSlot {
     //LectureDto->Lecture 바꾸는 함수
     public static Optional<TimeSlot> from(TimeTableController.TimeSlotDto timeSlotDto){
         TimeSlot timeSlot = createTimeSlot(
-                timeSlotDto.getDayName(),
+                timeSlotDto.getDay(),
                 timeSlotDto.getStartTime(),
                 timeSlotDto.getEndTime()
         );
-        return Optional.of(timeSlot);
+        return Optional.ofNullable(timeSlot);
     }
 
 }
