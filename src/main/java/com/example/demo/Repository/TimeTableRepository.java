@@ -1,9 +1,6 @@
 package com.example.demo.Repository;
 
-import com.example.demo.domain.Department;
-import com.example.demo.domain.Student;
-import com.example.demo.domain.TimeTable;
-import com.example.demo.domain.TimeTableLecture;
+import com.example.demo.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,14 +62,23 @@ public class TimeTableRepository {
     /**
      * 학생, 년도, 학기 별 시간표 조회
      */
-    //페치조인으로 수정해야 함(쿼리 한번만 나가도록)
-    public List<TimeTable> findByStudentAndYearAndSemester(Student student, int yearOfTimetable, String semester) {
-        return em.createQuery("select t from TimeTable t where t.student =:student and t.yearOfTimetable =: yearOfTimetable and t.semester=:semester", TimeTable.class)
+    //아우터 페치 조인
+    public List<TimeTable> findByStudentAndYearAndSemesterWithLecture(Student student, int yearOfTimetable, String semester) {
+        return em.createQuery("select t from TimeTable t left outer join fetch t.lectures tl  where t.student =:student and t.yearOfTimetable =: yearOfTimetable and t.semester=:semester", TimeTable.class)
                 .setParameter("student", student)
                 .setParameter("yearOfTimetable", yearOfTimetable)
                 .setParameter("semester", semester)
                 .getResultList();
     }
+
+    public List<TimeTable> findByStudentAndYearAndSemester(Student student, int yearOfTimetable, String semester) {
+        return em.createQuery("select t from TimeTable t  where t.student =:student and t.yearOfTimetable =: yearOfTimetable and t.semester=:semester", TimeTable.class)
+                .setParameter("student", student)
+                .setParameter("yearOfTimetable", yearOfTimetable)
+                .setParameter("semester", semester)
+                .getResultList();
+    }
+
 
 
     /**

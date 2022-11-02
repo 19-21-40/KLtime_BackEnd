@@ -91,7 +91,7 @@ public class Lecture {
 
     //LectureDto->Lecture 바꾸는 함수 (커스텀 강의 만들 때만 쓰임)
     public static Optional<Lecture> from(TimeTableController.LectureDto lectureDto,List<TimeSlot> timeSlots){
-        Lecture lecture = createLecture(lectureDto.getName(), 
+        Lecture lecture = createLecture(lectureDto.getLectureName(),
                 lectureDto.getProfessor(),
                 lectureDto.getSection(),
                 lectureDto.getSectionDetail(),

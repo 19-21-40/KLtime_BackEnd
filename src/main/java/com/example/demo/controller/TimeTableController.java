@@ -29,11 +29,8 @@ public class TimeTableController {
     private final TimeTableService timeTableService;
     private final TimeSlotRepository timeSlotRepository;
 
-    //lecture domain 수정하고 난뒤에, 컨트롤러 3개의 LectureDTO 의 스펙을 수정해야함.
-    //테이블리스트 안의 테이블들의 강의리스트들을 같이 받도록 수정해야함
-
     /**
-     * 시간표 페이지 처음 접속 시 & 년도/학기 변경(선택)시 (해당 년도/학기의 기본시간표가 떠야 함) -> 2022/2학기만 안됨...?
+     * 시간표 페이지 처음 접속 시 & 년도/학기 변경(선택)시 (해당 년도/학기의 기본시간표가 떠야 함) -> 쿼리 확인
      * @param studentDTO
      * @param year
      * @param semester
@@ -49,9 +46,11 @@ public class TimeTableController {
         try {
             if (studentDTO.getToken() != null) {
                 Student student = studentRepository.findByNumber(studentDTO.getNumber());
-                List<TimeTable> timeTables = timeTableRepository.findByStudentAndYearAndSemester(student,year,semester);
+                List<TimeTable> timeTables = timeTableRepository.findByStudentAndYearAndSemesterWithLecture(student,year,semester); //fetch outer join
+//                List<TimeTable> timeTables = timeTableRepository.findByStudentAndYearAndSemester(student,year,semester);
+
                 List <TimeTableDto> timeTableList=timeTables.stream()
-                        .map(timeTable -> new TimeTableDto(timeTable))
+                        .map(TimeTableDto::new)
                         .collect(Collectors.toList());
 
 //                TimeTable PrimaryTimeTable = timeTableRepository.findByStudentAndYearAndSemesterAndPrimary(student,year,semester,true);
@@ -172,7 +171,7 @@ public class TimeTableController {
 //                lectureSearch.setYearOfLecture(year);
 //                lectureSearch.setSemester(semester);
 //                List<Lecture> lectures = lectureRepository.findAll(lectureSearch);
-                List<Lecture> lectures = lectureRepository.findByLectureWithTimeslotByYearAndSemester(year,semester);
+                List<Lecture> lectures = lectureRepository.findByYearAndSemesterWithTimeslot(year,semester);
                 
                 List<LectureDto> searchLectureLists = lectures.stream()
                         .map(lecture -> new LectureDto(lecture))
@@ -476,19 +475,22 @@ public class TimeTableController {
         private boolean isPrimary;
 
         //렉처리스트 추가(수연)
-        private List<TimeTableLecture> myLectureList;
+//        private List<TimeTableLecture> myLectureList;
+        private List<LectureDto> myLectureList;
 
         public TimeTableDto(TimeTable timeTable) {
             tableName=timeTable.getTableName();
             isPrimary= timeTable.isPrimary();
-            myLectureList=timeTable.getLectures();
+            myLectureList=timeTable.getLectures().stream().map(timeTableLecture -> new LectureDto(timeTableLecture.getLecture()) ).collect(Collectors.toList());
+//            myLectureList=timeTable.getLectures();
         }
     }
 
     @Data
     @AllArgsConstructor
     public static class LectureDto {
-        private String name;
+        private String id;
+        private String lectureName;
         private String professor;
         private String section;
         private String sectionDetail;
@@ -498,10 +500,11 @@ public class TimeTableController {
         private String notes;
         private int yearOfLecture;
         private String semester;
-        private List<TimeSlot> times = new ArrayList<>(); //추가
+        private List<TimeSlotDto> lectureTimes = new ArrayList<>(); //추가
 
         public LectureDto(Lecture lecture) {
-            name=lecture.getName();
+            id=lecture.getLectureNumber();
+            lectureName=lecture.getName();
             professor=lecture.getSection();
             section=lecture.getSection();
             sectionDetail=lecture.getSectionDetail();
@@ -511,7 +514,8 @@ public class TimeTableController {
             notes=lecture.getNotes();
             yearOfLecture=lecture.getYearOfLecture();
             semester=lecture.getSemester();
-            times=lecture.getTimes().stream().map(lectureTimeSlot -> lectureTimeSlot.getTimeSlot()).collect(Collectors.toList());
+            lectureTimes =lecture.getTimes().stream().map(lectureTimeSlot -> new TimeSlotDto(lectureTimeSlot.getTimeSlot())).collect(Collectors.toList());
+//            lectureTimes =lecture.getTimes().stream().map(lectureTimeSlot -> lectureTimeSlot.getTimeSlot()).collect(Collectors.toList());
         }
     }
 }

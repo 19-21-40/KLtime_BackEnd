@@ -42,12 +42,13 @@ public class LectureRepository {
     }
 
 
-    public List<Lecture> findByLectureWithTimeslotByYearAndSemester(int yearOfLecture, String semester) {
+    public List<Lecture> findByYearAndSemesterWithTimeslot(int yearOfLecture, String semester) {
         return em.createQuery("select l from Lecture l join fetch l.times lt join fetch lt.timeSlot t where l.yearOfLecture =:yearOfLecture and l.semester=:semester and l.isCustom = false", Lecture.class)
                 .setParameter("yearOfLecture", yearOfLecture)
                 .setParameter("semester", semester)
                 .getResultList();
     }
+
 
     public List<Lecture> findAll(LectureSearch lectureSearch) {
         CriteriaBuilder cb = em.getCriteriaBuilder();

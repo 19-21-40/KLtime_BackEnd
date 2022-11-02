@@ -48,7 +48,7 @@ public class TimeTableService {
         //엔티티 조회
         //Student student = studentRepository.findByNumber(number);
         System.out.println("학번:" + student.getNumber() + "/년도:" + yearOfTimetable );
-        List<TimeTable> tableList = timeTableRepository.findByStudentAndYearAndSemester(student,yearOfTimetable,semester);
+        List<TimeTable> tableList = timeTableRepository.findByStudentAndYearAndSemesterWithLecture(student,yearOfTimetable,semester);
 
         //시간표 이름 생성
         int tableNumber = tableList.size() + 1;
