@@ -1,5 +1,6 @@
 package com.example.demo.Repository;
 
+import com.example.demo.domain.Lecture;
 import com.example.demo.domain.Student;
 import com.example.demo.domain.TimeSlot;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +54,13 @@ public class TimeSlotRepository {
         } catch (NoResultException e){
             return Optional.empty();
         }
+    }
+
+    /**
+     * 타임 슬롯 삭제
+     */
+    public void delete(TimeSlot timeSlot) {
+        em.remove(timeSlot);
     }
 
 

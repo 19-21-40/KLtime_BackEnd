@@ -359,8 +359,14 @@ public class TimeTableController {
                                 return TimeSlot.from(timeSlotDto).orElseThrow(()->new IllegalStateException("error"));
                             });
                 }).collect(Collectors.toList());
-                Lecture lecture = lectureRepository.findByTimeSlotAndCustom(true,timeSlots);
 
+                Lecture lecture;
+                if(studentAndCustomResult.customLectureDto.getId()==null){ //학정번호가 c_로 시작되는지로...
+                    lecture = lectureRepository.findByYearAndSemesterAndTimeSlotAndCustom(studentAndCustomResult.customLectureDto.getYearOfLecture(),studentAndCustomResult.customLectureDto.getSemester(),true,timeSlots.get(0));
+                }
+                else{
+                    lecture = lectureRepository.findByLectureNum(studentAndCustomResult.customLectureDto.getId());
+                }
                 timeTableService.deleteLecture(studentAndCustomResult.studentDto.getNumber(),year,semester,tableName,lecture);
                 return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
             }else{
