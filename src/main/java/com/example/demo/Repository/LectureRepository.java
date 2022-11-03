@@ -43,7 +43,7 @@ public class LectureRepository {
 
 
     public List<Lecture> findByYearAndSemesterWithTimeslot(int yearOfLecture, String semester) {
-        return em.createQuery("select l from Lecture l join fetch l.times lt join fetch lt.timeSlot t where l.yearOfLecture =:yearOfLecture and l.semester=:semester and l.isCustom = false", Lecture.class)
+        return em.createQuery("select distinct l from Lecture l join fetch l.times lt join fetch lt.timeSlot t where l.yearOfLecture =:yearOfLecture and l.semester=:semester and l.isCustom = false", Lecture.class)
                 .setParameter("yearOfLecture", yearOfLecture)
                 .setParameter("semester", semester)
                 .getResultList();
@@ -285,10 +285,10 @@ public class LectureRepository {
 
 
 
-    public Lecture findByTimeSlotAndCustom(boolean isCustom, TimeSlot timeSlot){
-        return em.createQuery("select L from Lecture L left join L.times t where t.timeSlot=:timeSlot and L.isCustom=:isCustom"
+    public Lecture findByTimeSlotAndCustom(boolean isCustom, List<TimeSlot> timeSlots){
+        return em.createQuery("select L from Lecture L left join L.times t where t.timeSlot=:timeSlots and L.isCustom=:isCustom"
                         ,Lecture.class)
-                .setParameter("timeSlot",timeSlot)
+                .setParameter("timeSlots",timeSlots)
                 .setParameter("isCustom", isCustom)
                 .getSingleResult();
     }
