@@ -33,7 +33,7 @@ public class TimeSlot {
         return timeSlot;
     }
 
-    //LectureDto->Lecture 바꾸는 함수
+    //TimeSlotDto->TimeSlot 바꾸는 함수
     public static Optional<TimeSlot> from(TimeTableController.TimeSlotDto timeSlotDto){
         TimeSlot timeSlot = createTimeSlot(
                 timeSlotDto.getDay(),

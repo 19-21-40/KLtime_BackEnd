@@ -3,11 +3,9 @@ package com.example.demo.Repository;
 import com.example.demo.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
@@ -194,7 +192,6 @@ public class LectureRepository {
     }
 
     /**
-
      * 커스텀 강의 삭제
      */
     public void delete(Lecture lecture) {
@@ -285,10 +282,12 @@ public class LectureRepository {
 
 
 
-    public Lecture findByTimeSlotAndCustom(boolean isCustom, List<TimeSlot> timeSlots){
-        return em.createQuery("select L from Lecture L left join L.times t where t.timeSlot=:timeSlots and L.isCustom=:isCustom"
+    public Lecture findByYearAndSemesterAndTimeSlotAndCustom(int year, String semester,boolean isCustom, TimeSlot timeSlot){
+        return em.createQuery("select L from Lecture L left join L.times t where L.yearOfLecture=:year and L.semester=:semester and t.timeSlot=:timeSlot and L.isCustom=:isCustom"
                         ,Lecture.class)
-                .setParameter("timeSlots",timeSlots)
+                .setParameter("year",year)
+                .setParameter("semester",semester)
+                .setParameter("timeSlot",timeSlot)
                 .setParameter("isCustom", isCustom)
                 .getSingleResult();
     }

@@ -22,6 +22,7 @@ public class TimeTableService {
     private final StudentLectureRepository studentLectureRepository;
     private final TimeTableLectureRepository timeTableLectureRepository;
     private final LectureService lectureService; //서비스 계층끼리 함수 공유해도 되나?
+    private final TimeSlotRepository timeSlotRepository;
 
     /**
      * 회원 가입 후 기본시간표 자동 생성 (studentlectures 에 추가)
@@ -213,14 +214,21 @@ public class TimeTableService {
         //엔티티 조회
         Student student = studentRepository.findByNumber(number);
         TimeTable timeTable = timeTableRepository.findByStudentAndYearAndSemesterAndName(student,yearOfTimetable,semester,tableName);
-        TimeTableLecture timeTableLecture = timeTableLectureRepository.findByTimetableAndLecture(timeTable,lecture);
 
-        //커스텀 강의라면, lecture 삭제
-        if(timeTableLecture.getLecture().isCustom()){
-            Lecture customLecture=timeTableLecture.getLecture();
-            lectureRepository.delete(customLecture);
+
+        //커스텀 강의라면, lecture와 해당 timeslot 삭제
+        if(lecture.isCustom()){
+            //Lecture customLecture=timeTableLecture.getLecture();
+            //lecture 삭제
+            lectureRepository.delete(lecture);
+            //timeslot 삭제
+            for(int i=0;i<lecture.getTimes().size();i++){
+                timeSlotRepository.delete(lecture.getTimes().get(i).getTimeSlot());
+            }
+            return;
         }
 
+        TimeTableLecture timeTableLecture = timeTableLectureRepository.findByTimetableAndLecture(timeTable,lecture);
         //시간표에서 강의 삭제(timeTableLecture 삭제)
         timeTableLectureRepository.delete(timeTableLecture);
 
