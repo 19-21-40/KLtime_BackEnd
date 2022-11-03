@@ -97,7 +97,7 @@ public class Lecture {
                 lectureDto.getSectionDetail(),
                 lectureDto.getCredit(),
                 lectureDto.getLevel(),
-                lectureDto.getCategory(),
+                lectureDto.getDepartment(),
                 lectureDto.getYearOfLecture(),
                 lectureDto.getSemester(),
                 timeSlots.stream().map(LectureTimeSlot::createLectureTimeSlot).collect(Collectors.toList())
