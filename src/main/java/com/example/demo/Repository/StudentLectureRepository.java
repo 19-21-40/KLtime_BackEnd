@@ -1,8 +1,5 @@
 package com.example.demo.Repository;
-import com.example.demo.domain.Student;
-import com.example.demo.domain.StudentLecture;
-import com.example.demo.domain.TimeTable;
-import com.example.demo.domain.TimeTableLecture;
+import com.example.demo.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +13,11 @@ public class StudentLectureRepository {
 
     public StudentLecture findById(Long id) {
         return em.find(StudentLecture.class, id);
+    }
+    public StudentLecture findByLecture(Lecture lecture){
+        return em.createQuery("select sl from StudentLecture sl where sl.lecture=: lecture",StudentLecture.class)
+                .setParameter("lecture",lecture)
+                .getSingleResult();
     }
 
     public List<StudentLecture> findByStudentAndYearAndSemester(Student student, int yearOfLecture, String takesSemester){

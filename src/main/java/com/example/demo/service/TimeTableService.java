@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -235,7 +236,7 @@ public class TimeTableService {
         //기본시간표라면, studentlecture 삭제
         if(timeTable.isPrimary()){
             //엔티티 조회
-            StudentLecture studentLecture = studentLectureRepository.findById(timeTableLecture.getLecture().getId());
+            StudentLecture studentLecture = studentLectureRepository.findByLecture(timeTableLecture.getLecture());
             studentLectureRepository.delete(studentLecture);
         }
     }

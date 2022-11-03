@@ -361,7 +361,7 @@ public class TimeTableController {
                 }).collect(Collectors.toList());
 
                 Lecture lecture;
-                if(studentAndCustomResult.customLectureDto.getId()==null){
+                if(studentAndCustomResult.customLectureDto.getId()==null){ //학정번호가 c_로 시작되는지로...
                     lecture = lectureRepository.findByYearAndSemesterAndTimeSlotAndCustom(studentAndCustomResult.customLectureDto.getYearOfLecture(),studentAndCustomResult.customLectureDto.getSemester(),true,timeSlots.get(0));
                 }
                 else{
