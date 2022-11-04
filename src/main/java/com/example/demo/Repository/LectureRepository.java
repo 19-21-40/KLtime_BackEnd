@@ -315,13 +315,15 @@ public class LectureRepository {
 
 
     /**
-     * 학정번호로 강의 찾기
+     * 해당 년도/학기 학정번호로 강의 찾기
      * @param lectureNumber
      * @return lecture
      */
-    public Lecture findByLectureNum(String lectureNumber) {
-        return em.createQuery("select l from Lecture l where l.lectureNumber=:lectureNumber",Lecture.class)
+    public Lecture findByLectureNumAndYearAndSemster(String lectureNumber,int year, String semester) {
+        return em.createQuery("select l from Lecture l where l.lectureNumber=:lectureNumber and l.yearOfLecture=:year and l.semester=:semester",Lecture.class)
                 .setParameter("lectureNumber", lectureNumber)
+                .setParameter("year", year)
+                .setParameter("semester", semester)
                 .getSingleResult();
     }
 }

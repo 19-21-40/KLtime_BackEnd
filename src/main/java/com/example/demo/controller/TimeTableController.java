@@ -271,7 +271,7 @@ public class TimeTableController {
         try {
             if (studentDTO.getToken() != null) {
                 //Student student = studentRepository.findByNumber(studentDTO.getNumber());
-                Lecture lecture = lectureRepository.findByLectureNum(lectureNum);
+                Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemster(lectureNum,year,semester);
                 timeTableService.addLecture(studentDTO.getNumber(),year,semester,tableName,lecture);
 
                 return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
@@ -365,7 +365,7 @@ public class TimeTableController {
                     lecture = lectureRepository.findByYearAndSemesterAndTimeSlotAndCustom(studentAndCustomResult.customLectureDto.getYearOfLecture(),studentAndCustomResult.customLectureDto.getSemester(),true,timeSlots.get(0));
                 }
                 else{
-                    lecture = lectureRepository.findByLectureNum(studentAndCustomResult.customLectureDto.getId());
+                    lecture = lectureRepository.findByLectureNumAndYearAndSemster(studentAndCustomResult.customLectureDto.getId(),year,semester);
                 }
                 timeTableService.deleteLecture(studentAndCustomResult.studentDto.getNumber(),year,semester,tableName,lecture);
                 return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
