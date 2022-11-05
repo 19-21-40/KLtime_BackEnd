@@ -104,7 +104,7 @@ public class Student {
 
     //==비즈니스 로직==//
 
-    /** 내가 들었던 강의들중 LectureName과 같은게 있다면 requiredLectures에서 삭제함*/
+    /** 내가 들었던 강의들중 LectureName과 같은게 있다면 requiredLectures에서 삭제함 */
     public void CheckIfListenLectures( Set<String> requiredLectures ){
         Iterator<String> iterate = requiredLectures.iterator();
 
@@ -116,7 +116,7 @@ public class Student {
         }
     }
 
-    /** 내가 들었던 강의들중 LectureName을 포함하는 것이 있다면 requiredLectures에서 LectureName을 포함하는 것들을 모두 삭제함*/
+    /** 내가 들었던 강의들중 LectureName을 포함하는 것이 있다면 requiredLectures에서 LectureName을 포함하는 것들을 모두 삭제함 */
     public void CheckIfListenSimilarLecture(Set<String> requiredLectures, String lectureName){
         if(myLectures.stream().anyMatch(sl -> (sl.getGpa()!="F" && sl.getGpa()!="NP"    // F나 NP가 아닌지 확인
                 && sl.getLecture().getName().contains(lectureName))))

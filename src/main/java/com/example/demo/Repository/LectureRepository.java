@@ -16,9 +16,13 @@ import java.util.Set;
 @Repository
 @RequiredArgsConstructor
 public class LectureRepository {
-
-
     private final EntityManager em;
+
+    public List<Lecture> findByCustom(boolean isCustom){
+        return em.createQuery("select l from Lecture l where l.isCustom=:isCustom",Lecture.class)
+                .setParameter("isCustom",isCustom)
+                .getResultList();
+    }
 
     public Long save(Lecture lecture) {
         em.persist(lecture);
@@ -319,7 +323,7 @@ public class LectureRepository {
      * @param lectureNumber
      * @return lecture
      */
-    public Lecture findByLectureNumAndYearAndSemster(String lectureNumber,int year, String semester) {
+    public Lecture findByLectureNumAndYearAndSemester(String lectureNumber, int year, String semester) {
         return em.createQuery("select l from Lecture l where l.lectureNumber=:lectureNumber and l.yearOfLecture=:year and l.semester=:semester",Lecture.class)
                 .setParameter("lectureNumber", lectureNumber)
                 .setParameter("year", year)

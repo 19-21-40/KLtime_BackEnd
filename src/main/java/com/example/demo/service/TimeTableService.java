@@ -228,7 +228,7 @@ public class TimeTableService {
         TimeTable timeTable = timeTableRepository.findByStudentAndYearAndSemesterAndName(student,yearOfTimeTable,semester,tableName);
 
         //외국인만 수강 가능이면 강의 추가가 안되야 함
-        if(!lecture.getNotes().contains("외국인")){
+        if(lecture.getNotes()==null || !lecture.getNotes().contains("외국인")){
             //studentLecture 을 조회해서 해당 강의 이름이 존재하는지 파악하고, 학점이 P 이거나 B0 이상이면 강의 추가가 안되야 함
             Optional<StudentLecture> retakeLecture =studentLectureRepository.findByStudentAndLectureName(student,lecture.getName());
             if(retakeLecture.isEmpty()||!Arrays.stream(passList).anyMatch(gpa->gpa.equals(retakeLecture.get().getGpa())) ){
@@ -251,6 +251,7 @@ public class TimeTableService {
     /**
      * 시간표에서 커스텀강의 한개 추가
      * 기본시간표에서 강의 추가하면 studentlecture 생성(추가)
+     * 여기서의 lecture는 lectureDto -> lecuture
      * 오버로딩
      */
     @Transactional
@@ -273,21 +274,14 @@ public class TimeTableService {
         //엔티티 조회
         Student student = studentRepository.findByNumber(number);
         TimeTable timeTable = timeTableRepository.findByStudentAndYearAndSemesterAndName(student,yearOfTimetable,semester,tableName);
-
+        TimeTableLecture timeTableLecture = timeTableLectureRepository.findByTimetableAndLecture(timeTable,lecture);
 
         //커스텀 강의라면, lecture와 해당 timeslot 삭제
         if(lecture.isCustom()){
-            //Lecture customLecture=timeTableLecture.getLecture();
             //lecture 삭제
             lectureRepository.delete(lecture);
-            //timeslot 삭제
-//            for(int i=0;i<lecture.getTimes().size();i++){
-//                timeSlotRepository.delete(lecture.getTimes().get(i).getTimeSlot());
-//            }
-//            return;
         }
 
-        TimeTableLecture timeTableLecture = timeTableLectureRepository.findByTimetableAndLecture(timeTable,lecture);
         //시간표에서 강의 삭제(timeTableLecture 삭제)
         timeTableLectureRepository.delete(timeTableLecture);
 

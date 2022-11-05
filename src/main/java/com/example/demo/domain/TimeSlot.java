@@ -29,7 +29,6 @@ public class TimeSlot {
         timeSlot.setStartTime(startTime);
         timeSlot.setEndTime(endTime);
 
-
         return timeSlot;
     }
 
