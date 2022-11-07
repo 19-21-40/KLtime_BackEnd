@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.Repository.*;
+import com.example.demo.Service.LectureService;
 import com.example.demo.Service.TimeTableService;
 import com.example.demo.domain.*;
 import com.example.demo.dto.ResponseDTO;
@@ -28,6 +29,8 @@ public class TimeTableController {
     private final StudentRepository studentRepository;
     private final TimeTableService timeTableService;
     private final TimeSlotRepository timeSlotRepository;
+
+    private final LectureService lectureService;
 
     /**
      * 시간표 페이지 처음 접속 시 & 년도/학기 변경(선택)시 (해당 년도/학기의 기본시간표가 떠야 함) -> 쿼리 확인
@@ -333,6 +336,46 @@ public class TimeTableController {
                 Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(studentAndCustomResult.customLectureDto.getId(),studentAndCustomResult.customLectureDto.getYearOfLecture(),studentAndCustomResult.customLectureDto.getSemester());
 
                 timeTableService.deleteLecture(studentAndCustomResult.studentDto.getNumber(),year,semester,tableName,lecture);
+
+                return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
+            }else{
+                throw new IllegalStateException("토큰이 존재하지 않습니다.");
+            }
+        }catch (Exception e){
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
+
+    /**
+     * 해당 년도/학기/시간표 내 커스텀 강의 정보 수정
+     * @param studentAndCustomResult
+     * @param year
+     * @param semester
+     * @param tableName
+     * @return new ResponseEntity<>(HttpStatus.OK)
+     */
+    @PostMapping("/updateCustomLecture/{tableName}")
+    public ResponseEntity<?> updateCustomLecture(
+            @RequestBody StudentAndCustomResult<StudentDTO, LectureDto,List<TimeSlotDto>> studentAndCustomResult,
+            @PathVariable(value = "year") int year,
+            @PathVariable(value = "semester") String semester,
+            @PathVariable(value = "tableName") String tableName
+    ){
+        try {
+            if (studentAndCustomResult.studentDto.getToken() != null) {
+                Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(studentAndCustomResult.customLectureDto.getId(),studentAndCustomResult.customLectureDto.getYearOfLecture(),studentAndCustomResult.customLectureDto.getSemester());
+
+                List<TimeSlot> timeSlots = studentAndCustomResult.timeSlotDtoList.stream().map((timeSlotDto)-> {
+                    return timeSlotRepository.findByTimeSlot(timeSlotDto.getDay(), timeSlotDto.getStartTime(), timeSlotDto.getEndTime())
+                            .orElseGet(() -> {
+                                return TimeSlot.from(timeSlotDto).orElseThrow(()->new IllegalStateException("error"));
+                            });
+                }).collect(Collectors.toList());
+
+                lectureService.updateLectureInfo(lecture.getLectureNumber(),year,semester,lecture.getName(),timeSlots);
 
                 return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
             }else{
