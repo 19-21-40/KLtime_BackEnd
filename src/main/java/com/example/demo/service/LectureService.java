@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -102,20 +101,25 @@ public class LectureService {
     @Transactional
     public void updateLectureInfo(String lectureNum, int year, String semester, String lectureName, List<TimeSlot> updateTimeSlots){
         //엔티티 조회
-        Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(lectureNum,year,semester);
+        Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemesterWithTimes(lectureNum,year,semester);
 
         //커스텀 강의인 경우에만 강의 정보 변경 가능
         if(lecture.isCustom()){
             //=====강의명 변경 (강의명, 시간만 수정) =====//
-            lecture.setName(lectureName);
+            lecture.setName(lectureName); //강의명 변경
+            //lectureRepository.save(lecture); //강의 정보 저장
+            System.out.println("lectureName : "+lecture.getName());
+
 
             //===== 강의 시간 변경 =====//
             System.out.println("lectureTimeSlot 개수 : "+lecture.getTimes().size());
             //기존 lectureTimeSlot 들 삭제
-            for(int i=0;i<lecture.getTimes().size();i++){
-                lectureTimeSlotRepository.delete(lecture.getTimes().get(i));
-            }
-
+//            for(int i=0;i<lecture.getTimes().size();i++){
+//                System.out.println("lectureTimeSlot: "+lecture.getTimes().get(i));
+//                lectureTimeSlotRepository.delete(lecture.getTimes().get(i));
+//                lecture.getTimes().remove(i);
+//            }
+            lecture.getTimes().clear();
             //인자의 timeslot 들로 새 timeslot 생성
 //            List<TimeSlot> updateTimeSlots=timeSlots.stream().map(timeSlot -> {
 //                return timeSlotRepository.findByTimeSlot(timeSlot.getDayName(),timeSlot.getStartTime(),timeSlot.getEndTime())

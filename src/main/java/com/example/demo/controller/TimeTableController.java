@@ -375,7 +375,7 @@ public class TimeTableController {
                             });
                 }).collect(Collectors.toList());
 
-                lectureService.updateLectureInfo(lecture.getLectureNumber(),year,semester,lecture.getName(),timeSlots);
+                lectureService.updateLectureInfo(lecture.getLectureNumber(),year,semester,studentAndCustomResult.customLectureDto.getLectureName(),timeSlots);
 
                 return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
             }else{

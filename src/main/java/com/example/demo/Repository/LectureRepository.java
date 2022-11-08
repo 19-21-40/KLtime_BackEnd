@@ -330,4 +330,12 @@ public class LectureRepository {
                 .setParameter("semester", semester)
                 .getSingleResult();
     }
+
+    public Lecture findByLectureNumAndYearAndSemesterWithTimes(String lectureNumber, int yearOfLecture, String semester){
+        return em.createQuery("select l from Lecture l join fetch l.times lt join fetch lt.timeSlot where l.lectureNumber=:lectureNumber and l.yearOfLecture =:yearOfLecture and l.semester=:semester", Lecture.class)
+                .setParameter("lectureNumber", lectureNumber)
+                .setParameter("yearOfLecture", yearOfLecture)
+                .setParameter("semester", semester)
+                .getSingleResult();
+    }
 }

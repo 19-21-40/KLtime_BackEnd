@@ -40,7 +40,7 @@ public class Lecture {
     private boolean isCustom;
 
 
-    @OneToMany(mappedBy = "lecture",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "lecture",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<LectureTimeSlot> times = new ArrayList<>();
 
     @OneToMany(mappedBy = "lecture",cascade = CascadeType.ALL)
