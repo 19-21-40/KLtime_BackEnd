@@ -3,10 +3,11 @@ package com.example.demo.Repository;
 import com.example.demo.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+
 import javax.persistence.*;
+
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +18,13 @@ import java.util.Set;
 @Repository
 @RequiredArgsConstructor
 public class LectureRepository {
-
-
     private final EntityManager em;
+
+    public List<Lecture> findByCustom(boolean isCustom){
+        return em.createQuery("select l from Lecture l where l.isCustom=:isCustom",Lecture.class)
+                .setParameter("isCustom",isCustom)
+                .getResultList();
+    }
 
     public Long save(Lecture lecture) {
         em.persist(lecture);
@@ -289,10 +294,13 @@ public class LectureRepository {
 //     */
 
 
-    public Lecture findByTimeSlotAndCustom(boolean isCustom, List<TimeSlot> timeSlots) {
-        return em.createQuery("select L from Lecture L left join L.times t where t.timeSlot=:timeSlots and L.isCustom=:isCustom"
-                        , Lecture.class)
-                .setParameter("timeSlots", timeSlots)
+
+    public Lecture findByYearAndSemesterAndTimeSlotAndCustom(int year, String semester,boolean isCustom, TimeSlot timeSlot){
+        return em.createQuery("select L from Lecture L left join L.times t where L.yearOfLecture=:year and L.semester=:semester and t.timeSlot=:timeSlot and L.isCustom=:isCustom"
+                        ,Lecture.class)
+                .setParameter("year",year)
+                .setParameter("semester",semester)
+                .setParameter("timeSlot",timeSlot)
                 .setParameter("isCustom", isCustom)
                 .getSingleResult();
     }
@@ -320,14 +328,34 @@ public class LectureRepository {
 
 
     /**
+
      * 학정번호로 강의 찾기
      *
      * @param lectureNumber
      * @return lecture
      */
-    public Lecture findByLectureNum(String lectureNumber) {
+    public List<Lecture> findByLectureNum(String lectureNumber) {
         return em.createQuery("select l from Lecture l where l.lectureNumber=:lectureNumber", Lecture.class)
+        .setParameter("lectureNumber", lectureNumber)
+                .getResultList();
+    }
+     * 해당 년도/학기 학정번호로 강의 찾기
+     * @param lectureNumber
+     * @return lecture
+     */
+    public Lecture findByLectureNumAndYearAndSemester(String lectureNumber, int year, String semester) {
+        return em.createQuery("select l from Lecture l where l.lectureNumber=:lectureNumber and l.yearOfLecture=:year and l.semester=:semester",Lecture.class)
                 .setParameter("lectureNumber", lectureNumber)
+                .setParameter("year", year)
+                .setParameter("semester", semester)
+                .getSingleResult();
+    }
+
+    public Lecture findByLectureNumAndYearAndSemesterWithTimes(String lectureNumber, int yearOfLecture, String semester){
+        return em.createQuery("select l from Lecture l join fetch l.times lt join fetch lt.timeSlot where l.lectureNumber=:lectureNumber and l.yearOfLecture =:yearOfLecture and l.semester=:semester", Lecture.class)
+                .setParameter("lectureNumber", lectureNumber)
+                .setParameter("yearOfLecture", yearOfLecture)
+                .setParameter("semester", semester)
                 .getSingleResult();
     }
 

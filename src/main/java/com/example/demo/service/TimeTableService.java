@@ -1,7 +1,6 @@
 package com.example.demo.Service;
 
 import com.example.demo.Repository.*;
-import com.example.demo.controller.TimeTableController;
 import com.example.demo.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 @Service
 @Transactional(readOnly = true)
@@ -22,9 +21,53 @@ public class TimeTableService {
     private final StudentLectureRepository studentLectureRepository;
     private final TimeTableLectureRepository timeTableLectureRepository;
     private final LectureService lectureService; //서비스 계층끼리 함수 공유해도 되나?
+    private final TimeSlotRepository timeSlotRepository;
+    
+    //현재 해당 년도/학기 불러오는 로직으로 바꿔야 함
+    private Integer currentYear= LocalDateTime.now().getYear();
+    private String currentSemester= "2학기"; //수정해야함.. 어케하지
 
+
+//    /**
+//     * 회원 가입 후 기본시간표 자동 생성
+//     */
+//    @Transactional
+//    public void addDefaultTimeTable(String number){
+//        Student student = studentRepository.findByNumber(number);
+//        //int currentYear=2022; // 수정해야함...
+//        for(int i= student.getAdmissionYear();i<= currentYear;i++) {
+//            for (int j = 1; j <= 2; j++) { //4로 고치면 String 으로 semester 바꿔야함
+//                //시간표 생성
+//                String semester = j + "학기";
+//                String defaultTableName = createDefaultTableName(student, i, semester);
+//                TimeTable timeTable = TimeTable.createTimetable(student, defaultTableName, i, semester, true);
+//            }
+//        }
+//    }
+//
+//    /**
+//     * 시간표 기본 이름 자동 생성
+//     */
+//    @Transactional
+//    public String createDefaultTableName(Student student, int yearOfTimetable, String semester){
+//        //엔티티 조회
+//        //Student student = studentRepository.findByNumber(number);
+//        System.out.println("학번:" + student.getNumber() + "/년도:" + yearOfTimetable );
+//        List<TimeTable> tableList = timeTableRepository.findByStudentAndYearAndSemesterWithLecture(student,yearOfTimetable,semester);
+//
+//        //시간표 이름 생성
+//        int tableNumber = tableList.size() + 1;
+//
+//        String tableName= "시간표" + tableNumber;
+//        for (TimeTable timeTable : tableList) {
+//            if (Objects.equals(timeTable.getTableName(), tableName)){
+//                tableName = "시간표" + (tableNumber+1);
+//            }
+//        }
+//        return tableName;
+//    }
     /**
-     * 회원 가입 후 기본시간표 자동 생성 (studentlectures 에 추가)
+      * 회원 가입 후 기본시간표 자동 생성
      */
     @Transactional
     public void addDefaultTimeTable(String number){
@@ -41,7 +84,7 @@ public class TimeTableService {
     }
 
     /**
-     * 시간표 기본 이름 자동 생성
+     * 시간표 이름 자동 생성
      */
     @Transactional
     public String createDefaultTableName(Student student, int yearOfTimetable, String semester){
@@ -121,9 +164,12 @@ public class TimeTableService {
         //validateDuplicatePrimary(newPrimaryTimeTable, student, newPrimaryTimeTable.getSemester()); //기본시간표 중복 체크
         List<StudentLecture> studentLectures= studentLectureRepository.findByStudentAndYearAndSemester(student, yearOfTimetable, semester);
 
-        //기존 기본시간표의 student lecture 들을 삭제
-        for(StudentLecture lecture : studentLectures){
-            studentLectureRepository.delete(lecture);
+
+        //해당 년도/학기를 제외한 기존 기본시간표의 student lecture 들을 삭제
+        if(yearOfTimetable != currentYear || !semester.equals(currentSemester)){
+            for(StudentLecture studentLecture : studentLectures){
+                studentLectureRepository.delete(studentLecture);
+            }
         }
 
         //기본 시간표 변경
@@ -131,14 +177,16 @@ public class TimeTableService {
         oldPrimaryTimeTable.setPrimary(false);
         newPrimaryTimeTable.setPrimary(true);
 
-        //변경한 기본시간표에 있는 강의들로 studentlecture 들 생성 (추가)
-        List<TimeTableLecture> timeTableLectures = newPrimaryTimeTable.getLectures();
-        for (TimeTableLecture timeTableLecture : timeTableLectures) {
-            Lecture lecture = timeTableLecture.getLecture();
-            //GPA == null 을 일단 default 로 함
-            StudentLecture studentLecture = StudentLecture.createStudentLecture(student, lecture, null); //엔티티 조회
-            student.addStudentLecture(studentLecture); //studentlecture 생성(추가)
+        if(yearOfTimetable != currentYear || !semester.equals(currentSemester)){ //해당 년도/학기 제외
+            List<TimeTableLecture> timeTableLectures = newPrimaryTimeTable.getLectures();
+            for(int i=0;i<timeTableLectures.size();i++){
+                Lecture lecture = timeTableLectures.get(i).getLecture();
+                //GPA == null 을 일단 default 로 함
+                StudentLecture studentLecture = StudentLecture.createStudentLecture(student,lecture,null); //엔티티 조회
+                student.addStudentLecture(studentLecture); //studentlecture 생성(추가)
+            }
         }
+
 
     }
 
@@ -158,14 +206,18 @@ public class TimeTableService {
         oldPrimaryTimeTable.setPrimary(false);
         newTimeTable.setPrimary(true);
 
-        //변경한 기본시간표에 있는 강의들로 studentlecture 들 생성 (추가)
-        List<TimeTableLecture> timeTableLectures = newTimeTable.getLectures();
-        for (TimeTableLecture timeTableLecture : timeTableLectures) {
-            Lecture lecture = timeTableLecture.getLecture();
-            //GPA == null 을 일단 default 로 함
-            StudentLecture studentLecture = StudentLecture.createStudentLecture(student, lecture, null); //엔티티 조회
-            student.addStudentLecture(studentLecture); //studentlecture 생성(추가)
+
+        //변경한 기본시간표에 있는 강의들로 해당 년도/학기를 제외한 studentlecture 들 생성 (추가)
+        if(yearOfTimetable != currentYear || !semester.equals(currentSemester)){ //해당 년도/학기 제외
+            List<TimeTableLecture> timeTableLectures = newPrimaryTimeTable.getLectures();
+            for(int i=0;i<timeTableLectures.size();i++){
+                Lecture lecture = timeTableLectures.get(i).getLecture();
+                //GPA == null 을 일단 default 로 함
+                StudentLecture studentLecture = StudentLecture.createStudentLecture(student,lecture,null); //엔티티 조회
+                student.addStudentLecture(studentLecture); //studentlecture 생성(추가)
+            }
         }
+        
     }
 
 
@@ -217,39 +269,40 @@ public class TimeTableService {
      */
     @Transactional
     public void addLecture(String number, int yearOfTimeTable, String semester,String tableName, Lecture lecture) {
-        addLecture(number, yearOfTimeTable, semester, tableName, lecture, null);
-    }
-
-    /**
-     * 시간표에서 강의(커스텀 X) 한개 추가
-     * 기본시간표에서 강의 추가하면 studentlecture 생성(추가)
-     */
-    @Transactional
-    public void addLecture(String number, int yearOfTimeTable, String semester,String tableName, Lecture lecture,String gpa) {
+        String[] passList={"B0","B+","A0","A+","P"};
+        System.out.println("year: "+ yearOfTimeTable + " semester: " + semester);
         //엔티티 조회
 
         Student student = studentRepository.findByNumber(number);
         //Lecture lecture = lectureRepository.findByLectureNum(lectureNum);
         TimeTable timeTable = timeTableRepository.findByStudentAndYearAndSemesterAndName(student,yearOfTimeTable,semester,tableName);
 
-        //강의가 이미 존재하면 return
-        if(timeTableLectureRepository.findByTimetableAndLecture(timeTable,lecture).isPresent())return;
 
-        TimeTableLecture timeTableLecture = TimeTableLecture.createTimeTableLecture(lecture);
+        //외국인만 수강 가능이면 강의 추가가 안되야 함
+        if(lecture.getNotes()==null || !lecture.getNotes().contains("외국인")){
+            //studentLecture 을 조회해서 해당 강의 이름이 존재하는지 파악하고, 학점이 P 이거나 B0 이상이면 강의 추가가 안되야 함
+            Optional<StudentLecture> retakeLecture =studentLectureRepository.findByStudentAndLectureName(student,lecture.getName());
+            if(retakeLecture.isEmpty()||!Arrays.stream(passList).anyMatch(gpa->gpa.equals(retakeLecture.get().getGpa())) ){
+                //시간표강의 생성(강의 추가)
+                TimeTableLecture timeTableLecture = TimeTableLecture.createTimeTableLecture(lecture);
+                timeTable.addTimeTableLecture(timeTableLecture);
 
-        //시간표강의 생성(강의 추가)
-        timeTable.addTimeTableLecture(timeTableLecture);
-
-        //기본시간표라면, studentlecture 생성(추가)
-        if(timeTable.isPrimary()){
-            StudentLecture studentLecture = StudentLecture.createStudentLecture(student,lecture,gpa);
-            student.addStudentLecture(studentLecture); //studentlecture 생성(추갸)
+                //기본시간표라면, studentlecture 생성(추가)
+                if(timeTable.isPrimary()){
+                    if(yearOfTimeTable != currentYear || !semester.equals(currentSemester)){ //해당 년도/학기 제외
+                        //GPA == null 을 일단 default로 함
+                        StudentLecture studentLecture = StudentLecture.createStudentLecture(student,lecture,null); //엔티티 조회
+                        student.addStudentLecture(studentLecture); //studentlecture 생성(추갸)
+                    }
+                }
+            }
         }
     }
 
     /**
      * 시간표에서 커스텀강의 한개 추가
      * 기본시간표에서 강의 추가하면 studentlecture 생성(추가)
+     * 여기서의 lecture는 lectureDto -> lecuture
      * 오버로딩
      */
     @Transactional
@@ -274,10 +327,10 @@ public class TimeTableService {
         TimeTable timeTable = timeTableRepository.findByStudentAndYearAndSemesterAndName(student,yearOfTimetable,semester,tableName);
         TimeTableLecture timeTableLecture = timeTableLectureRepository.findByTimetableAndLecture(timeTable,lecture).get();
 
-        //커스텀 강의라면, lecture 삭제
-        if(timeTableLecture.getLecture().isCustom()){
-            Lecture customLecture=timeTableLecture.getLecture();
-            lectureRepository.delete(customLecture);
+        //커스텀 강의라면, lecture와 해당 timeslot 삭제
+        if(lecture.isCustom()){
+            //lecture 삭제
+            lectureRepository.delete(lecture);
         }
 
         //시간표에서 강의 삭제(timeTableLecture 삭제)
@@ -285,9 +338,11 @@ public class TimeTableService {
 
         //기본시간표라면, studentlecture 삭제
         if(timeTable.isPrimary()){
-            //엔티티 조회
-            StudentLecture studentLecture = studentLectureRepository.findById(timeTableLecture.getLecture().getId());
-            studentLectureRepository.delete(studentLecture);
+            if(yearOfTimetable != currentYear || !semester.equals(currentSemester)){
+                //엔티티 조회
+                StudentLecture studentLecture = studentLectureRepository.findByStudentAndLecture(timeTableLecture.getLecture(),student);
+                studentLectureRepository.delete(studentLecture);
+            }
         }
     }
 }

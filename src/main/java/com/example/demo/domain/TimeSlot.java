@@ -29,11 +29,10 @@ public class TimeSlot {
         timeSlot.setStartTime(startTime);
         timeSlot.setEndTime(endTime);
 
-
         return timeSlot;
     }
 
-    //LectureDto->Lecture 바꾸는 함수
+    //TimeSlotDto->TimeSlot 바꾸는 함수
     public static Optional<TimeSlot> from(TimeTableController.TimeSlotDto timeSlotDto){
         TimeSlot timeSlot = createTimeSlot(
                 timeSlotDto.getDay(),

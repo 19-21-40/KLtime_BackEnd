@@ -51,6 +51,4 @@ public class TimeTableLectureRepository {
     public void delete(TimeTableLecture timeTableLecture) {
         em.remove(timeTableLecture);
     }
-
-
 }
