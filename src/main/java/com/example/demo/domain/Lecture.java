@@ -1,18 +1,13 @@
 package com.example.demo.domain;
 
 import com.example.demo.controller.TimeTableController;
-import com.example.demo.dto.StudentDTO;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
@@ -45,11 +40,10 @@ public class Lecture {
     private boolean isCustom;
 
 
-    @OneToMany(mappedBy = "lecture")
+    @OneToMany(mappedBy = "lecture",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<LectureTimeSlot> times = new ArrayList<>();
 
-    //이게 과연 어디에 쓰이는가..?
-    @OneToMany(mappedBy = "lecture")
+    @OneToMany(mappedBy = "lecture",cascade = CascadeType.ALL)
     private List<TimeTableLecture> tableListWhichAdd = new ArrayList<>();
 
 
@@ -89,9 +83,15 @@ public class Lecture {
         }
     }
 
-    //LectureDto->Lecture 바꾸는 함수 (커스텀 강의 만들 때만 쓰임)
+    public void addLectureTimeSlot(LectureTimeSlot lectureTimeSlot){
+        times.add(lectureTimeSlot);
+        lectureTimeSlot.setLecture(this);
+    }
+
+    //LectureDto -> Lecture 바꾸는 함수 (커스텀 강의 만들 때만 쓰임)
     public static Optional<Lecture> from(TimeTableController.LectureDto lectureDto,List<TimeSlot> timeSlots){
-        Lecture lecture = createLecture(lectureDto.getLectureName(),
+        Lecture lecture = createCustomLecture(lectureDto.getId(),
+                lectureDto.getLectureName(),
                 lectureDto.getProfessor(),
                 lectureDto.getSection(),
                 lectureDto.getSectionDetail(),
@@ -100,7 +100,8 @@ public class Lecture {
                 lectureDto.getDepartment(),
                 lectureDto.getYearOfLecture(),
                 lectureDto.getSemester(),
-                timeSlots.stream().map(LectureTimeSlot::createLectureTimeSlot).collect(Collectors.toList())
+                lectureDto.getNotes(),
+                timeSlots.stream().map(timeSlot -> LectureTimeSlot.createLectureTimeSlot(timeSlot)).collect(Collectors.toList())
         ); //수정(수연)
         return Optional.of(lecture);
     }
@@ -142,6 +143,7 @@ public class Lecture {
         lecture.setSemester(semester);
         for (LectureTimeSlot lectureTimeSlot : times) {
             lecture.addTimes(lectureTimeSlot);
+//            lecture.addLectureTimeSlot(lectureTimeSlot);
         }
         lecture.setNotes(notes);
         lecture.setCustom(isCustom);
@@ -151,7 +153,8 @@ public class Lecture {
 
     //추가(수연)
     //==커스텀강의 생성 메서드==//
-    public static Lecture createLecture(
+    public static Lecture createCustomLecture(
+            String lectureNumber,
             String name,
             String professor,
             String section,
@@ -161,9 +164,9 @@ public class Lecture {
             String category,
             int yearOfLecture,
             String semester,
+            String notes,
             List<LectureTimeSlot> lectureTimeSlots){
-        return createLecture(null,name,professor,section,sectionDetail,credit,level,category,yearOfLecture,semester,lectureTimeSlots,null,true);
-
+        return createLecture(lectureNumber,name,professor,section,sectionDetail,credit,level,category,yearOfLecture,semester,lectureTimeSlots,notes,true);
     }
     
     @Override

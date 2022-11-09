@@ -16,9 +16,13 @@ import java.util.Set;
 @Repository
 @RequiredArgsConstructor
 public class LectureRepository {
-
-
     private final EntityManager em;
+
+    public List<Lecture> findByCustom(boolean isCustom){
+        return em.createQuery("select l from Lecture l where l.isCustom=:isCustom",Lecture.class)
+                .setParameter("isCustom",isCustom)
+                .getResultList();
+    }
 
     public Long save(Lecture lecture) {
         em.persist(lecture);
@@ -315,13 +319,23 @@ public class LectureRepository {
 
 
     /**
-     * 학정번호로 강의 찾기
+     * 해당 년도/학기 학정번호로 강의 찾기
      * @param lectureNumber
      * @return lecture
      */
-    public Lecture findByLectureNum(String lectureNumber) {
-        return em.createQuery("select l from Lecture l where l.lectureNumber=:lectureNumber",Lecture.class)
+    public Lecture findByLectureNumAndYearAndSemester(String lectureNumber, int year, String semester) {
+        return em.createQuery("select l from Lecture l where l.lectureNumber=:lectureNumber and l.yearOfLecture=:year and l.semester=:semester",Lecture.class)
                 .setParameter("lectureNumber", lectureNumber)
+                .setParameter("year", year)
+                .setParameter("semester", semester)
+                .getSingleResult();
+    }
+
+    public Lecture findByLectureNumAndYearAndSemesterWithTimes(String lectureNumber, int yearOfLecture, String semester){
+        return em.createQuery("select l from Lecture l join fetch l.times lt join fetch lt.timeSlot where l.lectureNumber=:lectureNumber and l.yearOfLecture =:yearOfLecture and l.semester=:semester", Lecture.class)
+                .setParameter("lectureNumber", lectureNumber)
+                .setParameter("yearOfLecture", yearOfLecture)
+                .setParameter("semester", semester)
                 .getSingleResult();
     }
 }

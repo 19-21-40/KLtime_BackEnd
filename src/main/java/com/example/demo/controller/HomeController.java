@@ -34,26 +34,8 @@ public class HomeController {
     /**
      * 졸업요건 + 학점
      */
-//    @GetMapping("/api/gradconditionAndCredit")
-//    public CreditAndGradResult Credit() {
-//
-//        String studentNumber = "2019203029";
-//
-//        Student student = studentRepository.findByStudentNumWithLecture(studentNumber);
-//
-//        GradCondition gradcondition = gradConditionRepository.findByDeptAndAdmissionYear(student.getDepartment(), student.getAdmissionYear());
-//
-//        recommendLectureService.checkAndSaveCredit(studentNumber);
-//
-//        Credit credit = student.getCredit();
-//
-//        GradConditionDto gradConditionDto = new GradConditionDto(gradcondition);
-//        CreditDto creditDto = new CreditDto(credit);
-//
-//        return new CreditAndGradResult(gradConditionDto,creditDto);
-//    }
-    @PostMapping("/api/grad-conditionAndCredit")
-    public ResponseEntity<?> credit(@RequestBody StudentDTO studentDTO){
+    @PostMapping("/api/gradConditionAndCredit")
+    public ResponseEntity<?> gradConditionAndCredit(@RequestBody StudentDTO studentDTO){
         try {
             if (studentDTO.getToken() != null) {
                 Student student = studentRepository.findByStudentNumWithLecture(studentDTO.getNumber());
@@ -78,22 +60,6 @@ public class HomeController {
     /**
      * 강의 리스트
      */
-//    @GetMapping("/api/mainLecturelist")
-//    public LectureResult mainLectureList() {
-//        String studentNumber = "2019203029";
-//
-//        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendMainLectureWithNoDup(studentNumber);
-//
-//        Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
-//        for (String s : lectureListMap.keySet()) {
-//            List<LectureDto> lecturelistDto = lectureListMap.get(s).stream()
-//                    .map(lecture -> new LectureDto(lecture))
-//                    .collect(toList());
-//            lectureListMapDto.put(s, lecturelistDto);
-//        }
-//
-//        return new LectureResult(lectureListMapDto);
-//    }
     @PostMapping("/api/mainLectureList")
     public ResponseEntity<?> mainLectureList(@RequestBody StudentDTO studentDTO) {
         try{
@@ -124,104 +90,162 @@ public class HomeController {
         }
     }
 
-
-    @GetMapping("/api/essBalLecturelist")
-    public LectureResult essBalLectureList() {
-        String studentNumber = "2019203029";
-
-        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendEssBalLecturesWithNoDup(studentNumber);
-
-        Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
-        for (String section : lectureListMap.keySet()) {
-            List<LectureDto> lecturelistDto = lectureListMap.get(section).stream()
-                    .map(lecture -> new LectureDto(lecture))
-                    .collect(toList());
-            lectureListMapDto.put(section, lecturelistDto);
+    @PostMapping("/api/essBalLectureList")
+    public ResponseEntity<?> essBalLectureList(@RequestBody StudentDTO studentDTO) {
+        try{
+            if(studentDTO.getToken()!=null){
+                Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendEssBalLecturesWithNoDup(studentDTO.getNumber());
+                Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
+                for (String section : lectureListMap.keySet()) {
+                    List<LectureDto> lecturelistDto = lectureListMap.get(section).stream()
+                            .map(lecture -> new LectureDto(lecture))
+                            .collect(toList());
+                    lectureListMapDto.put(section, lecturelistDto);
+                }
+                return ResponseEntity.ok().body(new LectureResult(lectureListMapDto));
+            }
+            else{
+                throw new IllegalStateException("hello");
+            }
         }
-
-        return new LectureResult(lectureListMapDto);
+        catch (Exception e){
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
     }
 
-    @GetMapping("/api/essLecturelist")
-    public LectureResult essLectureList() {
-        String studentNumber = "2019203029";
+    @PostMapping("/api/essLectureList")
+    public ResponseEntity<?> essLectureList(@RequestBody StudentDTO studentDTO) {
+        try{
+            if(studentDTO.getToken()!=null){
 
-        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendOnlyEssLecturesWithNoDup(studentNumber);
+                Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendOnlyEssLecturesWithNoDup(studentDTO.getNumber());
 
-        Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
-        for (String section : lectureListMap.keySet()) {
-            List<LectureDto> lecturelistDto = lectureListMap.get(section).stream()
-                    .map(lecture -> new LectureDto(lecture))
-                    .collect(toList());
-            lectureListMapDto.put(section, lecturelistDto);
+                Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
+                for (String section : lectureListMap.keySet()) {
+                    List<LectureDto> lecturelistDto = lectureListMap.get(section).stream()
+                            .map(lecture -> new LectureDto(lecture))
+                            .collect(toList());
+                    lectureListMapDto.put(section, lecturelistDto);
+                }
+                return ResponseEntity.ok().body(new LectureResult(lectureListMapDto));
+            }
+            else{
+                throw new IllegalStateException("hello");
+            }
         }
-
-        return new LectureResult(lectureListMapDto);
+        catch (Exception e){
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
     }
 
-    @GetMapping("/api/balLecturelist")
-    public LectureResult balLectureList() {
-        String studentNumber = "2019203029";
-        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendOnlyBalLecturesWithNoDup(studentNumber);
-        Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
-        for (String section : lectureListMap.keySet()) {
-            List<LectureDto> lecturelistDto = lectureListMap.get(section).stream()
-                    .map(lecture -> new LectureDto(lecture))
-                    .collect(toList());
-            lectureListMapDto.put(section, lecturelistDto);
+    @PostMapping("/api/balLectureList")
+    public ResponseEntity<?> balLectureList(@RequestBody StudentDTO studentDTO) {
+        try{
+            if(studentDTO.getToken()!=null){
+                Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendOnlyBalLecturesWithNoDup(studentDTO.getNumber());
+                Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
+                for (String section : lectureListMap.keySet()) {
+                    List<LectureDto> lecturelistDto = lectureListMap.get(section).stream()
+                            .map(lecture -> new LectureDto(lecture))
+                            .collect(toList());
+                    lectureListMapDto.put(section, lecturelistDto);
+                }
+                return ResponseEntity.ok().body(new LectureResult(lectureListMapDto));
+            }
+            else{
+                throw new IllegalStateException("hello");
+            }
         }
-
-        return new LectureResult(lectureListMapDto);
+        catch (Exception e){
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
     }
 
-    @GetMapping("/api/basicLecturelist")
-    public LectureResult basicLectureList() {
-        String studentNumber = "2019203029";
-
-        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendBasicLectureWithNoDup(studentNumber);
-
-        Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
-        for (String s : lectureListMap.keySet()) {
-            List<LectureDto> lecturelistDto = lectureListMap.get(s).stream()
-                    .map(lecture -> new LectureDto(lecture))
-                    .collect(toList());
-            lectureListMapDto.put(s, lecturelistDto);
+    @PostMapping("/api/basicLectureList")
+    public ResponseEntity<?> basicLectureList(@RequestBody StudentDTO studentDTO) {
+        try{
+            if(studentDTO.getToken()!=null){
+                Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendBasicLectureWithNoDup(studentDTO.getNumber());
+                Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
+                for (String s : lectureListMap.keySet()) {
+                    List<LectureDto> lecturelistDto = lectureListMap.get(s).stream()
+                            .map(lecture -> new LectureDto(lecture))
+                            .collect(toList());
+                    lectureListMapDto.put(s, lecturelistDto);
+                }
+                return ResponseEntity.ok().body(new LectureResult(lectureListMapDto));
+            }
+            else{
+                throw new IllegalStateException("hello");
+            }
         }
-
-        return new LectureResult(lectureListMapDto);
-    }
-    @GetMapping("/api/basicScienceLecturelist")
-    public LectureResult basicScienceLectureList() {
-        String studentNumber = "2019203029";
-
-        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendBasicScienceLectureWithNoDup(studentNumber);
-
-        Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
-        for (String s : lectureListMap.keySet()) {
-            List<LectureDto> lecturelistDto = lectureListMap.get(s).stream()
-                    .map(lecture -> new LectureDto(lecture))
-                    .collect(toList());
-            lectureListMapDto.put(s, lecturelistDto);
+        catch (Exception e){
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.badRequest().body(responseDTO);
         }
-
-        return new LectureResult(lectureListMapDto);
     }
 
-    @GetMapping("/api/mathLecturelist")
-    public LectureResult mathLectureList() {
-        String studentNumber = "2019203029";
-
-        Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendMathLectureWithNoDup(studentNumber);
-
-        Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
-        for (String s : lectureListMap.keySet()) {
-            List<LectureDto> lecturelistDto = lectureListMap.get(s).stream()
-                    .map(lecture -> new LectureDto(lecture))
-                    .collect(toList());
-            lectureListMapDto.put(s, lecturelistDto);
+    @PostMapping("/api/basicScienceLectureList")
+    public ResponseEntity<?> basicScienceLectureList(@RequestBody StudentDTO studentDTO) {
+        try{
+            if(studentDTO.getToken()!=null){
+                Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendBasicScienceLectureWithNoDup(studentDTO.getNumber());
+                Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
+                for (String s : lectureListMap.keySet()) {
+                    List<LectureDto> lecturelistDto = lectureListMap.get(s).stream()
+                            .map(lecture -> new LectureDto(lecture))
+                            .collect(toList());
+                    lectureListMapDto.put(s, lecturelistDto);
+                }
+                return ResponseEntity.ok().body(new LectureResult(lectureListMapDto));
+            }
+            else{
+                throw new IllegalStateException("hello");
+            }
         }
+        catch (Exception e){
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
 
-        return new LectureResult(lectureListMapDto);
+    @PostMapping("/api/mathLectureList")
+    public ResponseEntity<?> mathLectureList(@RequestBody StudentDTO studentDTO) {
+        try{
+            if(studentDTO.getToken()!=null){
+                Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendMathLectureWithNoDup(studentDTO.getNumber());
+                Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
+                for (String s : lectureListMap.keySet()) {
+                    List<LectureDto> lecturelistDto = lectureListMap.get(s).stream()
+                            .map(lecture -> new LectureDto(lecture))
+                            .collect(toList());
+                    lectureListMapDto.put(s, lecturelistDto);
+                }
+                return ResponseEntity.ok().body(new LectureResult(lectureListMapDto));
+            }
+            else{
+                throw new IllegalStateException("hello");
+            }
+        }
+        catch (Exception e){
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
     }
 
     @Data
