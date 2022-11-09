@@ -30,10 +30,10 @@ public class Lecture {
     private String professor;
     private String section;
     private String sectionDetail;
-    private int credit;
-    private int level;
+    private Integer credit;
+    private Integer level;
     private String category;
-    private int yearOfLecture;
+    private Integer yearOfLecture;
     private String semester;
     private String notes;
 
@@ -55,7 +55,7 @@ public class Lecture {
         this.name = name;
     }
 
-    public Lecture(String lectureNumber, String name, String section, String sectionDetail, int credit, String professor, String category, int level, int yearOfLecture, String semester, String notes, boolean isCustom) {
+    public Lecture(String lectureNumber, String name, String section, String sectionDetail, Integer credit, String professor, String category, Integer level, Integer yearOfLecture, String semester, String notes, boolean isCustom) {
         this.lectureNumber = lectureNumber;
         this.name = name;
         this.professor = professor;
@@ -119,10 +119,10 @@ public class Lecture {
             String professor,
             String section,
             String sectionDetail,
-            int credit,
-            int level,
+            Integer credit,
+            Integer level,
             String category,
-            int yearOfLecture,
+            Integer yearOfLecture,
             String semester,
             List<LectureTimeSlot> times, //추가(수연)
             String notes,
@@ -141,15 +141,37 @@ public class Lecture {
         lecture.setCategory(category);
         lecture.setYearOfLecture(yearOfLecture);
         lecture.setSemester(semester);
-        for (LectureTimeSlot lectureTimeSlot : times) {
-            lecture.addTimes(lectureTimeSlot);
-//            lecture.addLectureTimeSlot(lectureTimeSlot);
+        if(times!=null) {
+            for (LectureTimeSlot lectureTimeSlot : times) {
+                lecture.addTimes(lectureTimeSlot);
+            }
+        }else{
+            lecture.setTimes(new ArrayList<>());
         }
         lecture.setNotes(notes);
         lecture.setCustom(isCustom);
 
         return lecture;
     }
+
+    public static Lecture createLecture(
+            String lectureNumber,
+            String name,
+            String professor,
+            String section,
+            String sectionDetail,
+            Integer credit,
+            Integer level,
+            String category,
+            Integer yearOfLecture,
+            String semester,
+            String notes,
+            boolean isCustom
+    ){
+        return createLecture(lectureNumber,name,professor,section,sectionDetail,credit,level,category,yearOfLecture,semester,null,notes,isCustom);
+    }
+
+
 
     //추가(수연)
     //==커스텀강의 생성 메서드==//
@@ -159,10 +181,10 @@ public class Lecture {
             String professor,
             String section,
             String sectionDetail,
-            int credit,
-            int level,
+            Integer credit,
+            Integer level,
             String category,
-            int yearOfLecture,
+            Integer yearOfLecture,
             String semester,
             String notes,
             List<LectureTimeSlot> lectureTimeSlots){

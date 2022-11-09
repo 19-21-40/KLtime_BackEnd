@@ -5,11 +5,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
+
+import javax.persistence.*;
+
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -35,9 +37,10 @@ public class LectureRepository {
 
     /**
      * id 값으로 강의 찾기
-     * @author 부겸
+     *
      * @param id 강의 id
      * @return 해당 id의 강의
+     * @author 부겸
      */
     public Lecture findOne(Long id) {
         return em.find(Lecture.class, id);
@@ -102,13 +105,13 @@ public class LectureRepository {
             criteria.add(category);
         }
         //년도 검색
-        if (lectureSearch.getYearOfLecture()!=null) {
+        if (lectureSearch.getYearOfLecture() != null) {
             Predicate yearOfLecture = cb.equal(l.get("yearOfLecture"),
                     lectureSearch.getYearOfLecture());
             criteria.add(yearOfLecture);
         }
         //학기 검색
-        if (lectureSearch.getSemester()!=null) {
+        if (lectureSearch.getSemester() != null) {
             Predicate semester = cb.equal(l.get("semester"),
                     lectureSearch.getSemester());
             criteria.add(semester);
@@ -130,15 +133,17 @@ public class LectureRepository {
 //                .getResultList();
 //    }
 //
+
     /**
      * 이름으로 대표 강의 1개 찾기
+     *
      * @param name 강의 이름
      * @return 같은 이름의 강의 리스트
      */
-    public Lecture findByLectureName(String name){
+    public Lecture findByLectureName(String name) {
         return em.createQuery("select L from Lecture L"
-        +" where L.name=:lectureName", Lecture.class)
-                .setParameter("lectureName",name)
+                        + " where L.name=:lectureName", Lecture.class)
+                .setParameter("lectureName", name)
                 .getSingleResult();
     }
 
@@ -150,7 +155,8 @@ public class LectureRepository {
 //
 
     /**
-     * Section에 대해 Set타입으로 2022년 강의를 조회함 */
+     * Section에 대해 Set타입으로 2022년 강의를 조회함
+     */
     public List<Lecture> findBySectionDetailSet2022(Set<String> sectionDetailSet) {
         return em.createQuery("select l from Lecture l where l.sectionDetail in :sectionDetailSet")
                 .setParameter("sectionDetailSet", sectionDetailSet)
@@ -184,6 +190,7 @@ public class LectureRepository {
 
     /**
      * 학생의 학과와 단과대학으로 연도구분없이 전필 전선 과목 찾기
+     *
      * @param studentDept
      * @return
      */
@@ -200,9 +207,11 @@ public class LectureRepository {
      */
     public void delete(Lecture lecture) {
         em.remove(lecture);
-        }
+    }
 
-     /** 학생의 학과와 단과대학으로 2022년 전필 전선 과목 찾기
+    /**
+     * 학생의 학과와 단과대학으로 2022년 전필 전선 과목 찾기
+     *
      * @param studentDept
      * @return
      */
@@ -297,10 +306,10 @@ public class LectureRepository {
     }
 
 
-    public List<Lecture> findByTimeSlot(TimeSlot timeSlot){
+    public List<Lecture> findByTimeSlot(TimeSlot timeSlot) {
         return em.createQuery("select L from Lecture L left join L.times t where t.timeSlot=:timeSlot"
-                        ,Lecture.class)
-                .setParameter("timeSlot",timeSlot)
+                        , Lecture.class)
+                .setParameter("timeSlot", timeSlot)
                 .getResultList();
     }
 
@@ -319,6 +328,17 @@ public class LectureRepository {
 
 
     /**
+
+     * 학정번호로 강의 찾기
+     *
+     * @param lectureNumber
+     * @return lecture
+     */
+    public List<Lecture> findByLectureNum(String lectureNumber) {
+        return em.createQuery("select l from Lecture l where l.lectureNumber=:lectureNumber", Lecture.class)
+        .setParameter("lectureNumber", lectureNumber)
+                .getResultList();
+    }
      * 해당 년도/학기 학정번호로 강의 찾기
      * @param lectureNumber
      * @return lecture
@@ -337,5 +357,18 @@ public class LectureRepository {
                 .setParameter("yearOfLecture", yearOfLecture)
                 .setParameter("semester", semester)
                 .getSingleResult();
+    }
+
+    public Optional<Lecture> findByLectureNumberAndNameAndYearAndSemester(String lectureNumber, String lectureName, Integer yearOfLecture, String semester) {
+        try {
+            return Optional.ofNullable(em.createQuery("select l from Lecture l where l.lectureNumber=:lectureNumber and l.name=:lectureName and l.yearOfLecture=:yearOfLecture and l.semester=:semester", Lecture.class)
+                    .setParameter("lectureNumber", lectureNumber)
+                    .setParameter("lectureName", lectureName)
+                    .setParameter("yearOfLecture", yearOfLecture)
+                    .setParameter("semester", semester)
+                    .getSingleResult());
+        } catch (NoResultException | NonUniqueResultException e) {
+            return Optional.empty();
+        }
     }
 }
