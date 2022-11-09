@@ -82,18 +82,19 @@ public class LectureService {
         //엔티티 조회
         //Lecture customLecture = Lecture.createLecture(name,professor,section,sectionDetail,credit,level,departmentName,yearOfLecture,semester);
 
+        //커스텀 강의 학정번호 설정 (조건문 추가)
+        if(lecture.getLectureNumber()==null){
+            lecture.setLectureNumber(createCustomNum());
+        }
+
         //커스텀 강의 추가(생성 후 저장)
         Long lectureId=lectureRepository.save(lecture);
 
 
-        for (TimeSlot timeSlot : timeSlots) {
-            //생성한 커스텀 강의에 있는 시간으로 TimeSlot 들 생성(추가)
-
-//            TimeSlot.createTimeSlot(timeSlot.getDayName(),timeSlot.getStartTime(),timeSlot.getEndTime());
-            timeSlotRepository.save(timeSlot); //TimeSlot 저장
-
-            LectureTimeSlot lectureTimeSlot = LectureTimeSlot.createLectureTimeSlot(timeSlot); //LectureTimeSlot 생성
-            lecture.addTimes(lectureTimeSlot); //LectureTimeSlot 생성(추가)
+        //TimeSlot 저장
+        for(int i=0;i<timeSlots.size();i++){
+            timeSlotRepository.save(timeSlots.get(i));
+//            lecture.addTimes(lecture.getTimes().get(i)); //LectureTimeSlot 생성(추가)
         }
 
         return lectureId;

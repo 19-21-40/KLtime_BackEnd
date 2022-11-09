@@ -315,15 +315,19 @@ public class TimeTableService {
      * 오버로딩
      */
     @Transactional
-    public void addCustomLecture(String number, int yearOfTimetable, String semester,String tableName, Lecture lecture, List<TimeSlot> timeSlots)
+    public void addCustomLecture(String number, int yearOfTimetable, String semester,String tableName, Lecture lecture, List<TimeSlot> timeSlots,String gpa)
     {
         //커스텀 강의 추가(생성)
         Long customLectureId = lectureService.addCustom(lecture,timeSlots);
         Lecture customLecture = lectureRepository.findOne(customLectureId);
 
-        addLecture(number,yearOfTimetable,semester,tableName,customLecture); //오버로딩
+        addLecture(number,yearOfTimetable,semester,tableName,customLecture,gpa); //오버로딩
     }
 
+    @Transactional
+    public void addCustomLecture(String number, int yearOfTimetable, String semester,String tableName, Lecture lecture, List<TimeSlot> timeSlots) {
+        addCustomLecture(number, yearOfTimetable, semester, tableName, lecture, timeSlots,null);
+    }
     /**
      * 시간표에서 강의(커스텀 포함) 삭제
      * 기본시간표에서 강의 삭제하면 studentlecture 삭제됨

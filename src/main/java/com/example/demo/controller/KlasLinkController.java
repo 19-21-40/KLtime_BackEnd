@@ -7,10 +7,7 @@ import com.example.demo.Repository.TimeSlotRepository;
 import com.example.demo.Repository.TimeTableRepository;
 import com.example.demo.Service.LectureService;
 import com.example.demo.Service.TimeTableService;
-import com.example.demo.domain.Lecture;
-import com.example.demo.domain.Student;
-import com.example.demo.domain.TimeSlot;
-import com.example.demo.domain.TimeTable;
+import com.example.demo.domain.*;
 import com.example.demo.dto.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -87,7 +84,7 @@ public class KlasLinkController {
                         a:
                         for (List<KlasTimeTableDTO> klasTimeTableDTOList : klasLinkDTO.klasTimeTableDTOListList) {
                             for (KlasTimeTableDTO timeTableDTO : klasTimeTableDTOList) {
-                                if (timeTableDTO.getYearhakgi().equals(klasTookLectureListDTO.getThisYear().toString())
+                                if (timeTableDTO.getYear().equals(klasTookLectureListDTO.getThisYear().toString())
                                         && timeTableDTO.getHakgi().equals(klasTookLectureListDTO.getHakgi())) {
                                     if (timeTableDTO.getHakjungno().equals(klasTookLectureDTO.getHakjungNo())) {
                                         klasTimeTableDTO = timeTableDTO;
@@ -102,7 +99,9 @@ public class KlasLinkController {
                         if(klasTimeTableDTO.getLctrumSchdulInfo()!=null) {
                             timeSlotList = klasTimeTableDTO.getTimeSlotDTO().stream().map(timeSlotDto -> {
                                 return timeSlotRepository.findByTimeSlot(timeSlotDto.getDay(), timeSlotDto.getStartTime(), timeSlotDto.getEndTime())
-                                        .orElse(TimeSlot.createTimeSlot(timeSlotDto.getDay(), timeSlotDto.getStartTime(), timeSlotDto.getEndTime()));
+                                        .orElseGet(() -> {
+                                            return TimeSlot.from(timeSlotDto).orElseThrow(()->new IllegalStateException("error"));
+                                        });
                             }).collect(Collectors.toList());
                         }
                         Lecture lecture = Lecture.createLecture(
@@ -116,12 +115,13 @@ public class KlasLinkController {
                                 klasTookLectureDTO.getHakgwa(),
                                 klasTookLectureListDTO.getThisYear(),
                                 klasTookLectureListDTO.getHakgiOrder(),
+                                timeSlotList.stream().map(timeSlot -> LectureTimeSlot.createLectureTimeSlot(timeSlot)).collect(Collectors.toList()),
                                 "KLAS_AUTO_CREATE",
                                 false);
-                        Long lecture_id = lectureService.lectureTimeSlotSave(lecture, timeSlotList);
+                        Long lecture_id = lectureService.addCustom(lecture, timeSlotList);
                         lecture=lectureRepository.findOne(lecture_id);
-                        timeTableService.addLecture(student.getNumber(), klasTookLectureListDTO.getThisYear(),
-                                klasTookLectureListDTO.getHakgiOrder(), timeTable.getTableName(), lecture, klasTookLectureDTO.getGetGrade());
+                        timeTableService.addCustomLecture(student.getNumber(), klasTookLectureListDTO.getThisYear(),
+                                klasTookLectureListDTO.getHakgiOrder(), timeTable.getTableName(), lecture, timeSlotList,klasTookLectureDTO.getGetGrade());
                     }
                 }
 

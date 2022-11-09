@@ -90,7 +90,8 @@ public class Lecture {
 
     //LectureDto -> Lecture 바꾸는 함수 (커스텀 강의 만들 때만 쓰임)
     public static Optional<Lecture> from(TimeTableController.LectureDto lectureDto,List<TimeSlot> timeSlots){
-        Lecture lecture = createCustomLecture(lectureDto.getId(),
+        Lecture lecture = createCustomLecture(
+                lectureDto.getId(),
                 lectureDto.getLectureName(),
                 lectureDto.getProfessor(),
                 lectureDto.getSection(),
@@ -130,7 +131,6 @@ public class Lecture {
             ){
 
         Lecture lecture=new Lecture();
-
         lecture.setLectureNumber(lectureNumber);
         lecture.setName(name);
         lecture.setProfessor(professor);
@@ -153,24 +153,6 @@ public class Lecture {
 
         return lecture;
     }
-
-    public static Lecture createLecture(
-            String lectureNumber,
-            String name,
-            String professor,
-            String section,
-            String sectionDetail,
-            Integer credit,
-            Integer level,
-            String category,
-            Integer yearOfLecture,
-            String semester,
-            String notes,
-            boolean isCustom
-    ){
-        return createLecture(lectureNumber,name,professor,section,sectionDetail,credit,level,category,yearOfLecture,semester,null,notes,isCustom);
-    }
-
 
 
     //추가(수연)
