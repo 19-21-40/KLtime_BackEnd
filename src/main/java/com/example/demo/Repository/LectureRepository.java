@@ -339,7 +339,7 @@ public class LectureRepository {
         .setParameter("lectureNumber", lectureNumber)
                 .getResultList();
     }
-     * 해당 년도/학기 학정번호로 강의 찾기
+     /* 해당 년도/학기 학정번호로 강의 찾기
      * @param lectureNumber
      * @return lecture
      */
