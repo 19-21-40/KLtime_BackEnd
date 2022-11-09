@@ -18,6 +18,17 @@ public class StudentLectureRepository {
         return em.find(StudentLecture.class, id);
     }
 
+    public List<StudentLecture> findByStudentAndTimeTable(Student student, TimeTable timeTable){
+        return em.createQuery("select sl from StudentLecture sl" +
+                        " where sl.student =:student" +
+                        " and sl.lecture.yearOfLecture =: yearOfLecture" +
+                        " and sl.takesSemester =:takesSemester", StudentLecture.class)
+                .setParameter("student", student)
+                .setParameter("yearOfLecture", timeTable.getYearOfTimetable())
+                .setParameter("takesSemester", timeTable.getSemester())
+                .getResultList();
+    }
+
     public List<StudentLecture> findByStudentAndYearAndSemester(Student student, int yearOfLecture, String takesSemester){
         return em.createQuery("select sl from StudentLecture sl" +
                         " where sl.student =:student" +

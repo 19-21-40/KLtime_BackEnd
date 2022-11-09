@@ -6,8 +6,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 //@Transactional
@@ -39,6 +42,25 @@ public class TimeTableRepository {
 //        return em.createQuery("select t from TimeTable d",TimeTable.class)
 //                .getResultList();
 //    }
+
+    public Optional<TimeTable> findByKlasLinkedTimeTable(Student student, int yearOfTimetable, String semester){
+        try {
+            return Optional.ofNullable(em.createQuery("select t from TimeTable t left outer join fetch t.lectures tl  where t.student =:student and t.yearOfTimetable =: yearOfTimetable and t.semester=:semester and t.tableName like 'Klas%'", TimeTable.class)
+                    .setParameter("student", student)
+                    .setParameter("yearOfTimetable", yearOfTimetable)
+                    .setParameter("semester", semester)
+                    .getSingleResult());
+        }catch (NonUniqueResultException| NoResultException e){
+            return Optional.empty();
+        }
+    }
+    public TimeTable findByStudentAndYearAndSemesterAndPrimary(Student student, int yearOfTimetable, String semester){
+        return em.createQuery("select t from TimeTable t left outer join fetch t.lectures tl  where t.student =:student and t.yearOfTimetable =: yearOfTimetable and t.semester=:semester and t.isPrimary=true", TimeTable.class)
+                .setParameter("student", student)
+                .setParameter("yearOfTimetable", yearOfTimetable)
+                .setParameter("semester", semester)
+                .getSingleResult();
+    }
 
     /**
      * 학생 별시간표 조회
@@ -86,6 +108,7 @@ public class TimeTableRepository {
      */
     //페치조인으로 수정해야 함(쿼리 한번만 나가도록)
     public TimeTable findByStudentAndYearAndSemesterAndName(Student student, int yearOfTimetable, String semester, String tableName) {
+        em.flush();
         return em.createQuery("select t from TimeTable t where t.student =:student and t.yearOfTimetable =: yearOfTimetable and t.semester=:semester and t.tableName=:tableName", TimeTable.class)
                 .setParameter("student", student)
                 .setParameter("yearOfTimetable", yearOfTimetable)
@@ -118,7 +141,7 @@ public class TimeTableRepository {
     }
 
     //시간표 이름 중복 때문에 추가(수연)
-    public List<TimeTable> findDupliTableName(Student student, int yearOfTimetable, String semester, boolean isPrimary,String tableName){
+    public List<TimeTable> findDupliTableName(Student student, int yearOfTimetable, String semester,String tableName){
         return em.createQuery("select t from TimeTable t where t.student =:student and t.yearOfTimetable =: yearOfTimetable and t.semester=:semester and t.tableName=:tableName", TimeTable.class)
                 .setParameter("student", student)
                 .setParameter("yearOfTimetable", yearOfTimetable)
@@ -132,6 +155,16 @@ public class TimeTableRepository {
      */
     public void delete(TimeTable timeTable) {
         em.remove(timeTable);
+        em.flush();
+        em.clear();
+    }
+
+    public Long countTimeTableByYearAndSemester(Student student,int yearOfTimetable, String semester){
+        return em.createQuery("select count(t) from TimeTable t where t.student=:student and t.yearOfTimetable=:yearOfTimetable and t.semester=:semester",Long.class)
+                .setParameter("student",student)
+                .setParameter("yearOfTimetable",yearOfTimetable)
+                .setParameter("semester",semester)
+                .getSingleResult();
     }
 
 }

@@ -8,7 +8,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -26,11 +29,15 @@ public class TimeTableLectureRepository {
     /**
      * 시간표 별 시간표강의 조회
      */
-    public TimeTableLecture findByTimetableAndLecture(TimeTable timeTable, Lecture lecture) {
-        return em.createQuery("select tl from TimeTableLecture tl where tl.timeTable =:timeTable and tl.lecture =:lecture", TimeTableLecture.class)
-                .setParameter("timeTable", timeTable)
-                .setParameter("lecture", lecture)
-                .getSingleResult();
+    public Optional<TimeTableLecture> findByTimetableAndLecture(TimeTable timeTable, Lecture lecture) {
+        try {
+            return Optional.ofNullable(em.createQuery("select tl from TimeTableLecture tl where tl.timeTable =:timeTable and tl.lecture =:lecture", TimeTableLecture.class)
+                    .setParameter("timeTable", timeTable)
+                    .setParameter("lecture", lecture)
+                    .getSingleResult());
+        } catch (NonUniqueResultException | NoResultException e) {
+            return Optional.empty();
+        }
     }
 
     /**

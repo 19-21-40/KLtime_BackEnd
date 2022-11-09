@@ -103,8 +103,8 @@ public class TimeTableController {
     ){
         try {
             if (studentDTO.getToken() != null) {
-                //Student student = studentRepository.findByNumber(studentDTO.getNumber());
-                timeTableService.addTimeTable(studentDTO.getNumber(),year,semester);
+                Student student = studentRepository.findByNumber(studentDTO.getNumber());
+                timeTableService.addTimeTable(student,year,semester);
 
                 return new ResponseEntity<>(HttpStatus.OK); //시간표 추가 후 OK 상태 반환
             }else{
@@ -236,8 +236,8 @@ public class TimeTableController {
     ){
         try {
             if (studentDTO.getToken() != null) {
-                //Student student = studentRepository.findByNumber(studentDTO.getNumber());
-                timeTableService.changeTimeTableName(studentDTO.getNumber(), year,semester,oldTableName,newTableName);
+                Student student = studentRepository.findByNumber(studentDTO.getNumber());
+                timeTableService.changeTimeTableName(student, year,semester,oldTableName,newTableName);
 
                 return new ResponseEntity<>(HttpStatus.OK); //시간표 이름 변경 후 OK 상태 반환
             }else{
