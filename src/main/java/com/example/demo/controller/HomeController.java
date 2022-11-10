@@ -267,6 +267,7 @@ public class HomeController {
         private int totalCredit; //학생의 총학점
         private int mainCredit; //학생의 주전공 학점
         private int multiCredit; //학생의 복수전공 학점
+        private int essBalCredit;
         private int essCredit; //학생의 필수교양 학점
         private int balCredit; //학생의 균형교양 학점
         private int basicCredit; //학생의 기초교양 학점
@@ -276,6 +277,7 @@ public class HomeController {
         public CreditDto(Credit credit) {
             totalCredit=credit.getTotalCredit();
             mainCredit=credit.getMainCredit();
+            essBalCredit=credit.getEssBalCredit();
             essCredit=credit.getEssCredit();
             balCredit=credit.getBalCredit();
             basicCredit=credit.getBasicCredit();

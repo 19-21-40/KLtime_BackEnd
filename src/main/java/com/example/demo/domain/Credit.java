@@ -13,6 +13,7 @@ public class Credit {
     private int totalCredit; // 학생의 총학점
     private int mainCredit; // 학생의 주전공 학점
     private int multiCredit; // 학생의 복수전공 학점
+    private int essBalCredit; // 학생의 필수+균형교양 학점
     private int essCredit; // 학생의 필수교양 학점
     private int balCredit; // 학생의 균형교양 학점
     private int basicCredit; // 학생의 기초교양 학점
@@ -23,6 +24,7 @@ public class Credit {
         totalCredit = 0;
         mainCredit = 0;
         multiCredit = 0;
+        essBalCredit = 0;
         essCredit = 0;
         balCredit = 0;
         basicCredit = 0;
@@ -44,6 +46,8 @@ public class Credit {
     public void addMultiCredit(int credit) {
         this.multiCredit += credit;
     }
+
+    public void addEssBalCredit(int credit) { this.essBalCredit += credit; }
 
     public void addEssCredit(int credit) { this.essCredit += credit; }
 

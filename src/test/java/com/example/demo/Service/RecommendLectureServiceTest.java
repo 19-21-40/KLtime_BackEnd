@@ -42,11 +42,9 @@ public class RecommendLectureServiceTest {
 
     @Test
     public void 교양과목출력테스트() {
-        //given
-        Student student = studentRepository.findById(3L);
 
         //when
-        recommendLectureService.recommendEssBalLecturesWithNoDup(student.getNumber());
+        recommendLectureService.recommendEssBalLecturesWithNoDup("2021203078");
 
         //then
     }
@@ -94,10 +92,9 @@ public class RecommendLectureServiceTest {
     @Test
     public void 학생의학점정보저장() {
         //given
-        Student student = studentRepository.findById(3L);
 
         //when
-        recommendLectureService.checkAndSaveCredit(student.getNumber());
+        recommendLectureService.checkAndSaveCredit("2021203078");
 
         //then
 //        req_lec = recommendLectureService.computeRequiredLecture(student); // 교필, 전필, 전선만 다룸

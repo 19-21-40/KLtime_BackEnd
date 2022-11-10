@@ -32,6 +32,8 @@ public class RecommendLectureService {
      * */
     public void checkAndSaveCredit(String studentNumber) {
 
+        System.out.println(studentNumber);
+
         Student student = studentRepository.findByStudentNumWithLecture(studentNumber);
 
         // 그에 맞는 졸업 학점 조건 불러오기
@@ -62,19 +64,33 @@ public class RecommendLectureService {
             String section = lecture.getSection();
             String sectionDetail = lecture.getSectionDetail();
 
+            System.out.print(lecture.getName() + " (section) : " + lecture.getSection() + "에 대해서 처리 : ");
+
             // 받은 학점이 F or NP라면 continue 실행
+            if(sl.getGpa() == null) continue;
             if (sl.getGpa().equals("F") || sl.getGpa().equals("NP")) continue;
 
             // 그게 아니라면
             // totalCredit에 현재강의의 학점을 더해줌
             temporalCredit.addTotalCredit(lecture.getCredit());
 
+            if(section == null) continue;
+
+            /** if(sectionDetail == null) continue;  *******************/
             // 교필과 교선에 대해서 먼저 따져줌 ( sectionDetail에 따라 처리해줘야 함 )
 
+            if (section.equals("교필") || section.equals("교선")){
 
-            /** 18, 19학번 기준 */
-            if(student.getAdmissionYear() == 2018 || student.getAdmissionYear() == 2019){
-                if (section.equals("교필") || section.equals("교선")) {
+                temporalCredit.addEssBalCredit(lecture.getCredit());
+                System.out.print("이것은 교필or교선 ");
+
+                if(sectionDetail == null) {
+                    System.out.println("");
+                    continue;
+                }
+
+                /** 18, 19학번 기준 */
+                if(student.getAdmissionYear() == 2018 || student.getAdmissionYear() == 2019){
                     switch (sectionDetail) {
                         case "광운인되기":
                             temporalCredit.addEssCredit(1);
@@ -113,10 +129,8 @@ public class RecommendLectureService {
                             break;
                     }
                 }
-            }
-            /** 20,21,22학번 기준 */
-            if(student.getAdmissionYear() == 2020 || student.getAdmissionYear() == 2021 || student.getAdmissionYear() == 2022) {
-                if (section.equals("교필") || section.equals("교선")) {
+                /** 20,21,22학번 기준 */
+                if(student.getAdmissionYear() == 2020 || student.getAdmissionYear() == 2021 || student.getAdmissionYear() == 2022) {
                     switch (sectionDetail) {
                         case "광운인되기":
                             temporalCredit.addEssCredit(1);
@@ -139,24 +153,22 @@ public class RecommendLectureService {
                             break;
                     }
                 }
-            }
-
-
             // 현재 학과 전공학점에 대해 따짐
-            if ((lecture.getCategory().contains(student.getDepartment().getName())) && (section == "전필" || section == "전선")) {
+            }else if ((lecture.getCategory().contains(student.getDepartment().getName())) && (section.equals("전필") || section.equals("전선"))) {
                 temporalCredit.addMainCredit(lecture.getCredit());
-            }
-
+                System.out.println("전공 학점 추가");
             // 복수전공의 경우 복수전공 학과 전공학점을 계산함
-            if(student.getMultiMajor()!=null) {
-                if ((lecture.getCategory().contains(student.getMultiDept().getName())) && (section == "전필" || section == "전선")) {
+            } else if(student.getMultiMajor()!=null) {
+                if ((lecture.getCategory().contains(student.getMultiDept().getName())) && (section.equals("전필") || section.equals("전선"))) {
                     temporalCredit.addMultiCredit(lecture.getCredit());
+                    System.out.println("부전공 학점 추가");
                 }
-            }
-
             // 기초교양학점에 대해 따짐
-            if (section == "기필" || section == "기선") {
+            }else if (section.equals("기필") || section.equals("기선")) {
                 temporalCredit.addBasicCredit(lecture.getCredit());
+                System.out.println("기초교양 학점 추가");
+                if(sectionDetail == null) continue;
+
                 if (sectionDetail == "수학")
                     temporalCredit.addMathCredit(lecture.getCredit());
                 if (sectionDetail == "기초과학") {
@@ -166,7 +178,7 @@ public class RecommendLectureService {
 
             // 교과목들 이름 변경된거 체크 필수. ex) 읽기와쓰기, 말하기와소통 -> 융합적사고와글쓰기
             // 또한 대학영어, 융사는 단과대학에 따라서 듣는 학기가 정해져있음
-
+            System.out.println("");
         }
 
         student.setCredit(temporalCredit);
@@ -209,6 +221,7 @@ public class RecommendLectureService {
         for (StudentLecture sl : myLectures) {
 
             // F이거나 NP이면 강의 목록에서 삭제하지 않음.
+            if(sl.getGpa() == null) continue;
             if(sl.getGpa() == "F" || sl.getGpa() == "NP") continue;
 
             String lectureName = sl.getLecture().getName();
@@ -257,6 +270,7 @@ public class RecommendLectureService {
         for (StudentLecture sl : myLectures) {
 
             // F이거나 NP이면 강의 목록에서 삭제하지 않음.
+            if(sl.getGpa() == null) continue;
             if(sl.getGpa() == "F" || sl.getGpa() == "NP") continue;
 
             String lectureName = sl.getLecture().getName();
@@ -297,6 +311,7 @@ public class RecommendLectureService {
         for (StudentLecture sl : myLectures) {
 
             // F이거나 NP이면 강의 목록에서 삭제하지 않음.
+            if(sl.getGpa() == null) continue;
             if(sl.getGpa() == "F" || sl.getGpa() == "NP") continue;
 
             String lectureName = sl.getLecture().getName();
@@ -336,6 +351,7 @@ public class RecommendLectureService {
         for (StudentLecture sl : myLectures) {
 
             // F이거나 NP이면 강의 목록에서 삭제하지 않음.
+            if(sl.getGpa() == null) continue;
             if(sl.getGpa() == "F" || sl.getGpa() == "NP") continue;
 
             String lectureName = sl.getLecture().getName();
@@ -388,7 +404,10 @@ public class RecommendLectureService {
             String section = lecture.getSection();
             String sectionDetail = lecture.getSectionDetail();
 
+            if(sectionDetail == null) continue;
+
             // 받은 학점이 F or NP라면 continue 실행
+            if(sl.getGpa() == null) continue;
             if(sl.getGpa().equals("F")  || sl.getGpa().equals("NP")) continue;
 
             /** 18,19학번 기준 */
@@ -531,6 +550,7 @@ public class RecommendLectureService {
             for (StudentLecture sl : myLectures) {
 
                 // F이거나 NP이면 강의 목록에서 삭제하지 않음.
+                if(sl.getGpa() == null) continue;
                 if(sl.getGpa() == "F" || sl.getGpa() == "NP") continue;
 
                 String lectureName = sl.getLecture().getName();
@@ -548,7 +568,7 @@ public class RecommendLectureService {
 
                 List<Lecture> lectureListBySection = balLectureList.stream()
                         .filter(lecture -> lecture.getSectionDetail().equals(sectionDetail))
-                                .collect(Collectors.toList());
+                        .collect(Collectors.toList());
                 System.out.println(sectionDetail +"의 과목리스트 : " + lectureListBySection);
                 lectureListMappedSectionDetail.put(sectionDetail, lectureListBySection);
             }
@@ -598,7 +618,7 @@ public class RecommendLectureService {
         }
 
 
-            // 학생이 들었던 과목 리스트
+        // 학생이 들었던 과목 리스트
         List<StudentLecture> myLectures = student.getMyLectures();
 
         // 내가 들었던 강의들에 대해 for문을 돌림
@@ -609,7 +629,10 @@ public class RecommendLectureService {
             String section = lecture.getSection();
             String sectionDetail = lecture.getSectionDetail();
 
+            if(sectionDetail == null) continue;
+
             // 받은 학점이 F or NP라면 continue 실행
+            if(sl.getGpa() == null) continue;
             if(sl.getGpa().equals("F")  || sl.getGpa().equals("NP")) continue;
 
             /** 18,19학번 기준 */
@@ -723,6 +746,7 @@ public class RecommendLectureService {
             for (StudentLecture sl : myLectures) {
 
                 // F이거나 NP이면 강의 목록에서 삭제하지 않음.
+                if(sl.getGpa() == null) continue;
                 if(sl.getGpa() == "F" || sl.getGpa() == "NP") continue;
 
                 String lectureName = sl.getLecture().getName();
@@ -798,7 +822,10 @@ public class RecommendLectureService {
             String section = lecture.getSection();
             String sectionDetail = lecture.getSectionDetail();
 
+            if(sectionDetail == null) continue;
+
             // 받은 학점이 F or NP라면 continue 실행
+            if(sl.getGpa() == null) continue;
             if(sl.getGpa().equals("F")  || sl.getGpa().equals("NP")) continue;
 
             /** 18,19학번 기준 */
@@ -914,6 +941,7 @@ public class RecommendLectureService {
             for (StudentLecture sl : myLectures) {
 
                 // F이거나 NP이면 강의 목록에서 삭제하지 않음.
+                if(sl.getGpa() == null) continue;
                 if(sl.getGpa() == "F" || sl.getGpa() == "NP") continue;
 
                 String lectureName = sl.getLecture().getName();

@@ -31,16 +31,7 @@ public class LectureServiceTest {
     @Autowired
     EntityManager em;
 
-    @Test
-    public void 강의_검색() throws Exception {
-        //given
-        LectureSearch lectureSearch = new LectureSearch();
-        lectureSearch.setDepartmentName("소프트웨어학부");
-        //when
-        List<Lecture> lectures = lectureService.findLectures(lectureSearch);
-        //then
-        assertEquals("강의 검색",9,lectures.size());
-    }
+
 
 
 }
