@@ -32,8 +32,6 @@ public class RecommendLectureService {
      * */
     public void checkAndSaveCredit(String studentNumber) {
 
-        System.out.println(studentNumber);
-
         Student student = studentRepository.findByStudentNumWithLecture(studentNumber);
 
         // 그에 맞는 졸업 학점 조건 불러오기
@@ -64,8 +62,6 @@ public class RecommendLectureService {
             String section = lecture.getSection();
             String sectionDetail = lecture.getSectionDetail();
 
-            System.out.print(lecture.getName() + " (section) : " + lecture.getSection() + "에 대해서 처리 : ");
-
             // 받은 학점이 F or NP라면 continue 실행
             if(sl.getGpa() == null) continue;
             if (sl.getGpa().equals("F") || sl.getGpa().equals("NP")) continue;
@@ -82,10 +78,8 @@ public class RecommendLectureService {
             if (section.equals("교필") || section.equals("교선")){
 
                 temporalCredit.addEssBalCredit(lecture.getCredit());
-                System.out.print("이것은 교필or교선 ");
 
                 if(sectionDetail == null) {
-                    System.out.println("");
                     continue;
                 }
 
@@ -156,17 +150,14 @@ public class RecommendLectureService {
             // 현재 학과 전공학점에 대해 따짐
             }else if ((lecture.getCategory().contains(student.getDepartment().getName())) && (section.equals("전필") || section.equals("전선"))) {
                 temporalCredit.addMainCredit(lecture.getCredit());
-                System.out.println("전공 학점 추가");
             // 복수전공의 경우 복수전공 학과 전공학점을 계산함
             } else if(student.getMultiMajor()!=null) {
                 if ((lecture.getCategory().contains(student.getMultiDept().getName())) && (section.equals("전필") || section.equals("전선"))) {
                     temporalCredit.addMultiCredit(lecture.getCredit());
-                    System.out.println("부전공 학점 추가");
                 }
             // 기초교양학점에 대해 따짐
             }else if (section.equals("기필") || section.equals("기선")) {
                 temporalCredit.addBasicCredit(lecture.getCredit());
-                System.out.println("기초교양 학점 추가");
                 if(sectionDetail == null) continue;
 
                 if (sectionDetail == "수학")
@@ -178,7 +169,6 @@ public class RecommendLectureService {
 
             // 교과목들 이름 변경된거 체크 필수. ex) 읽기와쓰기, 말하기와소통 -> 융합적사고와글쓰기
             // 또한 대학영어, 융사는 단과대학에 따라서 듣는 학기가 정해져있음
-            System.out.println("");
         }
 
         student.setCredit(temporalCredit);
@@ -527,18 +517,11 @@ public class RecommendLectureService {
 
             List<Lecture> balLectureList = lectureRepository.findBySectionDetailSet2022(needs_bal);
 
-            System.out.println("이름이 같은 강의 중복 제거 전");
-            System.out.println(balLectureList);
-
             /** 중복 제거를 위한 과정 */
             // 중복되는 이름을 필터링하기 위해서 HashSet 컬렉션타입을 선언
             Set<String> resultSet = new HashSet<>();
             // result에서 강의명이 같은 강의들을 삭제함(HashSet에 기존 값이 있을 경우 add가 안돼서 false를 반환하기 때문)
             balLectureList.removeIf(lecture -> !resultSet.add(lecture.getName()));
-
-            System.out.println("이름이 같은 강의 중복 제거 후");
-            System.out.println(balLectureList);
-
 
             /** 학생이 들었던 강의를 결과에서 지우기 위한 과정 */
             // 학생이 들은 강의들 중 "교필"과 "교선" 과목으로 필터링함.
@@ -559,17 +542,11 @@ public class RecommendLectureService {
                 balLectureList.removeIf(lecture -> lecture.getName().equals(lectureName));
             }
 
-            System.out.println("학생이 들었던 과목 제외 후");
-            System.out.println(balLectureList);
-
             /** 학생에게 필요한 section들에 따른 과목들을 Map<String, List<Lecture>>에 매핑함 */
             for (String sectionDetail : needs_bal) {
-                System.out.println("sectionDetail " + sectionDetail + "이 필요합니다.");
-
                 List<Lecture> lectureListBySection = balLectureList.stream()
                         .filter(lecture -> lecture.getSectionDetail().equals(sectionDetail))
                         .collect(Collectors.toList());
-                System.out.println(sectionDetail +"의 과목리스트 : " + lectureListBySection);
                 lectureListMappedSectionDetail.put(sectionDetail, lectureListBySection);
             }
         }
@@ -723,17 +700,11 @@ public class RecommendLectureService {
 
             List<Lecture> balLectureList = lectureRepository.findBySectionDetailSet2022(needs);
 
-            System.out.println("이름이 같은 강의 중복 제거 전");
-            System.out.println(balLectureList);
-
             /** 중복 제거를 위한 과정 */
             // 중복되는 이름을 필터링하기 위해서 HashSet 컬렉션타입을 선언
             Set<String> resultSet = new HashSet<>();
             // rbalLectureList에서 강의명이 같은 강의들을 삭제함(HashSet에 기존 값이 있을 경우 add가 안돼서 false를 반환하기 때문)
             balLectureList.removeIf(lecture -> !resultSet.add(lecture.getName()));
-
-            System.out.println("이름이 같은 강의 중복 제거 후");
-            System.out.println(balLectureList);
 
 
             /** 학생이 들었던 강의를 결과에서 지우기 위한 과정 */
@@ -755,17 +726,13 @@ public class RecommendLectureService {
                 balLectureList.removeIf(lecture -> lecture.getName().equals(lectureName));
             }
 
-            System.out.println("학생이 들었던 과목 제외 후");
-            System.out.println(balLectureList);
 
             /** 학생에게 필요한 section들에 따른 과목들을 Map<String, List<Lecture>>에 매핑함 */
             for (String sectionDetail : needs) {
-                System.out.println("sectionDetail " + sectionDetail + "이 필요합니다.");
 
                 List<Lecture> lectureListBySection = balLectureList.stream()
                         .filter(lecture -> lecture.getSectionDetail().equals(sectionDetail))
                         .collect(Collectors.toList());
-                System.out.println(sectionDetail +"의 과목리스트 : " + lectureListBySection);
                 lectureListMappedSectionDetail.put(sectionDetail, lectureListBySection);
             }
         }
@@ -952,12 +919,10 @@ public class RecommendLectureService {
 
             /** 학생에게 필요한 section들에 따른 과목들을 Map<String, List<Lecture>>에 매핑함 */
             for (String sectionDetail : needs) {
-                System.out.println("sectionDetail " + sectionDetail + "이 필요합니다.");
 
                 List<Lecture> lectureListBySection = essBalLectureList.stream()
                         .filter(lecture -> lecture.getSectionDetail().equals(sectionDetail))
                         .collect(Collectors.toList());
-                System.out.println(sectionDetail +"의 과목리스트 : " + lectureListBySection);
                 lectureListMappedSectionDetail.put(sectionDetail, lectureListBySection);
             }
         }
