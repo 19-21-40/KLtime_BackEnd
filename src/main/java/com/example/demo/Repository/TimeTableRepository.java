@@ -155,8 +155,6 @@ public class TimeTableRepository {
      */
     public void delete(TimeTable timeTable) {
         em.remove(timeTable);
-        em.flush();
-        em.clear();
     }
 
     public Long countTimeTableByYearAndSemester(Student student,int yearOfTimetable, String semester){
