@@ -57,16 +57,17 @@ public class KlasLinkController {
             klasLinkDTO.klasTookLectureListDTOList.forEach((klasTookLectureListDTO -> {
                 TimeTable timeTable;
 
-                timetableRepository.findByKlasLinkedTimeTable(student, klasTookLectureListDTO.getThisYear(), klasTookLectureListDTO.getHakgiOrder())
-                        .ifPresent(klasTimeTable -> timeTableService
-                                .deleteTimeTable(student.getNumber(), klasTimeTable.getYearOfTimetable(), klasTimeTable.getSemester(), klasTimeTable.getTableName()));
-
                 //시간표 추가
                 Long timeTable_id = timeTableService.addTimeTable(student, klasTookLectureListDTO.getThisYear(), klasTookLectureListDTO.getHakgiOrder());
 
                 //시간표 메인시간표로 변경
                 timeTable = timetableRepository.findOne(timeTable_id);
                 timeTableService.changePrimary(student, klasTookLectureListDTO.getThisYear(), klasTookLectureListDTO.getHakgiOrder(), timeTable.getTableName());
+
+                timetableRepository.findByKlasLinkedTimeTable(student, klasTookLectureListDTO.getThisYear(), klasTookLectureListDTO.getHakgiOrder())
+                        .ifPresent(klasTimeTable -> timeTableService
+                                .deleteTimeTable(student.getNumber(), klasTimeTable.getYearOfTimetable(), klasTimeTable.getSemester(), klasTimeTable.getTableName()));
+
                 timeTableService.changeTimeTableName(student, timeTable.getYearOfTimetable(), timeTable.getSemester(), timeTable.getTableName(), "Klas_" + now);
 
                 for (KlasTookLectureDTO klasTookLectureDTO : klasTookLectureListDTO.getSungjukList()) {
