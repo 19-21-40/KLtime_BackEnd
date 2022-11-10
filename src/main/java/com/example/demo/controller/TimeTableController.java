@@ -82,17 +82,18 @@ public class TimeTableController {
      * @param semester
      * @return new ResponseEntity<>(HttpStatus.OK)
      */
-    @PostMapping("/add")
+    @PostMapping("/add/{tableName}")
     public ResponseEntity<?> addTimeTable(
             @RequestBody StudentDTO studentDTO,
             //@PathVariable String number,
             @PathVariable(value = "year") int year,
-            @PathVariable(value = "semester") String semester
+            @PathVariable(value = "semester") String semester,
+            @PathVariable(value = "tableName") String tableName
     ){
         try {
             if (studentDTO.getToken() != null) {
                 Student student = studentRepository.findByNumber(studentDTO.getNumber());
-                timeTableService.addTimeTable(student,year,semester);
+                timeTableService.addTimeTable(student,tableName,year,semester);
 
                 return new ResponseEntity<>(HttpStatus.OK); //시간표 추가 후 OK 상태 반환
             }else{
@@ -378,6 +379,39 @@ public class TimeTableController {
                 lectureService.updateLectureInfo(lecture.getLectureNumber(),year,semester,studentAndCustomResult.customLectureDto.getLectureName(),timeSlots);
 
                 return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
+            }else{
+                throw new IllegalStateException("토큰이 존재하지 않습니다.");
+            }
+        }catch (Exception e){
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
+
+    /**
+     * 특정 년도/학기의 studentlecture 내의 강의 학점(Gpa) 입력
+     * @param studentDTO
+     * @param year
+     * @param semester
+     * @param lectureNum
+     * @return
+     */
+    @PostMapping("/updateGpa/{lectureNum}/{Gpa}")
+    public ResponseEntity<?> updateGpa(
+            @RequestBody StudentDTO studentDTO,
+            @PathVariable(value = "year") int year,
+            @PathVariable(value = "semester") String semester,
+            @PathVariable(value = "lectureNum") String lectureNum,
+            @PathVariable(value =  "Gpa") String Gpa
+    ){
+        try {
+            if (studentDTO.getToken() != null) {
+                //Student student = studentRepository.findByNumber(studentDTO.getNumber());
+                lectureService.updateGpa(studentDTO.getNumber(), year, semester, lectureNum, Gpa);
+
+                return new ResponseEntity<>(HttpStatus.OK); //Gpa 입력 후 OK 상태 반환
             }else{
                 throw new IllegalStateException("토큰이 존재하지 않습니다.");
             }

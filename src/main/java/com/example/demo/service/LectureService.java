@@ -20,6 +20,7 @@ public class LectureService {
     private final TimeSlotRepository timeSlotRepository;
     private final StudentRepository studentRepository;
     private final LectureTimeSlotRepository lectureTimeSlotRepository;
+    private final StudentLectureRepository studentLectureRepository;
 
     /**
      * 강의 검색
@@ -134,23 +135,11 @@ public class LectureService {
             //lectureRepository.save(lecture); //강의 정보 저장
             System.out.println("lectureName : "+lecture.getName());
 
-
             //===== 강의 시간 변경 =====//
             System.out.println("lectureTimeSlot 개수 : "+lecture.getTimes().size());
-            //기존 lectureTimeSlot 들 삭제
-//            for(int i=0;i<lecture.getTimes().size();i++){
-//                System.out.println("lectureTimeSlot: "+lecture.getTimes().get(i));
-//                lectureTimeSlotRepository.delete(lecture.getTimes().get(i));
-//                lecture.getTimes().remove(i);
-//            }
             lecture.getTimes().clear();
+
             //인자의 timeslot 들로 새 timeslot 생성
-//            List<TimeSlot> updateTimeSlots=timeSlots.stream().map(timeSlot -> {
-//                return timeSlotRepository.findByTimeSlot(timeSlot.getDayName(),timeSlot.getStartTime(),timeSlot.getEndTime())
-//                        .orElseGet(()->{
-//                            return TimeSlot.createTimeSlot(timeSlot.getDayName(),timeSlot.getStartTime(),timeSlot.getEndTime());
-//                        });
-//            }).collect(Collectors.toList());
 
             //새 lectureTimeSlot 들 생성
             List<LectureTimeSlot> newLectureTimeSlot = updateTimeSlots.stream().map(timeSlot -> LectureTimeSlot.createLectureTimeSlot(timeSlot)).collect(Collectors.toList());
@@ -165,5 +154,19 @@ public class LectureService {
                 timeSlotRepository.save(updateTimeSlots.get(i));
             }
         }
+    }
+
+    /**
+     * 입력받은 GPA 호출하는 함수
+     */
+    @Transactional
+    public void updateGpa(String studentNum, int year, String semester, String lectureNum, String Gpa){
+        //엔티티 조회
+        Student student = studentRepository.findByNumber(studentNum);
+        Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(lectureNum, year,semester);
+        StudentLecture studentLecture = studentLectureRepository.findByStudentAndLecture(lecture,student);
+
+        //학점 입력
+        studentLecture.setGpa(Gpa);
     }
 }

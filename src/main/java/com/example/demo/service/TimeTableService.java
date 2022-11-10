@@ -112,8 +112,6 @@ public class TimeTableService {
      * @param yearOfTimetable
      * @param semester
      */
-    // find 개수 where 연도 + 학기 + 해당 student 1
-    //select count(t) from timetable where
     @Transactional
     public Long addTimeTable(Student student, int yearOfTimetable, String semester) {
         String defaultTableName = createDefaultTableName(student,yearOfTimetable,semester);
@@ -124,8 +122,6 @@ public class TimeTableService {
     /**
      * 시간표 추가 (기본시간표 X => studentlectures 엔 추가 안됨)
      */
-    // find 개수 where 연도 + 학기 + 해당 student 1
-    //select count(t) from timetable where
     @Transactional
     public Long addTimeTable(Student student, String name, int yearOfTimetable, String semester){
 
@@ -358,4 +354,5 @@ public class TimeTableService {
             }
         }
     }
+
 }
