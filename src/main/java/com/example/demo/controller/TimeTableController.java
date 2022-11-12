@@ -47,26 +47,15 @@ public class TimeTableController {
             @PathVariable(value = "semester", required = false) String semester
     ){
         try {
-            if (studentDTO.getToken() != null) {
-                Student student = studentRepository.findByNumber(studentDTO.getNumber());
-                List<TimeTable> timeTables = timeTableRepository.findByStudentAndYearAndSemesterWithLecture(student,year,semester); //fetch outer join
+            Student student = studentRepository.findByNumber(studentDTO.getNumber());
+            List<TimeTable> timeTables = timeTableRepository.findByStudentAndYearAndSemesterWithLecture(student,year,semester); //fetch outer join
 //                List<TimeTable> timeTables = timeTableRepository.findByStudentAndYearAndSemester(student,year,semester);
 
-                List <TimeTableDto> timeTableList=timeTables.stream()
-                        .map(TimeTableDto::new)
-                        .collect(Collectors.toList());
+            List <TimeTableDto> timeTableList=timeTables.stream()
+                    .map(TimeTableDto::new)
+                    .collect(Collectors.toList());
 
-//                TimeTable PrimaryTimeTable = timeTableRepository.findByStudentAndYearAndSemesterAndPrimary(student,year,semester,true);
-//                List<MyLectureDto> lectureLists = PrimaryTimeTable.getLectures().stream()
-//                        .map(timeTableLecture -> new MyLectureDto(timeTableLecture.getLecture()))
-//                        .collect(Collectors.toList());
-
-                //return ResponseEntity.ok().body(new TimeTableController.tablesAndLectureResult(timeTableList,lectureLists));
-                return ResponseEntity.ok().body(new TableResult(timeTableList));
-
-            }else{
-                throw new IllegalStateException("토큰이 존재하지 않습니다.");
-            }
+            return ResponseEntity.ok().body(new TableResult(timeTableList));
         }catch (Exception e){
             ResponseDTO<Object> responseDTO = ResponseDTO.builder()
                     .error(e.getMessage())
@@ -82,22 +71,19 @@ public class TimeTableController {
      * @param semester
      * @return new ResponseEntity<>(HttpStatus.OK)
      */
-    @PostMapping("/add")
+    @PostMapping("/add/{tableName}")
     public ResponseEntity<?> addTimeTable(
             @RequestBody StudentDTO studentDTO,
             //@PathVariable String number,
             @PathVariable(value = "year") int year,
-            @PathVariable(value = "semester") String semester
+            @PathVariable(value = "semester") String semester,
+            @PathVariable(value = "tableName") String tableName
     ){
         try {
-            if (studentDTO.getToken() != null) {
-                Student student = studentRepository.findByNumber(studentDTO.getNumber());
-                timeTableService.addTimeTable(student,year,semester);
+            Student student = studentRepository.findByNumber(studentDTO.getNumber());
+            timeTableService.addTimeTable(student,tableName,year,semester);
 
-                return new ResponseEntity<>(HttpStatus.OK); //시간표 추가 후 OK 상태 반환
-            }else{
-                throw new IllegalStateException("토큰이 존재하지 않습니다.");
-            }
+            return new ResponseEntity<>(HttpStatus.OK); //시간표 추가 후 OK 상태 반환
         }catch (Exception e){
             ResponseDTO<Object> responseDTO = ResponseDTO.builder()
                     .error(e.getMessage())
@@ -123,14 +109,9 @@ public class TimeTableController {
             @PathVariable(value = "tableName") String tableName
     ){
         try {
-            if (studentDTO.getToken() != null) {
-                //Student student = studentRepository.findByNumber(studentDTO.getNumber());
-                timeTableService.deleteTimeTable(studentDTO.getNumber(),year,semester,tableName);
+            timeTableService.deleteTimeTable(studentDTO.getNumber(),year,semester,tableName);
 
-                return new ResponseEntity<>(HttpStatus.OK); //시간표 삭제 후 OK 상태 반환
-            }else{
-                throw new IllegalStateException("토큰이 존재하지 않습니다.");
-            }
+            return new ResponseEntity<>(HttpStatus.OK); //시간표 삭제 후 OK 상태 반환
         }catch (Exception e){
             ResponseDTO<Object> responseDTO = ResponseDTO.builder()
                     .error(e.getMessage())
@@ -153,18 +134,14 @@ public class TimeTableController {
             @PathVariable(value = "semester") String semester
     ){
         try {
-            if (studentDTO.getToken() != null) {
-                //Student student = studentRepository.findByNumber(studentDTO.getNumber());
-                List<Lecture> lectures = lectureRepository.findByYearAndSemesterWithTimeslot(year,semester);
-                
-                List<LectureDto> searchLectureLists = lectures.stream()
-                        .map(lecture -> new LectureDto(lecture))
-                        .collect(Collectors.toList());
+            //Student student = studentRepository.findByNumber(studentDTO.getNumber());
+            List<Lecture> lectures = lectureRepository.findByYearAndSemesterWithTimeslot(year,semester);
 
-                return ResponseEntity.ok().body(new LectureResult<>(searchLectureLists));
-            }else{
-                throw new IllegalStateException("토큰이 존재하지 않습니다.");
-            }
+            List<LectureDto> searchLectureLists = lectures.stream()
+                    .map(lecture -> new LectureDto(lecture))
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok().body(new LectureResult<>(searchLectureLists));
         }catch (Exception e){
             ResponseDTO<Object> responseDTO = ResponseDTO.builder()
                     .error(e.getMessage())
@@ -189,14 +166,10 @@ public class TimeTableController {
             @PathVariable(value = "tableName") String newPriTableName
     ){
         try {
-            if (studentDTO.getToken() != null) {
-                Student student = studentRepository.findByNumber(studentDTO.getNumber());
-                timeTableService.changePrimary(student,year,semester,newPriTableName);
+            Student student = studentRepository.findByNumber(studentDTO.getNumber());
+            timeTableService.changePrimary(student,year,semester,newPriTableName);
 
-                return new ResponseEntity<>(HttpStatus.OK); //기본 시간표 변경 후 OK 상태 반환
-            }else{
-                throw new IllegalStateException("토큰이 존재하지 않습니다.");
-            }
+            return new ResponseEntity<>(HttpStatus.OK); //기본 시간표 변경 후 OK 상태 반환
         }catch (Exception e){
             ResponseDTO<Object> responseDTO = ResponseDTO.builder()
                     .error(e.getMessage())
@@ -223,14 +196,10 @@ public class TimeTableController {
             @PathVariable(value = "newTableName") String newTableName
     ){
         try {
-            if (studentDTO.getToken() != null) {
-                Student student = studentRepository.findByNumber(studentDTO.getNumber());
-                timeTableService.changeTimeTableName(student, year,semester,oldTableName,newTableName);
+            Student student = studentRepository.findByNumber(studentDTO.getNumber());
+            timeTableService.changeTimeTableName(student, year,semester,oldTableName,newTableName);
 
-                return new ResponseEntity<>(HttpStatus.OK); //시간표 이름 변경 후 OK 상태 반환
-            }else{
-                throw new IllegalStateException("토큰이 존재하지 않습니다.");
-            }
+            return new ResponseEntity<>(HttpStatus.OK); //시간표 이름 변경 후 OK 상태 반환
         }catch (Exception e){
             ResponseDTO<Object> responseDTO = ResponseDTO.builder()
                     .error(e.getMessage())
@@ -257,15 +226,11 @@ public class TimeTableController {
             @PathVariable(value = "lectureNum") String lectureNum
             ){
         try {
-            if (studentDTO.getToken() != null) {
-                //Student student = studentRepository.findByNumber(studentDTO.getNumber());
-                Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(lectureNum,year,semester);
-                timeTableService.addLecture(studentDTO.getNumber(),year,semester,tableName,lecture);
+            //Student student = studentRepository.findByNumber(studentDTO.getNumber());
+            Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(lectureNum,year,semester);
+            timeTableService.addLecture(studentDTO.getNumber(),year,semester,tableName,lecture);
 
-                return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
-            }else{
-                throw new IllegalStateException("토큰이 존재하지 않습니다.");
-            }
+            return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
         }catch (Exception e){
             ResponseDTO<Object> responseDTO = ResponseDTO.builder()
                     .error(e.getMessage())
@@ -290,24 +255,20 @@ public class TimeTableController {
             @PathVariable(value = "tableName") String tableName
     ) {
         try {
-            if (studentAndCustomResult.studentDto.getToken() != null) {
-                //Student student = studentRepository.findByNumber(studentDTO.getNumber());
-                List<TimeSlot>timeSlots=studentAndCustomResult.timeSlotDtoList.stream().map((timeSlotDto)-> {
-                    return timeSlotRepository.findByTimeSlot(timeSlotDto.getDay(), timeSlotDto.getStartTime(), timeSlotDto.getEndTime())
-                            .orElseGet(() -> {
-                                return TimeSlot.from(timeSlotDto).orElseThrow(()->new IllegalStateException("error"));
-                            });
-                }).collect(Collectors.toList());
-                Lecture lecture = Lecture.from(studentAndCustomResult.customLectureDto,timeSlots).
-                        orElseThrow(() -> {
-                            throw new IllegalStateException("지정된 형식과 일치하지 않습니다.");
+            //Student student = studentRepository.findByNumber(studentDTO.getNumber());
+            List<TimeSlot>timeSlots=studentAndCustomResult.timeSlotDtoList.stream().map((timeSlotDto)-> {
+                return timeSlotRepository.findByTimeSlot(timeSlotDto.getDay(), timeSlotDto.getStartTime(), timeSlotDto.getEndTime())
+                        .orElseGet(() -> {
+                            return TimeSlot.from(timeSlotDto).orElseThrow(()->new IllegalStateException("error"));
                         });
-                timeTableService.addCustomLecture(studentAndCustomResult.studentDto.getNumber(), year, semester, tableName, lecture, timeSlots);
+            }).collect(Collectors.toList());
+            Lecture lecture = Lecture.from(studentAndCustomResult.customLectureDto,timeSlots).
+                    orElseThrow(() -> {
+                        throw new IllegalStateException("지정된 형식과 일치하지 않습니다.");
+                    });
+            timeTableService.addCustomLecture(studentAndCustomResult.studentDto.getNumber(), year, semester, tableName, lecture, timeSlots);
 
-                return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
-            } else {
-                throw new IllegalStateException("토큰이 존재하지 않습니다.");
-            }
+            return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
         } catch (Exception e) {
             ResponseDTO<Object> responseDTO = ResponseDTO.builder()
                     .error(e.getMessage())
@@ -332,15 +293,11 @@ public class TimeTableController {
             @PathVariable(value = "tableName") String tableName
     ){
         try {
-            if (studentAndCustomResult.studentDto.getToken() != null) {
-                Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(studentAndCustomResult.customLectureDto.getId(),studentAndCustomResult.customLectureDto.getYearOfLecture(),studentAndCustomResult.customLectureDto.getSemester());
+            Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(studentAndCustomResult.customLectureDto.getId(),studentAndCustomResult.customLectureDto.getYearOfLecture(),studentAndCustomResult.customLectureDto.getSemester());
 
-                timeTableService.deleteLecture(studentAndCustomResult.studentDto.getNumber(),year,semester,tableName,lecture);
+            timeTableService.deleteLecture(studentAndCustomResult.studentDto.getNumber(),year,semester,tableName,lecture);
 
-                return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
-            }else{
-                throw new IllegalStateException("토큰이 존재하지 않습니다.");
-            }
+            return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
         }catch (Exception e){
             ResponseDTO<Object> responseDTO = ResponseDTO.builder()
                     .error(e.getMessage())
@@ -365,22 +322,47 @@ public class TimeTableController {
             @PathVariable(value = "tableName") String tableName
     ){
         try {
-            if (studentAndCustomResult.studentDto.getToken() != null) {
-                Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(studentAndCustomResult.customLectureDto.getId(),studentAndCustomResult.customLectureDto.getYearOfLecture(),studentAndCustomResult.customLectureDto.getSemester());
+            Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(studentAndCustomResult.customLectureDto.getId(),studentAndCustomResult.customLectureDto.getYearOfLecture(),studentAndCustomResult.customLectureDto.getSemester());
 
-                List<TimeSlot> timeSlots = studentAndCustomResult.timeSlotDtoList.stream().map((timeSlotDto)-> {
-                    return timeSlotRepository.findByTimeSlot(timeSlotDto.getDay(), timeSlotDto.getStartTime(), timeSlotDto.getEndTime())
-                            .orElseGet(() -> {
-                                return TimeSlot.from(timeSlotDto).orElseThrow(()->new IllegalStateException("error"));
-                            });
-                }).collect(Collectors.toList());
+            List<TimeSlot> timeSlots = studentAndCustomResult.timeSlotDtoList.stream().map((timeSlotDto)-> {
+                return timeSlotRepository.findByTimeSlot(timeSlotDto.getDay(), timeSlotDto.getStartTime(), timeSlotDto.getEndTime())
+                        .orElseGet(() -> {
+                            return TimeSlot.from(timeSlotDto).orElseThrow(()->new IllegalStateException("error"));
+                        });
+            }).collect(Collectors.toList());
 
-                lectureService.updateLectureInfo(lecture.getLectureNumber(),year,semester,studentAndCustomResult.customLectureDto.getLectureName(),timeSlots);
+            lectureService.updateLectureInfo(lecture.getLectureNumber(),year,semester,studentAndCustomResult.customLectureDto.getLectureName(),timeSlots);
 
-                return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
-            }else{
-                throw new IllegalStateException("토큰이 존재하지 않습니다.");
-            }
+            return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
+        }catch (Exception e){
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
+
+    /**
+     * 특정 년도/학기의 studentlecture 내의 강의 학점(Gpa) 입력
+     * @param studentDTO
+     * @param year
+     * @param semester
+     * @param lectureNum
+     * @return
+     */
+    @PostMapping("/updateGpa/{lectureNum}/{Gpa}")
+    public ResponseEntity<?> updateGpa(
+            @RequestBody StudentDTO studentDTO,
+            @PathVariable(value = "year") int year,
+            @PathVariable(value = "semester") String semester,
+            @PathVariable(value = "lectureNum") String lectureNum,
+            @PathVariable(value =  "Gpa") String Gpa
+    ){
+        try {
+            //Student student = studentRepository.findByNumber(studentDTO.getNumber());
+            lectureService.updateGpa(studentDTO.getNumber(), year, semester, lectureNum, Gpa);
+
+            return new ResponseEntity<>(HttpStatus.OK); //Gpa 입력 후 OK 상태 반환
         }catch (Exception e){
             ResponseDTO<Object> responseDTO = ResponseDTO.builder()
                     .error(e.getMessage())

@@ -7,6 +7,7 @@ import com.example.demo.domain.Student;
 import com.example.demo.dto.ResponseDTO;
 import com.example.demo.dto.StudentDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -76,6 +77,25 @@ public class StudentController {
         } else {
             ResponseDTO<Object> responseDTO = ResponseDTO.builder()
                     .error("로그인 실패")
+                    .build();
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
+
+    /**
+     * 회원 탈퇴 (수연 추가)
+     * @param studentDTO
+     * @return
+     */
+    @PostMapping("/sign_out")
+    public ResponseEntity<?> signOutStudent(@RequestBody StudentDTO studentDTO){
+        try {
+            studentService.deleteStudent(studentDTO.getNumber());
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        catch (Exception e) {
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
+                    .error(e.getMessage())
                     .build();
             return ResponseEntity.badRequest().body(responseDTO);
         }

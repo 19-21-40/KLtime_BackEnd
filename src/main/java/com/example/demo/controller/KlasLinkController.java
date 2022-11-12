@@ -51,7 +51,6 @@ public class KlasLinkController {
     public ResponseEntity<?> link(@RequestBody KlasLinkDTO klasLinkDTO) {
         String now = LocalDate.now().toString();
         try {
-            if (klasLinkDTO.studentDTO.getToken() == null) throw new IllegalArgumentException("토큰이 존재하지 않습니다.");
 
             Student student = studentRepository.findByNumber(klasLinkDTO.studentDTO.getNumber());
             klasLinkDTO.klasTookLectureListDTOList.forEach((klasTookLectureListDTO -> {
