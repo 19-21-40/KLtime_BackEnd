@@ -44,4 +44,13 @@ public class StudentService {
     }
 
 
+    /**
+     * 계정 삭제
+     * @param number
+     */
+    public void deleteStudent(final String number){
+        Student student= studentRepository.findByNumber(number);
+        studentRepository.delete(student);
+    }
+
 }

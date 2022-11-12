@@ -96,4 +96,7 @@ public class StudentRepository {
 
     }
 
+    public void delete(Student student) {
+        em.remove(student);
+    }
 }
