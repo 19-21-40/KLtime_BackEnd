@@ -104,12 +104,20 @@ public class KlasLinkController {
                                         });
                             }).collect(Collectors.toList());
                         }
+                        String sectionDetail=null;
+                        List<Lecture> lectureListForSectionDetail=lectureRepository.findByLectureName(klasTookLectureDTO.getGwamokKname());
+                        for (Lecture lecture : lectureListForSectionDetail) {
+                            if(lecture.getSectionDetail()!=null){
+                                sectionDetail=lecture.getSectionDetail();
+                                break;
+                            }
+                        }
                         Lecture lecture = Lecture.createLecture(
                                 klasTookLectureDTO.getHakjungNo(),
                                 klasTookLectureDTO.getGwamokKname(),
                                 klasTimeTableDTO.getProfNm(),
                                 klasTookLectureDTO.getCodeName1(),
-                                null,
+                                sectionDetail,
                                 klasTookLectureDTO.getHakjumNum(),
                                 klasTookLectureDTO.getHakjungNo()!=null&&klasTookLectureDTO.getHakjungNo().length()>6?klasTookLectureDTO.getHakjungNo().charAt(5) - '0':null,
                                 klasTookLectureDTO.getHakgwa(),
