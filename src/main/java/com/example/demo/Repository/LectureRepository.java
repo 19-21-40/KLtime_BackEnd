@@ -140,11 +140,11 @@ public class LectureRepository {
      * @param name 강의 이름
      * @return 같은 이름의 강의 리스트
      */
-    public Lecture findByLectureName(String name) {
+    public List<Lecture> findByLectureName(String name) {
         return em.createQuery("select L from Lecture L"
                         + " where L.name=:lectureName", Lecture.class)
                 .setParameter("lectureName", name)
-                .getSingleResult();
+                .getResultList();
     }
 
 
