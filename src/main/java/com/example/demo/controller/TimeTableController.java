@@ -51,9 +51,11 @@ public class TimeTableController {
             List<TimeTable> timeTables = timeTableRepository.findByStudentAndYearAndSemesterWithLecture(student,year,semester); //fetch outer join
 //                List<TimeTable> timeTables = timeTableRepository.findByStudentAndYearAndSemester(student,year,semester);
 
-            List <TimeTableDto> timeTableList=timeTables.stream()
-                    .map(TimeTableDto::new)
-                    .collect(Collectors.toList());
+            int newId = 1;
+            List <TimeTableDto> timeTableList = new ArrayList<>();
+            for (TimeTable timeTable : timeTables) {
+                timeTableList.add(new TimeTableDto(newId++, timeTable));
+            }
 
             return ResponseEntity.ok().body(new TableResult(timeTableList));
         }catch (Exception e){
@@ -390,7 +392,7 @@ public class TimeTableController {
     @Data
     @AllArgsConstructor
     static class TableResult<T>{
-        private T totaltableList;
+        private T totalTableList;
     }
 
     @Data
@@ -414,17 +416,19 @@ public class TimeTableController {
     @Data
     @AllArgsConstructor
     static class TimeTableDto {
+        private int id;
         private String tableName;
 
         private boolean isPrimary;
 
         //렉처리스트 추가(수연)
-        private List<LectureDto> myLectureList;
+        private List<LectureDto> lectureList;
 
-        public TimeTableDto(TimeTable timeTable) {
+        public TimeTableDto(int id, TimeTable timeTable) {
+            this.id = id;
             tableName=timeTable.getTableName();
             isPrimary= timeTable.isPrimary();
-            myLectureList=timeTable.getLectures().stream().map(timeTableLecture -> new LectureDto(timeTableLecture.getLecture())).collect(Collectors.toList());
+            lectureList=timeTable.getLectures().stream().map(timeTableLecture -> new LectureDto(timeTableLecture.getLecture())).collect(Collectors.toList());
         }
     }
 
