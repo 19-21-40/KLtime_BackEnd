@@ -79,4 +79,44 @@ public class StudentLectureRepository {
             return Optional.empty();
         }
     }
+
+    /**
+     * 강의 추천 1
+     * @param lecture
+     * @return
+     */
+    public Optional<List<Lecture>> recommendLectureList1(Lecture lecture) {
+        try {
+            return Optional.ofNullable(em.createQuery(
+                            "select sl2.lecture from StudentLecture sl1 join StudentLecture sl2"
+                                    + " where sl1.lecture=:lecture and sl1.student=sl2.student group by sl2.lecture"
+                                    + " order by count(sl2)", Lecture.class)
+                    .setParameter("lecture", lecture)
+                    .setMaxResults(3)
+                    .getResultList());
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * 강의 추천 2
+     * @param lecture
+     * @return
+     */
+    public Optional<List<Lecture>> recommendLectureList2(Lecture lecture,int grade) {
+        try {
+            return Optional.ofNullable(em.createQuery(
+                            "select sl2.lecture from StudentLecture sl1 join StudentLecture sl2"
+                                    + " where sl1.lecture=:lecture and sl1.student = sl2.student and sl1.student.grade=:grade "
+                                    + "group by sl2.lecture"
+                                    + " order by count(sl2)", Lecture.class)
+                    .setParameter("lecture", lecture)
+                    .setParameter("grade", grade)
+                    .setMaxResults(3)
+                    .getResultList());
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
 }
