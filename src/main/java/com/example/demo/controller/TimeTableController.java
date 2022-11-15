@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -34,20 +35,21 @@ public class TimeTableController {
 
     /**
      * 시간표 페이지 처음 접속 시 & 년도/학기 변경(선택)시 (해당 년도/학기의 기본시간표가 떠야 함) -> 쿼리 확인
-     * @param studentDTO
+     * @param
      * @param year
      * @param semester
      * @return ResponseEntity.ok().body(new TimeTableController.TableResult(timeTableList));
      */
-    @PostMapping("/totalTimeTableList")
+    @GetMapping("/totalTimeTableList")
     public ResponseEntity<?> totalTimeTableList(
-            @RequestBody StudentDTO studentDTO,
-            //@PathVariable String number,
+            @AuthenticationPrincipal Long id,
+//            @RequestBody StudentDTO studentDTO,
             @PathVariable(value = "year", required = false) int year,
             @PathVariable(value = "semester", required = false) String semester
     ){
         try {
-            Student student = studentRepository.findByNumber(studentDTO.getNumber());
+            Student student=studentRepository.findById(id);
+//            Student student = studentRepository.findByNumber(studentDTO.getNumber());
             List<TimeTable> timeTables = timeTableRepository.findByStudentAndYearAndSemesterWithLecture(student,year,semester); //fetch outer join
 //                List<TimeTable> timeTables = timeTableRepository.findByStudentAndYearAndSemester(student,year,semester);
 
@@ -68,21 +70,22 @@ public class TimeTableController {
 
     /**
      * 해당 년도/학기 시간표 추가 (자동으로 이름 생성) -> 쿼리 확인
-     * @param studentDTO
+     * @param
      * @param year
      * @param semester
      * @return new ResponseEntity<>(HttpStatus.OK)
      */
     @PostMapping("/add/{tableName}")
     public ResponseEntity<?> addTimeTable(
-            @RequestBody StudentDTO studentDTO,
+            @AuthenticationPrincipal Long id,
             //@PathVariable String number,
             @PathVariable(value = "year") int year,
             @PathVariable(value = "semester") String semester,
             @PathVariable(value = "tableName") String tableName
     ){
         try {
-            Student student = studentRepository.findByNumber(studentDTO.getNumber());
+            Student student=studentRepository.findById(id);
+//            Student student = studentRepository.findByNumber(studentDTO.getNumber());
             timeTableService.addTimeTable(student,tableName,year,semester);
 
             return new ResponseEntity<>(HttpStatus.OK); //시간표 추가 후 OK 상태 반환
@@ -96,7 +99,7 @@ public class TimeTableController {
 
     /**
      * 해당 년도/학기 시간표 삭제 -> 쿼리 확인
-     * @param studentDTO
+     * @param
      * @param year
      * @param semester
      * @param tableName
@@ -104,14 +107,15 @@ public class TimeTableController {
      */
     @PostMapping("/delete/{tableName}")
     public ResponseEntity<?> deleteTimeTable(
-            @RequestBody StudentDTO studentDTO,
+            @AuthenticationPrincipal Long id,
             //@PathVariable String number,
             @PathVariable(value = "year") int year,
             @PathVariable(value = "semester") String semester,
             @PathVariable(value = "tableName") String tableName
     ){
         try {
-            timeTableService.deleteTimeTable(studentDTO.getNumber(),year,semester,tableName);
+            Student student=studentRepository.findById(id);
+            timeTableService.deleteTimeTable(student.getNumber(),year,semester,tableName);
 
             return new ResponseEntity<>(HttpStatus.OK); //시간표 삭제 후 OK 상태 반환
         }catch (Exception e){
@@ -124,14 +128,13 @@ public class TimeTableController {
 
     /**
      * 해당 년도/학기 강의 리스트 -> 쿼리 확인
-     * @param studentDTO
+     * @param
      * @param year
      * @param semester
      * @return tablesAndLectureResult(timeTableList,lectureLists)
      */
-    @PostMapping("/totalLectureList")
+    @GetMapping("/totalLectureList")
     public ResponseEntity<?> totalLectureList(
-            @RequestBody StudentDTO studentDTO,
             @PathVariable(value = "year") int year,
             @PathVariable(value = "semester") String semester
     ){
@@ -154,7 +157,7 @@ public class TimeTableController {
 
     /**
      * 해당 년도/학기 기본 시간표 변경 -> 쿼리 확인 (전/후 각각 한번씩 select)
-     * @param studentDTO
+     * @param
      * @param year
      * @param semester
      * @param newPriTableName
@@ -162,13 +165,14 @@ public class TimeTableController {
      */
     @PostMapping("/changePrimary/{tableName}")
     public ResponseEntity<?> changePrimaryTimeTable(
-            @RequestBody StudentDTO studentDTO,
+            @AuthenticationPrincipal Long id,
             @PathVariable(value = "year") int year,
             @PathVariable(value = "semester") String semester,
             @PathVariable(value = "tableName") String newPriTableName
     ){
         try {
-            Student student = studentRepository.findByNumber(studentDTO.getNumber());
+            Student student=studentRepository.findById(id);
+//            Student student = studentRepository.findByNumber(studentDTO.getNumber());
             timeTableService.changePrimary(student,year,semester,newPriTableName);
 
             return new ResponseEntity<>(HttpStatus.OK); //기본 시간표 변경 후 OK 상태 반환
@@ -182,7 +186,7 @@ public class TimeTableController {
 
     /**
      * 해당 년도/학기/시간표 이름 변경 -> 쿼리 확인 (+ 중복 확인 select)
-     * @param studentDTO
+     * @param
      * @param year
      * @param semester
      * @param oldTableName
@@ -191,14 +195,15 @@ public class TimeTableController {
      */
     @PostMapping("/changeName/{oldTableName}/{newTableName}")
     public ResponseEntity<?> changeTimeTableName(
-            @RequestBody StudentDTO studentDTO,
+            @AuthenticationPrincipal Long id,
             @PathVariable(value = "year") int year,
             @PathVariable(value = "semester") String semester,
             @PathVariable(value = "oldTableName") String oldTableName,
             @PathVariable(value = "newTableName") String newTableName
     ){
         try {
-            Student student = studentRepository.findByNumber(studentDTO.getNumber());
+            Student student=studentRepository.findById(id);
+//            Student student = studentRepository.findByNumber(studentDTO.getNumber());
             timeTableService.changeTimeTableName(student, year,semester,oldTableName,newTableName);
 
             return new ResponseEntity<>(HttpStatus.OK); //시간표 이름 변경 후 OK 상태 반환
@@ -221,16 +226,17 @@ public class TimeTableController {
      */
     @PostMapping("/addLecture/{tableName}/{lectureNum}")
     public ResponseEntity<?> addLecture(
-            @RequestBody StudentDTO studentDTO,
+            @AuthenticationPrincipal Long id,
             @PathVariable(value = "year") int year,
             @PathVariable(value = "semester") String semester,
             @PathVariable(value = "tableName") String tableName,
             @PathVariable(value = "lectureNum") String lectureNum
             ){
         try {
+            Student student=studentRepository.findById(id);
             //Student student = studentRepository.findByNumber(studentDTO.getNumber());
             Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(lectureNum,year,semester);
-            timeTableService.addLecture(studentDTO.getNumber(),year,semester,tableName,lecture);
+            timeTableService.addLecture(student.getNumber(),year,semester,tableName,lecture);
 
             return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
         }catch (Exception e){
@@ -243,7 +249,7 @@ public class TimeTableController {
     /**
      * 해당 년도/학기/시간표 내 커스텀 강의 추가 (커스텀 O ) -> 쿼리 확인
      *
-     * @param studentAndCustomResult
+     * @param lectureAndTimeSlotResult
      * @param year
      * @param semester
      * @param tableName
@@ -251,24 +257,26 @@ public class TimeTableController {
      */
     @PostMapping("/addCustomLecture/{tableName}")
     public ResponseEntity<?> addCustomLecture(
-            @RequestBody StudentAndCustomResult<StudentDTO, LectureDto, List<TimeSlotDto>> studentAndCustomResult,
+            @AuthenticationPrincipal Long id,
+            @RequestBody LectureAndTimeSlotResult<LectureDto, List<TimeSlotDto>> lectureAndTimeSlotResult,
             @PathVariable(value = "year") int year,
             @PathVariable(value = "semester") String semester,
             @PathVariable(value = "tableName") String tableName
     ) {
         try {
+            Student student=studentRepository.findById(id);
             //Student student = studentRepository.findByNumber(studentDTO.getNumber());
-            List<TimeSlot>timeSlots=studentAndCustomResult.timeSlotDtoList.stream().map((timeSlotDto)-> {
+            List<TimeSlot>timeSlots=lectureAndTimeSlotResult.timeSlotDtoList.stream().map((timeSlotDto)-> {
                 return timeSlotRepository.findByTimeSlot(timeSlotDto.getDay(), timeSlotDto.getStartTime(), timeSlotDto.getEndTime())
                         .orElseGet(() -> {
                             return TimeSlot.from(timeSlotDto).orElseThrow(()->new IllegalStateException("error"));
                         });
             }).collect(Collectors.toList());
-            Lecture lecture = Lecture.from(studentAndCustomResult.lectureDto,timeSlots).
+            Lecture lecture = Lecture.from(lectureAndTimeSlotResult.lectureDto,timeSlots).
                     orElseThrow(() -> {
                         throw new IllegalStateException("지정된 형식과 일치하지 않습니다.");
                     });
-            timeTableService.addCustomLecture(studentAndCustomResult.studentDto.getNumber(), year, semester, tableName, lecture, timeSlots);
+            timeTableService.addCustomLecture(student.getNumber(), year, semester, tableName, lecture, timeSlots);
 
             return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
         } catch (Exception e) {
@@ -281,7 +289,7 @@ public class TimeTableController {
     }
     /**
      * 해당 년도/학기/시간표 내 커스텀 강의 삭제 (커스텀 O ) -> 쿼리 확인
-     * @param studentAndCustomResult
+     * @param lectureAndTimeSlotResult
      * @param year
      * @param semester
      * @param tableName
@@ -289,15 +297,17 @@ public class TimeTableController {
      */
     @PostMapping("/deleteLecture/{tableName}")
     public ResponseEntity<?> deleteLecture(
-            @RequestBody StudentAndCustomResult<StudentDTO, LectureDto,List<TimeSlotDto>> studentAndCustomResult,
+            @AuthenticationPrincipal Long id,
+            @RequestBody LectureAndTimeSlotResult<LectureDto,List<TimeSlotDto>> lectureAndTimeSlotResult,
             @PathVariable(value = "year") int year,
             @PathVariable(value = "semester") String semester,
             @PathVariable(value = "tableName") String tableName
     ){
         try {
-            Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(studentAndCustomResult.lectureDto.getId(),studentAndCustomResult.lectureDto.getYearOfLecture(),studentAndCustomResult.lectureDto.getSemester());
+            Student student=studentRepository.findById(id);
+            Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(lectureAndTimeSlotResult.lectureDto.getId(),lectureAndTimeSlotResult.lectureDto.getYearOfLecture(),lectureAndTimeSlotResult.lectureDto.getSemester());
 
-            timeTableService.deleteLecture(studentAndCustomResult.studentDto.getNumber(),year,semester,tableName,lecture);
+            timeTableService.deleteLecture(student.getNumber(),year,semester,tableName,lecture);
 
             return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
         }catch (Exception e){
@@ -310,7 +320,7 @@ public class TimeTableController {
 
     /**
      * 해당 년도/학기/시간표 내 커스텀 강의 정보 수정
-     * @param studentAndCustomResult
+     * @param lectureAndTimeSlotResult
      * @param year
      * @param semester
      * @param tableName
@@ -318,22 +328,22 @@ public class TimeTableController {
      */
     @PostMapping("/updateCustomLecture/{tableName}")
     public ResponseEntity<?> updateCustomLecture(
-            @RequestBody StudentAndCustomResult<StudentDTO, LectureDto,List<TimeSlotDto>> studentAndCustomResult,
+            @RequestBody LectureAndTimeSlotResult<LectureDto,List<TimeSlotDto>> lectureAndTimeSlotResult,
             @PathVariable(value = "year") int year,
             @PathVariable(value = "semester") String semester,
             @PathVariable(value = "tableName") String tableName
     ){
         try {
-            Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(studentAndCustomResult.lectureDto.getId(),studentAndCustomResult.lectureDto.getYearOfLecture(),studentAndCustomResult.lectureDto.getSemester());
+            Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(lectureAndTimeSlotResult.lectureDto.getId(),lectureAndTimeSlotResult.lectureDto.getYearOfLecture(),lectureAndTimeSlotResult.lectureDto.getSemester());
 
-            List<TimeSlot> timeSlots = studentAndCustomResult.timeSlotDtoList.stream().map((timeSlotDto)-> {
+            List<TimeSlot> timeSlots = lectureAndTimeSlotResult.timeSlotDtoList.stream().map((timeSlotDto)-> {
                 return timeSlotRepository.findByTimeSlot(timeSlotDto.getDay(), timeSlotDto.getStartTime(), timeSlotDto.getEndTime())
                         .orElseGet(() -> {
                             return TimeSlot.from(timeSlotDto).orElseThrow(()->new IllegalStateException("error"));
                         });
             }).collect(Collectors.toList());
 
-            lectureService.updateLectureInfo(lecture.getLectureNumber(),year,semester,studentAndCustomResult.lectureDto.getLectureName(),timeSlots);
+            lectureService.updateLectureInfo(lecture.getLectureNumber(),year,semester,lectureAndTimeSlotResult.lectureDto.getLectureName(),timeSlots);
 
             return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
         }catch (Exception e){
@@ -346,7 +356,7 @@ public class TimeTableController {
 
     /**
      * 특정 년도/학기의 studentlecture 내의 강의 학점(Gpa) 입력
-     * @param studentDTO
+     * @param
      * @param year
      * @param semester
      * @param lectureNum
@@ -354,15 +364,16 @@ public class TimeTableController {
      */
     @PostMapping("/updateGpa/{lectureNum}/{Gpa}")
     public ResponseEntity<?> updateGpa(
-            @RequestBody StudentDTO studentDTO,
+            @AuthenticationPrincipal Long id,
             @PathVariable(value = "year") int year,
             @PathVariable(value = "semester") String semester,
             @PathVariable(value = "lectureNum") String lectureNum,
             @PathVariable(value =  "Gpa") String Gpa
     ){
         try {
+            Student student = studentRepository.findById(id);
             //Student student = studentRepository.findByNumber(studentDTO.getNumber());
-            lectureService.updateGpa(studentDTO.getNumber(), year, semester, lectureNum, Gpa);
+            lectureService.updateGpa(student.getNumber(), year, semester, lectureNum, Gpa);
 
             return new ResponseEntity<>(HttpStatus.OK); //Gpa 입력 후 OK 상태 반환
         }catch (Exception e){
@@ -377,10 +388,9 @@ public class TimeTableController {
 
     @Data
     @AllArgsConstructor
-    static class StudentAndCustomResult<A,B,C>{
-        private A studentDto;
-        private B lectureDto; //customLectureDto -> lectureDto 로 변수명 변경(수연)
-        private C timeSlotDtoList;
+    static class LectureAndTimeSlotResult<A,B>{
+        private A lectureDto; //customLectureDto -> lectureDto 로 변수명 변경(수연)
+        private B timeSlotDtoList;
     }
 
     @Data
