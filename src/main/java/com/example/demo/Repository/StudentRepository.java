@@ -6,8 +6,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -99,4 +101,16 @@ public class StudentRepository {
     public void delete(Student student) {
         em.remove(student);
     }
+
+    //개망
+//    public Optional<Student> findBystudentLecture(String lectureName) {
+//        try{
+//            return Optional.ofNullable(em.createQuery("select s from Student s left join s.myLectures sl left join sl.lecture where sl.lecture.name=:lectureName",Student.class)
+//                    .setParameter("lectureName", lectureName)
+//                    .getResultList());
+//        }catch (NoResultException e){
+//            return Optional.empty();
+//        }
+//
+//    }
 }

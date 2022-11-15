@@ -84,7 +84,7 @@ public class TimeTableRepository {
     /**
      * 학생, 년도, 학기 별 시간표 조회
      */
-    //아우터 페치 조인
+    //아우터 페치 조인(distinct 추가)
     public List<TimeTable> findByStudentAndYearAndSemesterWithLecture(Student student, int yearOfTimetable, String semester) {
         return em.createQuery("select distinct t from TimeTable t left outer join fetch t.lectures tl  where t.student =:student and t.yearOfTimetable =: yearOfTimetable and t.semester=:semester", TimeTable.class)
                 .setParameter("student", student)

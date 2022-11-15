@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.Repository.*;
-import com.example.demo.Service.RecommendLectureService;
+import com.example.demo.Service.GraduationRequirementService;
 import com.example.demo.domain.*;
 import com.example.demo.dto.ResponseDTO;
 import com.example.demo.dto.StudentDTO;
@@ -9,17 +9,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.constraints.Null;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -27,7 +23,7 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor
 public class HomeController {
 
-    private final RecommendLectureService recommendLectureService;
+    private final GraduationRequirementService graduationRequirementService;
     private final GradConditionRepository gradConditionRepository;
     private final StudentRepository studentRepository;
 
@@ -39,7 +35,7 @@ public class HomeController {
         try {
             Student student = studentRepository.findByStudentNumWithLecture(studentDTO.getNumber());
             GradCondition gradCondition= gradConditionRepository.findByDeptAndAdmissionYear(student.getDepartment(),student.getAdmissionYear());
-            recommendLectureService.checkAndSaveCredit(student.getNumber());
+            graduationRequirementService.checkAndSaveCredit(student.getNumber());
             Credit credit=student.getCredit();
             GradConditionDto gradConditionDto=new GradConditionDto(gradCondition);
             CreditDto creditDto=new CreditDto(credit);
@@ -61,7 +57,7 @@ public class HomeController {
         try{
             Student student=studentRepository.findByNumber(studentDTO.getNumber());
 
-            Map<String,List<Lecture>> lectureListMap=recommendLectureService.recommendBasicLectureWithNoDup(student.getNumber());
+            Map<String,List<Lecture>> lectureListMap= graduationRequirementService.recommendBasicLectureWithNoDup(student.getNumber());
 
             Map<String,List<LectureDto>> lectureListMapDto=new HashMap<>();
             for(String s:lectureListMap.keySet()){
@@ -84,7 +80,7 @@ public class HomeController {
     @PostMapping("/api/essBalLectureList")
     public ResponseEntity<?> essBalLectureList(@RequestBody StudentDTO studentDTO) {
         try{
-            Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendEssBalLecturesWithNoDup(studentDTO.getNumber());
+            Map<String, List<Lecture>> lectureListMap = graduationRequirementService.recommendEssBalLecturesWithNoDup(studentDTO.getNumber());
             Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
             for (String section : lectureListMap.keySet()) {
                 List<LectureDto> lecturelistDto = lectureListMap.get(section).stream()
@@ -105,7 +101,7 @@ public class HomeController {
     @PostMapping("/api/essLectureList")
     public ResponseEntity<?> essLectureList(@RequestBody StudentDTO studentDTO) {
         try{
-            Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendOnlyEssLecturesWithNoDup(studentDTO.getNumber());
+            Map<String, List<Lecture>> lectureListMap = graduationRequirementService.recommendOnlyEssLecturesWithNoDup(studentDTO.getNumber());
 
             Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
             for (String section : lectureListMap.keySet()) {
@@ -127,7 +123,7 @@ public class HomeController {
     @PostMapping("/api/balLectureList")
     public ResponseEntity<?> balLectureList(@RequestBody StudentDTO studentDTO) {
         try{
-            Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendOnlyBalLecturesWithNoDup(studentDTO.getNumber());
+            Map<String, List<Lecture>> lectureListMap = graduationRequirementService.recommendOnlyBalLecturesWithNoDup(studentDTO.getNumber());
             Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
             for (String section : lectureListMap.keySet()) {
                 List<LectureDto> lecturelistDto = lectureListMap.get(section).stream()
@@ -148,7 +144,7 @@ public class HomeController {
     @PostMapping("/api/basicLectureList")
     public ResponseEntity<?> basicLectureList(@RequestBody StudentDTO studentDTO) {
         try{
-            Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendBasicLectureWithNoDup(studentDTO.getNumber());
+            Map<String, List<Lecture>> lectureListMap = graduationRequirementService.recommendBasicLectureWithNoDup(studentDTO.getNumber());
             Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
             for (String s : lectureListMap.keySet()) {
                 List<LectureDto> lecturelistDto = lectureListMap.get(s).stream()
@@ -169,7 +165,7 @@ public class HomeController {
     @PostMapping("/api/basicScienceLectureList")
     public ResponseEntity<?> basicScienceLectureList(@RequestBody StudentDTO studentDTO) {
         try{
-            Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendBasicScienceLectureWithNoDup(studentDTO.getNumber());
+            Map<String, List<Lecture>> lectureListMap = graduationRequirementService.recommendBasicScienceLectureWithNoDup(studentDTO.getNumber());
             Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
             for (String s : lectureListMap.keySet()) {
                 List<LectureDto> lecturelistDto = lectureListMap.get(s).stream()
@@ -190,7 +186,7 @@ public class HomeController {
     @PostMapping("/api/mathLectureList")
     public ResponseEntity<?> mathLectureList(@RequestBody StudentDTO studentDTO) {
         try{
-            Map<String, List<Lecture>> lectureListMap = recommendLectureService.recommendMathLectureWithNoDup(studentDTO.getNumber());
+            Map<String, List<Lecture>> lectureListMap = graduationRequirementService.recommendMathLectureWithNoDup(studentDTO.getNumber());
             Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
             for (String s : lectureListMap.keySet()) {
                 List<LectureDto> lecturelistDto = lectureListMap.get(s).stream()

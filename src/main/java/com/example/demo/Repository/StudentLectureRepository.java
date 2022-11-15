@@ -1,4 +1,5 @@
 package com.example.demo.Repository;
+
 import com.example.demo.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -16,14 +17,15 @@ public class StudentLectureRepository {
     public StudentLecture findById(Long id) {
         return em.find(StudentLecture.class, id);
     }
-    public StudentLecture findByStudentAndLecture(Lecture lecture,Student student){
-        return em.createQuery("select sl from StudentLecture sl where sl.lecture=: lecture and sl.student=:student",StudentLecture.class)
-                .setParameter("lecture",lecture)
-                .setParameter("student",student)
+
+    public StudentLecture findByStudentAndLecture(Lecture lecture, Student student) {
+        return em.createQuery("select sl from StudentLecture sl where sl.lecture=: lecture and sl.student=:student", StudentLecture.class)
+                .setParameter("lecture", lecture)
+                .setParameter("student", student)
                 .getSingleResult();
     }
 
-    public List<StudentLecture> findByStudentAndTimeTable(Student student, TimeTable timeTable){
+    public List<StudentLecture> findByStudentAndTimeTable(Student student, TimeTable timeTable) {
         return em.createQuery("select sl from StudentLecture sl" +
                         " where sl.student =:student" +
                         " and sl.lecture.yearOfLecture =: yearOfLecture" +
@@ -34,7 +36,7 @@ public class StudentLectureRepository {
                 .getResultList();
     }
 
-    public List<StudentLecture> findByStudentAndYearAndSemester(Student student, int yearOfLecture, String takesSemester){
+    public List<StudentLecture> findByStudentAndYearAndSemester(Student student, int yearOfLecture, String takesSemester) {
         return em.createQuery("select sl from StudentLecture sl" +
                         " where sl.student =:student" +
                         " and sl.lecture.yearOfLecture =: yearOfLecture" +
@@ -45,13 +47,13 @@ public class StudentLectureRepository {
                 .getResultList();
     }
 
-    public Optional<StudentLecture> findByStudentAndLectureName(Student student, String lectureName){
-        try{
-            return Optional.ofNullable(em.createQuery("select sl from StudentLecture sl join fetch sl.lecture L where sl.student=:student and L.name=:lectureName",StudentLecture.class)
-                    .setParameter("student",student)
-                    .setParameter("lectureName",lectureName)
+    public Optional<StudentLecture> findByStudentAndLectureName(Student student, String lectureName) {
+        try {
+            return Optional.ofNullable(em.createQuery("select sl from StudentLecture sl join fetch sl.lecture L where sl.student=:student and L.name=:lectureName", StudentLecture.class)
+                    .setParameter("student", student)
+                    .setParameter("lectureName", lectureName)
                     .getSingleResult());
-        }catch (NoResultException e){
+        } catch (NoResultException e) {
             return Optional.empty();
         }
     }
@@ -61,5 +63,60 @@ public class StudentLectureRepository {
      */
     public void delete(StudentLecture studentLecture) {
         em.remove(studentLecture);
+    }
+
+
+    public Optional<List<String>> recommendLectureNameList(String lectureName) {
+        try {
+            return Optional.ofNullable(em.createQuery(
+                            "select sl2.lecture.name from StudentLecture sl1 join StudentLecture sl2"
+                                    + " where sl1.lecture.name=:lectureName and sl1.student=sl2.student group by sl2.lecture.name"
+                                    + " order by count(sl2)", String.class)
+                    .setParameter("lectureName", lectureName)
+                    .setMaxResults(3)
+                    .getResultList());
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * 강의 추천 1
+     * @param lecture
+     * @return
+     */
+    public Optional<List<Lecture>> recommendLectureList1(Lecture lecture) {
+        try {
+            return Optional.ofNullable(em.createQuery(
+                            "select sl2.lecture from StudentLecture sl1 join StudentLecture sl2"
+                                    + " where sl1.lecture=:lecture and sl1.student=sl2.student group by sl2.lecture"
+                                    + " order by count(sl2)", Lecture.class)
+                    .setParameter("lecture", lecture)
+                    .setMaxResults(3)
+                    .getResultList());
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * 강의 추천 2
+     * @param lecture
+     * @return
+     */
+    public Optional<List<Lecture>> recommendLectureList2(Lecture lecture,int grade) {
+        try {
+            return Optional.ofNullable(em.createQuery(
+                            "select sl2.lecture from StudentLecture sl1 join StudentLecture sl2"
+                                    + " where sl1.lecture=:lecture and sl1.student = sl2.student and sl1.student.grade=:grade "
+                                    + "group by sl2.lecture"
+                                    + " order by count(sl2)", Lecture.class)
+                    .setParameter("lecture", lecture)
+                    .setParameter("grade", grade)
+                    .setMaxResults(3)
+                    .getResultList());
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 }
