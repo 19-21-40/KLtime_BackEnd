@@ -61,14 +61,16 @@ public class TimeTableLectureRepository {
     public Optional<List<Lecture>> recommendLectureList1(Lecture lecture,boolean isPrimary) {
         try {
             return Optional.ofNullable(em.createQuery(
-                            "select tl2.lecture from TimeTableLecture tl1 join TimeTableLecture tl2"
-                                    + " where tl1.lecture=:lecture and tl1.timeTable.student=tl2.timeTable.student"
+                            "select tl2.lecture from TimeTableLecture tl1, TimeTableLecture tl2 "
+//                                    + "join fetch tl1.lecture l join fetch l.times"
+                                    + " where tl1.lecture=:lecture and tl1.timeTable.student=tl2.timeTable.student "
+                                    + " and tl2.lecture<>:lecture"
                                     +" and tl1.timeTable.isPrimary=:isPrimary "
                                     + "group by tl2.lecture"
-                                    + " order by count(tl2)", Lecture.class)
+                                    + " order by count(tl2.lecture) desc", Lecture.class)
                     .setParameter("lecture", lecture)
                     .setParameter("isPrimary", isPrimary)
-                    .setMaxResults(3)
+//                    .setMaxResults(3)
                     .getResultList());
         } catch (NoResultException e) {
             return Optional.empty();
@@ -80,19 +82,23 @@ public class TimeTableLectureRepository {
      * @param lecture
      * @return
      */
-    public Optional<List<Lecture>> recommendLectureList2(Lecture lecture,int grade,boolean isPrimary) {
+    public Optional<List<Lecture>> recommendLectureList2(Lecture lecture, String departmentName, int grade,boolean isPrimary) {
         try {
             return Optional.ofNullable(em.createQuery(
-                            "select tl2.lecture from TimeTableLecture tl1 join TimeTableLecture tl2"
+                            "select tl2.lecture from TimeTableLecture tl1, TimeTableLecture tl2 "
+//                                    + "join fetch tl1.lecture l join fetch l.times lt join lt.timeSlot"
                                     + " where tl1.lecture=:lecture and tl1.timeTable.student = tl2.timeTable.student "
+                                    + " and tl2.lecture<>:lecture"
+                                    + " and tl1.timeTable.student.department.name =: departmentName"
                                     + " and tl1.timeTable.student.grade=:grade "
                                     + " and tl1.timeTable.isPrimary=:isPrimary "
                                     + " group by tl2.lecture"
-                                    + " order by count(tl2)", Lecture.class)
+                                    + " order by count(tl2.lecture) desc", Lecture.class)
                     .setParameter("lecture", lecture)
+                    .setParameter("departmentName", departmentName)
                     .setParameter("grade", grade)
                     .setParameter("isPrimary", isPrimary)
-                    .setMaxResults(3)
+//                    .setMaxResults(3)
                     .getResultList());
         } catch (NoResultException e) {
             return Optional.empty();
