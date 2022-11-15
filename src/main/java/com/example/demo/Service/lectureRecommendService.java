@@ -3,6 +3,7 @@ package com.example.demo.Service;
 import com.example.demo.Repository.LectureRepository;
 import com.example.demo.Repository.StudentLectureRepository;
 import com.example.demo.Repository.StudentRepository;
+import com.example.demo.Repository.TimeTableLectureRepository;
 import com.example.demo.domain.Lecture;
 import com.example.demo.domain.TimeSlot;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class lectureRecommendService {
     private final LectureRepository lectureRepository;
     private final StudentRepository studentRepository;
     private final StudentLectureRepository studentLectureRepository;
+    private final TimeTableLectureRepository timeTableLectureRepository;
 
 
     /**
@@ -28,14 +30,11 @@ public class lectureRecommendService {
     @Transactional
     public List<Lecture> lecRecom1(Lecture lecture){
         //엔티티 조회
-//        studentLectureRepository.recommendLectureNameList(lectureName).ifPresent(
-//                System.out::println
-//        );
-//        return studentLectureRepository.recommendLectureNameList(lectureName).orElse(new ArrayList<>());
-        studentLectureRepository.recommendLectureList1(lecture).ifPresent(
+        timeTableLectureRepository.recommendLectureList1(lecture,true).ifPresent(
                 System.out::println
         );
-        return studentLectureRepository.recommendLectureList1(lecture).orElse(new ArrayList<>());
+
+        return timeTableLectureRepository.recommendLectureList1(lecture,true).orElse(new ArrayList<>());
     }
 
     /**
@@ -44,10 +43,11 @@ public class lectureRecommendService {
     @Transactional
     public List<Lecture> lecRecom2(Lecture lecture, int grade){
         //엔티티 조회
-        studentLectureRepository.recommendLectureList2(lecture, grade).ifPresent(
+        timeTableLectureRepository.recommendLectureList2(lecture,grade,true).ifPresent(
                 System.out::println
         );
-        return studentLectureRepository.recommendLectureList2(lecture, grade).orElse(new ArrayList<>());
+
+        return timeTableLectureRepository.recommendLectureList2(lecture,grade,true).orElse(new ArrayList<>());
     }
 
 }
