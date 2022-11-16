@@ -226,7 +226,7 @@ public class TimeTableController {
             @PathVariable(value = "semester") String semester,
             @PathVariable(value = "tableName") String tableName,
             @PathVariable(value = "lectureNum") String lectureNum
-            ){
+    ){
         try {
             //Student student = studentRepository.findByNumber(studentDTO.getNumber());
             Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(lectureNum,year,semester);
@@ -264,7 +264,7 @@ public class TimeTableController {
                             return TimeSlot.from(timeSlotDto).orElseThrow(()->new IllegalStateException("error"));
                         });
             }).collect(Collectors.toList());
-            Lecture lecture = Lecture.from(studentAndCustomResult.customLectureDto,timeSlots).
+            Lecture lecture = Lecture.from(studentAndCustomResult.lectureDto,timeSlots).
                     orElseThrow(() -> {
                         throw new IllegalStateException("지정된 형식과 일치하지 않습니다.");
                     });
@@ -295,7 +295,7 @@ public class TimeTableController {
             @PathVariable(value = "tableName") String tableName
     ){
         try {
-            Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(studentAndCustomResult.customLectureDto.getId(),studentAndCustomResult.customLectureDto.getYearOfLecture(),studentAndCustomResult.customLectureDto.getSemester());
+            Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(studentAndCustomResult.lectureDto.getId(), year, semester);
 
             timeTableService.deleteLecture(studentAndCustomResult.studentDto.getNumber(),year,semester,tableName,lecture);
 
@@ -324,7 +324,7 @@ public class TimeTableController {
             @PathVariable(value = "tableName") String tableName
     ){
         try {
-            Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(studentAndCustomResult.customLectureDto.getId(),studentAndCustomResult.customLectureDto.getYearOfLecture(),studentAndCustomResult.customLectureDto.getSemester());
+            Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(studentAndCustomResult.lectureDto.getId(),studentAndCustomResult.lectureDto.getYearOfLecture(),studentAndCustomResult.lectureDto.getSemester());
 
             List<TimeSlot> timeSlots = studentAndCustomResult.timeSlotDtoList.stream().map((timeSlotDto)-> {
                 return timeSlotRepository.findByTimeSlot(timeSlotDto.getDay(), timeSlotDto.getStartTime(), timeSlotDto.getEndTime())
@@ -333,7 +333,7 @@ public class TimeTableController {
                         });
             }).collect(Collectors.toList());
 
-            lectureService.updateLectureInfo(lecture.getLectureNumber(),year,semester,studentAndCustomResult.customLectureDto.getLectureName(),timeSlots);
+            lectureService.updateLectureInfo(lecture.getLectureNumber(),year,semester,studentAndCustomResult.lectureDto.getLectureName(),timeSlots);
 
             return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
         }catch (Exception e){
@@ -379,7 +379,7 @@ public class TimeTableController {
     @AllArgsConstructor
     static class StudentAndCustomResult<A,B,C>{
         private A studentDto;
-        private B customLectureDto;
+        private B lectureDto;
         private C timeSlotDtoList;
     }
 
