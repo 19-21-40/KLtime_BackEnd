@@ -21,7 +21,7 @@ import java.util.Set;
 @Transactional
 public class RecommendLectureServiceTest {
     @Autowired
-    RecommendLectureService recommendLectureService;
+    GraduationRequirementService graduationRequirementService;
 
     @Autowired
     LectureRepository lectureRepository;
@@ -35,7 +35,7 @@ public class RecommendLectureServiceTest {
         Student student = studentRepository.findById(3L);
 
         //when
-        recommendLectureService.recommendMainLectureWithNoDup(student.getNumber());
+        graduationRequirementService.recommendMainLectureWithNoDup(student.getNumber());
 
         //then
     }
@@ -44,7 +44,7 @@ public class RecommendLectureServiceTest {
     public void 교양과목출력테스트() {
 
         //when
-        recommendLectureService.recommendEssBalLecturesWithNoDup("2021203078");
+        graduationRequirementService.recommendEssBalLecturesWithNoDup("2021203078");
 
         //then
     }
@@ -55,7 +55,7 @@ public class RecommendLectureServiceTest {
         Student student = studentRepository.findById(3L);
 
         //when
-        Map<String, List<Lecture>> result = recommendLectureService.recommendOnlyBalLecturesWithNoDup(student.getNumber());
+        Map<String, List<Lecture>> result = graduationRequirementService.recommendOnlyBalLecturesWithNoDup(student.getNumber());
 
         //then
         System.out.println(result);
@@ -67,7 +67,7 @@ public class RecommendLectureServiceTest {
         Student student = studentRepository.findById(3L);
 
         //when
-        Map<String, List<Lecture>> result = recommendLectureService.recommendOnlyEssLecturesWithNoDup(student.getNumber());
+        Map<String, List<Lecture>> result = graduationRequirementService.recommendOnlyEssLecturesWithNoDup(student.getNumber());
 
         //then
         System.out.println(result);
@@ -80,7 +80,7 @@ public class RecommendLectureServiceTest {
         Set<String> req_lec = new HashSet<>();
 
         //when
-        recommendLectureService.recommendBasicLectureWithNoDup(student.getNumber());
+        graduationRequirementService.recommendBasicLectureWithNoDup(student.getNumber());
 
         //then
 //        req_lec = recommendLectureService.computeRequiredLecture(student); // 교필, 전필, 전선만 다룸
@@ -94,7 +94,7 @@ public class RecommendLectureServiceTest {
         //given
 
         //when
-        recommendLectureService.checkAndSaveCredit("2021203078");
+        graduationRequirementService.checkAndSaveCredit("2021203078");
 
         //then
 //        req_lec = recommendLectureService.computeRequiredLecture(student); // 교필, 전필, 전선만 다룸
