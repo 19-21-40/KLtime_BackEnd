@@ -105,7 +105,7 @@ public class TimeTableController {
      * @param tableName
      * @return new ResponseEntity<>(HttpStatus.OK)
      */
-    @GetMapping("/delete/{tableName}")
+    @PostMapping("/delete/{tableName}")
     public ResponseEntity<?> deleteTimeTable(
             @AuthenticationPrincipal Long id,
             //@PathVariable String number,
@@ -193,7 +193,7 @@ public class TimeTableController {
      * @param newTableName
      * @return new ResponseEntity<>(HttpStatus.OK)
      */
-    @GetMapping("/changeName/{oldTableName}/{newTableName}")
+    @PostMapping("/changeName/{oldTableName}/{newTableName}")
     public ResponseEntity<?> changeTimeTableName(
             @AuthenticationPrincipal Long id,
             @PathVariable(value = "year") int year,
