@@ -118,7 +118,7 @@ public class KlasLinkController {
                                 klasTookLectureDTO.getCodeName1(),
                                 sectionDetail,
                                 klasTookLectureDTO.getHakjumNum(),
-                                klasTookLectureDTO.getHakjungNo()!=null&&klasTookLectureDTO.getHakjungNo().length()>6?klasTookLectureDTO.getHakjungNo().charAt(5) - '0':null,
+                                klasTookLectureDTO.getHakjungNo()!=null&&klasTookLectureDTO.getHakjungNo().length()>6?klasTookLectureDTO.getHakjungNo().charAt(5) - '0':1,
                                 klasTookLectureDTO.getHakgwa(),
                                 klasTookLectureListDTO.getThisYear(),
                                 klasTookLectureListDTO.getHakgiOrder(),
