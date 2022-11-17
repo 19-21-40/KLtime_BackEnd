@@ -62,7 +62,7 @@ public class TimeTableLectureRepository {
         try {
             return Optional.ofNullable(em.createQuery(
                             "select tl2.lecture from TimeTableLecture tl1, TimeTableLecture tl2 "
-//                                    + "join fetch tl1.lecture l join fetch l.times"
+//                                    + "left outer join fetch tl1.lecture l join l.times"
                                     + " where tl1.lecture=:lecture and tl1.timeTable.student=tl2.timeTable.student "
                                     + " and tl2.lecture<>:lecture"
                                     +" and tl1.timeTable.isPrimary=:isPrimary "
@@ -86,7 +86,7 @@ public class TimeTableLectureRepository {
         try {
             return Optional.ofNullable(em.createQuery(
                             "select tl2.lecture from TimeTableLecture tl1, TimeTableLecture tl2 "
-//                                    + "join fetch tl1.lecture l join fetch l.times lt join lt.timeSlot"
+//                                    + "left outer join fetch tl1.lecture l left outer join fetch l.times"
                                     + " where tl1.lecture=:lecture and tl1.timeTable.student = tl2.timeTable.student "
                                     + " and tl2.lecture<>:lecture"
                                     + " and tl1.timeTable.student.department.name =: departmentName"
