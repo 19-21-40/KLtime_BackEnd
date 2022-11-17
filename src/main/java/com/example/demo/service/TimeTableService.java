@@ -276,31 +276,36 @@ public class TimeTableService {
         //Lecture lecture = lectureRepository.findByLectureNum(lectureNum);
         TimeTable timeTable = timeTableRepository.findByStudentAndYearAndSemesterAndName(student,yearOfTimeTable,semester,tableName);
 
-
         //외국인만 수강 가능이면 강의 추가가 안되야 함
-        if(lecture.getNotes()==null || !lecture.getNotes().contains("외국인")){
-            //studentLecture 을 조회해서 해당 강의 이름이 존재하는지 파악하고, 학점이 P 이거나 B0 이상이면 강의 추가가 안되야 함
-            Optional<StudentLecture> retakeLecture =studentLectureRepository.findByStudentAndLectureName(student,lecture.getName());
-            if(retakeLecture.isEmpty()||!Arrays.stream(passList).anyMatch(Gpa->Gpa.equals(retakeLecture.get().getGpa())) ){
-                //시간표강의 생성(강의 추가)
-                TimeTableLecture timeTableLecture = TimeTableLecture.createTimeTableLecture(lecture);
-                timeTable.addTimeTableLecture(timeTableLecture);
+//        if(lecture.getNotes()==null || !lecture.getNotes().contains("외국인")){
+//        }
 
-                //기본시간표라면, studentlecture 생성(추가)
-                if(timeTable.isPrimary()){
-                    if(yearOfTimeTable != currentYear || !semester.equals(currentSemester)){ //해당 년도/학기 제외
-                        //GPA == null 을 일단 default로 함
-                        StudentLecture studentLecture = StudentLecture.createStudentLecture(student,lecture,gpa); //엔티티 조회
-                        student.addStudentLecture(studentLecture); //studentlecture 생성(추갸)
-                    }
+        //studentLecture 을 조회해서 해당 강의 이름이 존재하는지 파악하고, 학점이 P 이거나 B0 이상이면 강의 추가가 안되야 함
+        Optional<StudentLecture> retakeLecture =studentLectureRepository.findByStudentAndLectureName(student,lecture.getName());
+        if(retakeLecture.isEmpty()||!Arrays.stream(passList).anyMatch(Gpa->Gpa.equals(retakeLecture.get().getGpa())) ){
+            //시간표강의 생성(강의 추가)
+            TimeTableLecture timeTableLecture = TimeTableLecture.createTimeTableLecture(lecture);
+            timeTable.addTimeTableLecture(timeTableLecture);
+
+            //기본시간표라면, studentlecture 생성(추가)
+            if(timeTable.isPrimary()){
+                if(yearOfTimeTable != currentYear || !semester.equals(currentSemester)){ //해당 년도/학기 제외
+                    //GPA == null 을 일단 default로 함
+                    StudentLecture studentLecture = StudentLecture.createStudentLecture(student,lecture,gpa); //엔티티 조회
+                    student.addStudentLecture(studentLecture); //studentlecture 생성(추갸)
                 }
             }
         }
+        else{
+            throw new IllegalStateException("재수강이 불가능합니다.");
+        }
+
+
     }
 
 
     @Transactional
-    public void addLecture(String number, int yearOfTimeTable, String semester,String tableName, Lecture lecture) {
+    public void addLecture(String number, int yearOfTimeTable, String semester,String tableName, Lecture lecture) throws IllegalStateException {
         addLecture(number, yearOfTimeTable, semester, tableName, lecture,null);
     }
 

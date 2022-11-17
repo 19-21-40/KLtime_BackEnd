@@ -75,7 +75,7 @@ public class TimeTableController {
      * @param semester
      * @return new ResponseEntity<>(HttpStatus.OK)
      */
-    @GetMapping("/add/{tableName}")
+    @PostMapping("/add/{tableName}")
     public ResponseEntity<?> addTimeTable(
             @AuthenticationPrincipal Long id,
             //@PathVariable String number,
@@ -237,8 +237,10 @@ public class TimeTableController {
             //Student student = studentRepository.findByNumber(studentDTO.getNumber());
             Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(lectureNum,year,semester);
             timeTableService.addLecture(student.getNumber(),year,semester,tableName,lecture);
-
-            return new ResponseEntity<>(HttpStatus.OK); //시간표 내 강의 추가 후 OK 상태 반환
+            if(lecture.getNotes().contains("외국인")){
+                return ResponseEntity.ok().body("외국인만 수강가능합니다.");
+            }
+            return ResponseEntity.ok().body("추가되었습니다."); //시간표 내 강의 추가 후 OK 상태 반환
         }catch (Exception e){
             ResponseDTO<Object> responseDTO = ResponseDTO.builder()
                     .error(e.getMessage())

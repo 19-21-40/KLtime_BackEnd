@@ -14,6 +14,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class RecommendController {
 
     /**
      * 이 과목을 들은 학생들이 가장 많이 들은 과목 top3 -> 쿼리 확인
-     * @param studentDTO
+     * @param id
      * @param year
      * @param semester
      * @param lectureNum
@@ -43,7 +44,7 @@ public class RecommendController {
      */
     @PostMapping("/lectureList1/{lectureNum}")
     public ResponseEntity<?> recommendLectureList1(
-            @RequestBody StudentDTO studentDTO,
+            @AuthenticationPrincipal Long id,
             @PathVariable(value = "year") int year,
             @PathVariable(value = "semester") String semester,
             @PathVariable(value = "lectureNum") String lectureNum
@@ -52,7 +53,15 @@ public class RecommendController {
             Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(lectureNum,year,semester);
 
             List<Lecture> lectureList = recommendLectureService.lecRecom1(lecture);
-            List<LectureDto> lectureListDto = lectureList.stream().map(Lecture -> new LectureDto(Lecture)).collect(toList());
+            List<LectureDto> lectureListDto = lectureList.stream().limit(3).map(Lecture -> {
+                //외국인만 수강가능하거나, 1학년만 수강이 가능한 경우엔 추천 리스트에서 제외
+                if(!Lecture.getNotes().contains("외국인")&&!Lecture.getNotes().contains("1학년")){
+                    return new LectureDto(Lecture);
+                }
+                else{
+                    return null;
+                }
+            }).collect(toList());
 
             return ResponseEntity.ok().body(new LectureResult(lectureListDto));
         }
@@ -66,7 +75,7 @@ public class RecommendController {
 
     /**
      * 이 과목을 들은 소프트웨어학부 n학년이 가장 많이 들은 과목 top3 (n = 해당 사용자의 학년) -> 쿼리 확인
-     * @param studentDTO
+     * @param id
      * @param year
      * @param semester
      * @param lectureNum
@@ -74,17 +83,25 @@ public class RecommendController {
      */
     @PostMapping("/lectureList2/{lectureNum}")
     public ResponseEntity<?> recommendLectureList2(
-            @RequestBody StudentDTO studentDTO,
+            @AuthenticationPrincipal Long id,
             @PathVariable(value = "year") int year,
             @PathVariable(value = "semester") String semester,
             @PathVariable(value = "lectureNum") String lectureNum
     ){
         try {
-            Student student = studentRepository.findByNumber(studentDTO.getNumber());
+            Student student = studentRepository.findById(id);
             Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(lectureNum,year,semester);
 
             List<Lecture> lectureList = recommendLectureService.lecRecom2(lecture,student.getDepartment().getName(),student.getGrade());
-            List<LectureDto> lectureListDto = lectureList.stream().map(Lecture -> new LectureDto(Lecture)).collect(toList());
+            List<LectureDto> lectureListDto = lectureList.stream().limit(3).map(Lecture -> {
+                //외국인만 수강가능하거나, 1학년만 수강이 가능한 경우엔 추천 리스트에서 제외
+                if(!Lecture.getNotes().contains("외국인")&&!Lecture.getNotes().contains("1학년")){
+                    return new LectureDto(Lecture);
+                }
+                else{
+                    return null;
+                }
+            }).collect(toList());
 
             return ResponseEntity.ok().body(new LectureResult(lectureListDto));
         }catch (Exception e){
