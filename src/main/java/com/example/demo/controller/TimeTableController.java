@@ -459,6 +459,7 @@ public class TimeTableController {
         private int yearOfLecture;
         private String semester;
         private List<TimeSlotDto> lectureTimes = new ArrayList<>(); //추가
+        private boolean isDup;
 
         public LectureDto(Lecture lecture) {
             id=lecture.getLectureNumber();
@@ -473,6 +474,7 @@ public class TimeTableController {
             yearOfLecture=lecture.getYearOfLecture();
             semester=lecture.getSemester();
             lectureTimes =lecture.getTimes().stream().map(lectureTimeSlot -> new TimeSlotDto(lectureTimeSlot.getTimeSlot())).collect(Collectors.toList());
+            isDup=false;
         }
     }
 }

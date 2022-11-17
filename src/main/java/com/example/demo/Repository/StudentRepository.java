@@ -55,7 +55,7 @@ public class StudentRepository {
     }
 
     public Student findByStudentNumWithLecture(String number) {
-        return em.createQuery("select s from Student s join fetch s.myLectures sl join fetch sl.lecture l where s.number =:number", Student.class)
+        return em.createQuery("select s from Student s left outer join fetch s.myLectures sl left outer join fetch sl.lecture l where s.number =:number", Student.class)
                 .setParameter("number", number)
                 .getSingleResult();
     }
