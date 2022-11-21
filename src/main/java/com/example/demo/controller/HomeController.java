@@ -67,10 +67,7 @@ public class HomeController {
     public ResponseEntity<?> mainLectureList(@AuthenticationPrincipal Long id) {
         try{
             Student student=studentRepository.findById(id);
-//            Student student=studentRepository.findByNumber(studentDTO.getNumber());
-
             Map<String,List<Lecture>> lectureListMap= graduationRequirementService.recommendBasicLectureWithNoDup(student.getNumber());
-
             Map<String,List<LectureDto>> lectureListMapDto=new HashMap<>();
             for(String s:lectureListMap.keySet()){
                 List<LectureDto> lectureDtoList=lectureListMap.get(s).stream()
@@ -116,7 +113,6 @@ public class HomeController {
         try{
             Student student=studentRepository.findById(id);
             Map<String, List<Lecture>> lectureListMap = graduationRequirementService.recommendOnlyEssLecturesWithNoDup(student.getNumber());
-
             Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
             for (String section : lectureListMap.keySet()) {
                 List<LectureDto> lecturelistDto = lectureListMap.get(section).stream()
