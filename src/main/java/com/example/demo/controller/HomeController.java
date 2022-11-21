@@ -29,6 +29,30 @@ public class HomeController {
     private final GradConditionRepository gradConditionRepository;
     private final StudentRepository studentRepository;
 
+
+    @GetMapping("api/loadUser")
+    public ResponseEntity<?> loadUser(@AuthenticationPrincipal Long id) {
+        try {
+            Student student = studentRepository.findById(id);
+            StudentDTO studentDTO=StudentDTO.builder()
+                    .name(student.getName())
+                    .number(student.getNumber())
+                    .departmentName(student.getDepartment()!=null?student.getDepartment().getName():null)
+                    .semester(student.getSemester())
+                    .email(student.getEmail())
+                    .grade(student.getGrade())
+                    .multMajor(student.getMultiMajor())
+                    .multDeptName(student.getMultiDept()!=null?student.getMultiDept().getName():null)
+                    .build();
+            return ResponseEntity.ok().body(studentDTO);
+        } catch (Exception e) {
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
+
     /**
      * 졸업요건 + 학점
      */
@@ -40,7 +64,15 @@ public class HomeController {
             GradCondition gradCondition= gradConditionRepository.findByDeptAndAdmissionYear(student.getDepartment(),student.getAdmissionYear());
             graduationRequirementService.checkAndSaveCredit(student.getNumber());
             Credit credit=student.getCredit();
-            GradConditionDto gradConditionDto=new GradConditionDto(gradCondition);
+            GradConditionDto gradConditionDto;
+
+            if(student.getMultiMajor()==null){ //단일 전공인 경우
+                gradConditionDto=new GradConditionDto(gradCondition,false,student.getMultiMajor());
+            }
+            else { //다전공인 경우
+                gradConditionDto=new GradConditionDto(gradCondition,true,student.getMultiMajor());
+            }
+
             CreditDto creditDto=new CreditDto(credit);
 
             return ResponseEntity.ok().body(new CreditAndGradResult(gradConditionDto,creditDto));
@@ -59,10 +91,7 @@ public class HomeController {
     public ResponseEntity<?> mainLectureList(@AuthenticationPrincipal Long id) {
         try{
             Student student=studentRepository.findById(id);
-//            Student student=studentRepository.findByNumber(studentDTO.getNumber());
-
             Map<String,List<Lecture>> lectureListMap= graduationRequirementService.recommendBasicLectureWithNoDup(student.getNumber());
-
             Map<String,List<LectureDto>> lectureListMapDto=new HashMap<>();
             for(String s:lectureListMap.keySet()){
                 List<LectureDto> lectureDtoList=lectureListMap.get(s).stream()
@@ -108,7 +137,6 @@ public class HomeController {
         try{
             Student student=studentRepository.findById(id);
             Map<String, List<Lecture>> lectureListMap = graduationRequirementService.recommendOnlyEssLecturesWithNoDup(student.getNumber());
-
             Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
             for (String section : lectureListMap.keySet()) {
                 List<LectureDto> lecturelistDto = lectureListMap.get(section).stream()
@@ -281,12 +309,27 @@ public class HomeController {
         private int mainCredit;
         private int essBalCredit;
         private int basicCredit;
-        private Integer multiCredit;
 
-        public GradConditionDto(GradCondition gradCondition) {
+        private Integer multiCredit; //추가
+
+        public GradConditionDto(GradCondition gradCondition,boolean isMultiMajor,String multiMajor) {
+            if(isMultiMajor){ //다전공인 경우
+                mainCredit=gradCondition.getMainCreditIfMulti();
+                if(multiMajor.equals("복수전공")){
+                    multiCredit=gradCondition.getDoubleMajorCredit();
+                }
+                else if(multiMajor.equals("부전공")){
+                    multiCredit=gradCondition.getMinorCredit();
+                }
+            }
+            else{ //단일 전공인 경우
+                mainCredit=gradCondition.getMainCreditIfNotMulti();
+                multiCredit=0;
+
+            }
             admissionYear=gradCondition.getAdmissionYear();
             gradCredit=gradCondition.getGradCredit();
-            mainCredit=gradCondition.getMainCreditIfMulti();
+//            mainCredit=gradCondition.getMainCreditIfMulti();
             essBalCredit=gradCondition.getEssBalCredit();
             basicCredit=gradCondition.getBasicCredit();
         }

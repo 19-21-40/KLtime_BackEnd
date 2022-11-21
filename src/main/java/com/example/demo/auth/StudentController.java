@@ -82,6 +82,8 @@ public class StudentController {
         }
     }
 
+
+
     /**
      * 회원 탈퇴 (수연 추가)
      * @param studentDTO
