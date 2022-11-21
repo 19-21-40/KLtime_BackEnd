@@ -75,4 +75,5 @@ public class DepartmentRepository {
                 .setParameter("collegeName", collegeName)
                 .getResultList();
     }
+
 }
