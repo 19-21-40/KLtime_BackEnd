@@ -29,6 +29,30 @@ public class HomeController {
     private final GradConditionRepository gradConditionRepository;
     private final StudentRepository studentRepository;
 
+
+    @GetMapping("api/loadUser")
+    public ResponseEntity<?> loadUser(@AuthenticationPrincipal Long id) {
+        try {
+            Student student = studentRepository.findById(id);
+            StudentDTO studentDTO=StudentDTO.builder()
+                    .name(student.getName())
+                    .number(student.getNumber())
+                    .departmentName(student.getDepartment().getName())
+                    .semester(student.getSemester())
+                    .email(student.getEmail())
+                    .grade(student.getGrade())
+                    .multMajor(student.getMultiMajor())
+                    .multDeptName(student.getMultiDept().getName())
+                    .build();
+            return ResponseEntity.ok().body(studentDTO);
+        } catch (Exception e) {
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
+
     /**
      * 졸업요건 + 학점
      */
