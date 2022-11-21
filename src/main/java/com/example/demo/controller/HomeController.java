@@ -37,12 +37,12 @@ public class HomeController {
             StudentDTO studentDTO=StudentDTO.builder()
                     .name(student.getName())
                     .number(student.getNumber())
-                    .departmentName(student.getDepartment().getName())
+                    .departmentName(student.getDepartment()!=null?student.getDepartment().getName():null)
                     .semester(student.getSemester())
                     .email(student.getEmail())
                     .grade(student.getGrade())
                     .multMajor(student.getMultiMajor())
-                    .multDeptName(student.getMultiDept().getName())
+                    .multDeptName(student.getMultiDept()!=null?student.getMultiDept().getName():null)
                     .build();
             return ResponseEntity.ok().body(studentDTO);
         } catch (Exception e) {

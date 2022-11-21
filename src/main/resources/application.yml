@@ -1,14 +1,14 @@
 server:
   #로컬(배포시 주석)
-  address: localhost
+#  address: localhost
   port: 8080
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
 # 로컬
-    url: jdbc:mysql://43.200.136.102:3306/TRS?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+#    url: jdbc:mysql://43.200.136.102:3306/TRS?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
 # 배포용 url
-#    url: jdbc:mysql://localhost:3306/TRS?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/TRS?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
     username: trs
     password: trs
   jpa:
