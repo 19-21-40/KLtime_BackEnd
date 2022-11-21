@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,18 +42,16 @@ public class KlasLinkController {
     @Data
     @AllArgsConstructor
     static class KlasLinkDTO {
-
-        private StudentDTO studentDTO;
         private List<KlasTookLectureListDTO> klasTookLectureListDTOList;
         private List<List<KlasTimeTableDTO>> klasTimeTableDTOListList;
     }
 
     @PostMapping("/api/Klas/link")
-    public ResponseEntity<?> link(@RequestBody KlasLinkDTO klasLinkDTO) {
+    public ResponseEntity<?> link(@AuthenticationPrincipal Long id, @RequestBody KlasLinkDTO klasLinkDTO) {
         String now = LocalDate.now().toString();
         try {
-
-            Student student = studentRepository.findByNumber(klasLinkDTO.studentDTO.getNumber());
+            Student student=studentRepository.findById(id);
+//            Student student = studentRepository.findByNumber(klasLinkDTO.studentDTO.getNumber());
             klasLinkDTO.klasTookLectureListDTOList.forEach((klasTookLectureListDTO -> {
                 TimeTable timeTable;
 
@@ -119,7 +118,7 @@ public class KlasLinkController {
                                 klasTookLectureDTO.getCodeName1(),
                                 sectionDetail,
                                 klasTookLectureDTO.getHakjumNum(),
-                                klasTookLectureDTO.getHakjungNo()!=null&&klasTookLectureDTO.getHakjungNo().length()>6?klasTookLectureDTO.getHakjungNo().charAt(5) - '0':null,
+                                klasTookLectureDTO.getHakjungNo()!=null&&klasTookLectureDTO.getHakjungNo().length()>6?klasTookLectureDTO.getHakjungNo().charAt(5) - '0':1,
                                 klasTookLectureDTO.getHakgwa(),
                                 klasTookLectureListDTO.getThisYear(),
                                 klasTookLectureListDTO.getHakgiOrder(),

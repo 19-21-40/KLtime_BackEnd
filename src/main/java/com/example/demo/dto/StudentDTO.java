@@ -18,5 +18,7 @@ public class StudentDTO {
     private String departmentName;
     private String semester;
     private String email;
+    private String multMajor;
+    private String multDeptName;
 }
 //그럼 한번만 url 수정할테니까 delete 만 되는지 확인하고 수정할게요

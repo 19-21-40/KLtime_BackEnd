@@ -26,7 +26,6 @@ public class StudentController {
     private final DepartmentRepository departmentRepository;
     private final TokenProvider tokenProvider;
     private final TimeTableService timeTableService;
-
     private final PasswordEncoder passwordEncoder =new BCryptPasswordEncoder();
 
     @PostMapping("/sign_up")
@@ -71,6 +70,7 @@ public class StudentController {
             final String token = tokenProvider.create(student);
             final StudentDTO responseStudentDTO = StudentDTO.builder()
                     .number(student.getNumber())
+                    .name(student.getName())
                     .token(token)
                     .build();
             return ResponseEntity.ok().body(responseStudentDTO);
@@ -81,6 +81,8 @@ public class StudentController {
             return ResponseEntity.badRequest().body(responseDTO);
         }
     }
+
+
 
     /**
      * 회원 탈퇴 (수연 추가)

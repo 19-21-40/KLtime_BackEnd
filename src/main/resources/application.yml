@@ -1,10 +1,14 @@
 server:
+  #로컬(배포시 주석)
   address: localhost
   port: 8080
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://43.200.136.102:3306/TRS?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
+# 로컬
+    url: jdbc:mysql://43.200.136.102:3306/TRS?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+# 배포용 url
+#    url: jdbc:mysql://localhost:3306/TRS?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
     username: trs
     password: trs
   jpa:
@@ -14,3 +18,6 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: none
+    properties:
+      hibernate:
+        default_batch_fetch_size: 1000
