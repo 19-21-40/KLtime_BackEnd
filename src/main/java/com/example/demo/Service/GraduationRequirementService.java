@@ -158,9 +158,9 @@ public class GraduationRequirementService {
                 temporalCredit.addBasicCredit(lecture.getCredit());
                 if(sectionDetail == null) continue;
 
-                if (sectionDetail == "수학")
+                if (sectionDetail.equals("수학"))
                     temporalCredit.addMathCredit(lecture.getCredit());
-                if (sectionDetail == "기초과학") {
+                if (sectionDetail.equals("기초과학")) {
                     temporalCredit.addScienceCredit(lecture.getCredit());
                 }
             }
@@ -210,7 +210,7 @@ public class GraduationRequirementService {
 
             // F이거나 NP이면 강의 목록에서 삭제하지 않음.
             if(sl.getGpa() == null) continue;
-            if(sl.getGpa() == "F" || sl.getGpa() == "NP") continue;
+            if(sl.getGpa().equals("F") || sl.getGpa().equals("NP")) continue;
 
             String lectureName = sl.getLecture().getName();
 
@@ -259,7 +259,7 @@ public class GraduationRequirementService {
 
             // F이거나 NP이면 강의 목록에서 삭제하지 않음.
             if(sl.getGpa() == null) continue;
-            if(sl.getGpa() == "F" || sl.getGpa() == "NP") continue;
+            if(sl.getGpa().equals("F") || sl.getGpa().equals("NP")) continue;
 
             String lectureName = sl.getLecture().getName();
 
@@ -300,7 +300,7 @@ public class GraduationRequirementService {
 
             // F이거나 NP이면 강의 목록에서 삭제하지 않음.
             if(sl.getGpa() == null) continue;
-            if(sl.getGpa() == "F" || sl.getGpa() == "NP") continue;
+            if(sl.getGpa().equals("F") || sl.getGpa().equals("NP")) continue;
 
             String lectureName = sl.getLecture().getName();
 
@@ -340,7 +340,7 @@ public class GraduationRequirementService {
 
             // F이거나 NP이면 강의 목록에서 삭제하지 않음.
             if(sl.getGpa() == null) continue;
-            if(sl.getGpa() == "F" || sl.getGpa() == "NP") continue;
+            if(sl.getGpa().equals("F") || sl.getGpa().equals("NP")) continue;
 
             String lectureName = sl.getLecture().getName();
 
@@ -473,7 +473,7 @@ public class GraduationRequirementService {
             // 균형교양 학점이 3보다 낮다면, Map 변수 needs_bal<section, 부족한 학점>을 대입한다.
             for (String sectionDetail : bal_Lec_Map.keySet()) {
                 // 18,19학번의 경우 위에서 융사를 처리해주므로 continue 처리
-                if (sectionDetail == "융합적사고와글쓰기") continue;
+                if (sectionDetail.equals("융합적사고와글쓰기")) continue;
                 if (bal_Lec_Map.get(sectionDetail) < 3) {
                     needs_bal.add(sectionDetail);
                 }
@@ -532,7 +532,7 @@ public class GraduationRequirementService {
 
                 // F이거나 NP이면 강의 목록에서 삭제하지 않음.
                 if(sl.getGpa() == null) continue;
-                if(sl.getGpa() == "F" || sl.getGpa() == "NP") continue;
+                if(sl.getGpa().equals("F") || sl.getGpa().equals("NP")) continue;
 
                 String lectureName = sl.getLecture().getName();
 
@@ -716,7 +716,7 @@ public class GraduationRequirementService {
 
                 // F이거나 NP이면 강의 목록에서 삭제하지 않음.
                 if(sl.getGpa() == null) continue;
-                if(sl.getGpa() == "F" || sl.getGpa() == "NP") continue;
+                if(sl.getGpa().equals("F")  || sl.getGpa().equals("NP")) continue;
 
                 String lectureName = sl.getLecture().getName();
 
@@ -907,7 +907,7 @@ public class GraduationRequirementService {
 
                 // F이거나 NP이면 강의 목록에서 삭제하지 않음.
                 if(sl.getGpa() == null) continue;
-                if(sl.getGpa() == "F" || sl.getGpa() == "NP") continue;
+                if(sl.getGpa().equals("F") || sl.getGpa().equals("NP")) continue;
 
                 String lectureName = sl.getLecture().getName();
 
