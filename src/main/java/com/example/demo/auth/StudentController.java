@@ -2,21 +2,26 @@ package com.example.demo.auth;
 
 import com.example.demo.Repository.DepartmentRepository;
 import com.example.demo.Service.TimeTableService;
-import com.example.demo.domain.Department;
-import com.example.demo.domain.Student;
+import com.example.demo.controller.HomeController;
+import com.example.demo.controller.TimeTableController;
+import com.example.demo.domain.*;
 import com.example.demo.dto.ResponseDTO;
 import com.example.demo.dto.StudentDTO;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.NoResultException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -102,4 +107,41 @@ public class StudentController {
             return ResponseEntity.badRequest().body(responseDTO);
         }
     }
+
+    @GetMapping ("/departmentList")
+    public ResponseEntity<?> departmentList(){
+        try {
+            Set<String> collegeList = departmentRepository.findAll().stream().map(department -> department.getCollegeName()).collect(Collectors.toSet());
+            List<String> departmentList = new ArrayList<>();
+            List <DepartmentListResult> departmentListResults = new ArrayList<>();
+
+            for (String collegeName : collegeList) {
+                departmentList=departmentRepository.findByCollege(collegeName).stream().map(department -> department.getName()).collect(Collectors.toList());
+                departmentListResults.add(new DepartmentListResult(collegeName,departmentList));
+            }
+
+            return ResponseEntity.ok().body(departmentListResults);
+
+        }
+        catch (Exception e) {
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
+
+
+
+
+
+    @Data
+    @AllArgsConstructor
+    static class DepartmentListResult{
+        private String college;
+        private List<String> departmentList;
+    }
+
+
+
 }
