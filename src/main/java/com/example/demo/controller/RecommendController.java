@@ -52,7 +52,7 @@ public class RecommendController {
         try{
             Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(lectureNum,year,semester);
 
-            List<Lecture> lectureList = recommendLectureService.lecRecom1(lecture);
+            List<Lecture> lectureList = recommendLectureService.lecRecom1(lecture,year,semester);
             List<LectureDto> lectureListDto = lectureList.stream().limit(3).map(Lecture -> {
                 //외국인만 수강가능하거나, 1학년만 수강이 가능한 경우엔 추천 리스트에서 제외
                 if(!Lecture.getNotes().contains("외국인")&&!Lecture.getNotes().contains("1학년")){
@@ -92,7 +92,7 @@ public class RecommendController {
             Student student = studentRepository.findById(id);
             Lecture lecture = lectureRepository.findByLectureNumAndYearAndSemester(lectureNum,year,semester);
 
-            List<Lecture> lectureList = recommendLectureService.lecRecom2(lecture,student.getDepartment().getName(),student.getGrade());
+            List<Lecture> lectureList = recommendLectureService.lecRecom2(lecture,student.getDepartment().getName(),student.getGrade(),year,semester);
             List<LectureDto> lectureListDto = lectureList.stream().limit(3).map(Lecture -> {
                 //외국인만 수강가능하거나, 1학년만 수강이 가능한 경우엔 추천 리스트에서 제외
                 if(!Lecture.getNotes().contains("외국인")&&!Lecture.getNotes().contains("1학년")){

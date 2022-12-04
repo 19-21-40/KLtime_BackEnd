@@ -58,7 +58,7 @@ public class TimeTableLectureRepository {
      * @param lecture
      * @return
      */
-    public Optional<List<Lecture>> recommendLectureList1(Lecture lecture,boolean isPrimary) {
+    public Optional<List<Lecture>> recommendLectureList1(Lecture lecture,boolean isPrimary,int year, String semester) {
         try {
             return Optional.ofNullable(em.createQuery(
                             "select tl2.lecture from TimeTableLecture tl1, TimeTableLecture tl2 "
@@ -66,10 +66,14 @@ public class TimeTableLectureRepository {
                                     + " where tl1.lecture=:lecture and tl1.timeTable.student=tl2.timeTable.student "
                                     + " and tl2.lecture<>:lecture"
                                     +" and tl1.timeTable.isPrimary=:isPrimary "
+                                    +"and tl2.lecture.yearOfLecture=:year " //추가
+                                    +"and tl2.lecture.semester=:semester " //추가
                                     + "group by tl2.lecture"
                                     + " order by count(tl2.lecture) desc", Lecture.class)
                     .setParameter("lecture", lecture)
                     .setParameter("isPrimary", isPrimary)
+                    .setParameter("year", year) //추가
+                    .setParameter("semester",semester) //추가
 //                    .setMaxResults(3)
                     .getResultList());
         } catch (NoResultException e) {
@@ -82,7 +86,7 @@ public class TimeTableLectureRepository {
      * @param lecture
      * @return
      */
-    public Optional<List<Lecture>> recommendLectureList2(Lecture lecture, String departmentName, int grade,boolean isPrimary) {
+    public Optional<List<Lecture>> recommendLectureList2(Lecture lecture, String departmentName, int grade,boolean isPrimary,int year,String semester) {
         try {
             return Optional.ofNullable(em.createQuery(
                             "select tl2.lecture from TimeTableLecture tl1, TimeTableLecture tl2 "
@@ -92,12 +96,16 @@ public class TimeTableLectureRepository {
                                     + " and tl1.timeTable.student.department.name =: departmentName"
                                     + " and tl1.timeTable.student.grade=:grade "
                                     + " and tl1.timeTable.isPrimary=:isPrimary "
+                                    +"and tl2.lecture.yearOfLecture=:year " //추가
+                                    +"and tl2.lecture.semester=:semester " //추가
                                     + " group by tl2.lecture"
                                     + " order by count(tl2.lecture) desc", Lecture.class)
                     .setParameter("lecture", lecture)
                     .setParameter("departmentName", departmentName)
                     .setParameter("grade", grade)
                     .setParameter("isPrimary", isPrimary)
+                    .setParameter("year", year) //추가
+                    .setParameter("semester",semester) //추가
 //                    .setMaxResults(3)
                     .getResultList());
         } catch (NoResultException e) {
