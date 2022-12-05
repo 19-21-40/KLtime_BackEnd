@@ -112,6 +112,32 @@ public class RecommendController {
         }
     }
 
+
+    @GetMapping("/timeTable")
+    public ResponseEntity<?> recommendTimeTable(
+            @AuthenticationPrincipal Long id,
+            @PathVariable(value = "year") int year,
+            @PathVariable(value = "semester") String semester
+    ){
+        try{
+            Student student = studentRepository.findById(id);
+            List<Lecture> lectureList= lectureRepository.findByDepartmentAndYearAndSemesterAndLevel(student.getDepartment().getName(),year,semester,student.getGrade());
+            List<LectureDto> majorLectureList=lectureList.stream().filter(
+                    lecture ->
+                        student.getMyLectures().stream().noneMatch(studentLecture -> lecture.getName().equals(studentLecture.getLecture().getName()))
+            ).map(LectureDto::new)
+                    .collect(toList());
+
+
+            return ResponseEntity.ok().body(majorLectureList);
+        }catch (Exception e){
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
+
     @Data
     @AllArgsConstructor
     static class LectureResult<T>{

@@ -76,6 +76,8 @@ public class StudentController {
             final StudentDTO responseStudentDTO = StudentDTO.builder()
                     .number(student.getNumber())
                     .name(student.getName())
+                    .multiMajor(student.getMultiMajor())
+                    .multiDeptName(student.getMultiMajor()!=null?student.getMultiDept().getName():"")
                     .token(token)
                     .build();
             return ResponseEntity.ok().body(responseStudentDTO);

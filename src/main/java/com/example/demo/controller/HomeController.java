@@ -41,8 +41,8 @@ public class HomeController {
                     .semester(student.getSemester())
                     .email(student.getEmail())
                     .grade(student.getGrade())
-                    .multMajor(student.getMultiMajor())
-                    .multDeptName(student.getMultiDept()!=null?student.getMultiDept().getName():null)
+                    .multiMajor(student.getMultiMajor())
+                    .multiDeptName(student.getMultiDept()!=null?student.getMultiDept().getName():"")
                     .build();
             return ResponseEntity.ok().body(studentDTO);
         } catch (Exception e) {
@@ -184,7 +184,7 @@ public class HomeController {
             Map<String, List<LectureDto>> lectureListMapDto = new HashMap<>();
             for (String s : lectureListMap.keySet()) {
                 List<LectureDto> lecturelistDto = lectureListMap.get(s).stream()
-                        .map(lecture -> new LectureDto(lecture))
+                        .map(LectureDto::new)
                         .collect(toList());
                 lectureListMapDto.put(s, lecturelistDto);
             }
