@@ -20,9 +20,9 @@ import java.util.Set;
 public class LectureRepository {
     private final EntityManager em;
 
-    public List<Lecture> findByCustom(boolean isCustom){
-        return em.createQuery("select l from Lecture l where l.isCustom=:isCustom",Lecture.class)
-                .setParameter("isCustom",isCustom)
+    public List<Lecture> findByCustom(boolean isCustom) {
+        return em.createQuery("select l from Lecture l where l.isCustom=:isCustom", Lecture.class)
+                .setParameter("isCustom", isCustom)
                 .getResultList();
     }
 
@@ -294,13 +294,12 @@ public class LectureRepository {
 //     */
 
 
-
-    public Lecture findByYearAndSemesterAndTimeSlotAndCustom(int year, String semester,boolean isCustom, TimeSlot timeSlot){
+    public Lecture findByYearAndSemesterAndTimeSlotAndCustom(int year, String semester, boolean isCustom, TimeSlot timeSlot) {
         return em.createQuery("select L from Lecture L left join L.times t where L.yearOfLecture=:year and L.semester=:semester and t.timeSlot=:timeSlot and L.isCustom=:isCustom"
-                        ,Lecture.class)
-                .setParameter("year",year)
-                .setParameter("semester",semester)
-                .setParameter("timeSlot",timeSlot)
+                        , Lecture.class)
+                .setParameter("year", year)
+                .setParameter("semester", semester)
+                .setParameter("timeSlot", timeSlot)
                 .setParameter("isCustom", isCustom)
                 .getSingleResult();
     }
@@ -328,7 +327,6 @@ public class LectureRepository {
 
 
     /**
-
      * 학정번호로 강의 찾기
      *
      * @param lectureNumber
@@ -336,22 +334,23 @@ public class LectureRepository {
      */
     public List<Lecture> findByLectureNum(String lectureNumber) {
         return em.createQuery("select l from Lecture l where l.lectureNumber=:lectureNumber", Lecture.class)
-        .setParameter("lectureNumber", lectureNumber)
+                .setParameter("lectureNumber", lectureNumber)
                 .getResultList();
     }
-     /* 해당 년도/학기 학정번호로 강의 찾기
+
+    /* 해당 년도/학기 학정번호로 강의 찾기
      * @param lectureNumber
      * @return lecture
      */
     public Lecture findByLectureNumAndYearAndSemester(String lectureNumber, int year, String semester) {
-        return em.createQuery("select l from Lecture l where l.lectureNumber=:lectureNumber and l.yearOfLecture=:year and l.semester=:semester",Lecture.class)
+        return em.createQuery("select l from Lecture l where l.lectureNumber=:lectureNumber and l.yearOfLecture=:year and l.semester=:semester", Lecture.class)
                 .setParameter("lectureNumber", lectureNumber)
                 .setParameter("year", year)
                 .setParameter("semester", semester)
                 .getSingleResult();
     }
 
-    public Lecture findByLectureNumAndYearAndSemesterWithTimes(String lectureNumber, int yearOfLecture, String semester){
+    public Lecture findByLectureNumAndYearAndSemesterWithTimes(String lectureNumber, int yearOfLecture, String semester) {
         return em.createQuery("select l from Lecture l join fetch l.times lt join fetch lt.timeSlot where l.lectureNumber=:lectureNumber and l.yearOfLecture =:yearOfLecture and l.semester=:semester", Lecture.class)
                 .setParameter("lectureNumber", lectureNumber)
                 .setParameter("yearOfLecture", yearOfLecture)
@@ -370,5 +369,20 @@ public class LectureRepository {
         } catch (NoResultException | NonUniqueResultException e) {
             return Optional.empty();
         }
+    }
+
+    public List<Lecture> findByDepartmentAndYearAndSemesterAndLevel(String departmentName, Integer yearOfLecture, String semester,Integer level) {
+        return em.createQuery("select l from Lecture l where"
+                                + " l.yearOfLecture=:yearOfLecture"
+                                + " and l.semester=:semester"
+                                + " and l.category like CONCAT('%',:departmentName,'%')"
+                                + " and l.level=:level"
+                        , Lecture.class)
+                .setParameter("departmentName", departmentName)
+                .setParameter("yearOfLecture", yearOfLecture)
+                .setParameter("semester", semester)
+                .setParameter("level",level)
+                .getResultList();
+
     }
 }
